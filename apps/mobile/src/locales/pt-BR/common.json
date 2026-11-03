@@ -1,0 +1,33 @@
+{
+  "appName": "Pet Care",
+  "actions": {
+    "save": "Salvar",
+    "cancel": "Cancelar",
+    "delete": "Excluir",
+    "edit": "Editar",
+    "back": "Voltar",
+    "continue": "Continuar",
+    "confirm": "Confirmar",
+    "close": "Fechar",
+    "retry": "Tentar de novo",
+    "remove": "Remover"
+  },
+  "loading": "Carregando…",
+  "comingSoon": "Em breve",
+  "optional": "opcional",
+  "validation": {
+    "required": "Preencha este campo.",
+    "tooLong": "Texto muito longo.",
+    "dateInvalid": "Data inválida. Confira dia, mês e ano.",
+    "dateFuture": "A data não pode ser no futuro.",
+    "numberInvalid": "Digite apenas números.",
+    "ageTooHigh": "Confira a idade informada.",
+    "weightInvalid": "Peso inválido. Exemplo: 12,5",
+    "microchipInvalid": "O microchip tem de 9 a 15 letras ou números.",
+    "ufInvalid": "UF inválida. Exemplo: SP",
+    "emailInvalid": "Digite um e-mail válido.",
+    "passwordTooShort": "A senha precisa ter pelo menos 8 caracteres.",
+    "passwordWeak": "Use letras e números na senha.",
+    "termsRequired": "Para criar a conta, aceite os Termos e a Política de Privacidade."
+  }
+}

@@ -1,0 +1,26 @@
+{
+  "name": "pet-care",
+  "private": true,
+  "version": "0.0.0",
+  "workspaces": [
+    "apps/*",
+    "packages/*",
+    "functions",
+    "tests/*"
+  ],
+  "scripts": {
+    "typecheck": "npm run typecheck --workspaces --if-present",
+    "lint": "npm run lint --workspaces --if-present",
+    "test": "npm run test --workspaces --if-present",
+    "test:emulators": "firebase emulators:exec --only auth,firestore,storage --project demo-petcare \"npm run test:rules --workspace=@petcare/rules-tests && npm run test:emu --workspace=@petcare/functions\"",
+    "test:rules": "firebase emulators:exec --only firestore,storage --project demo-petcare \"npm run test:rules --workspace=@petcare/rules-tests\"",
+    "emulators": "firebase emulators:start --only auth,firestore,storage,functions --project demo-petcare",
+    "build:functions": "npm run build --workspace=@petcare/functions"
+  },
+  "engines": {
+    "node": ">=22.13"
+  },
+  "devDependencies": {
+    "firebase-tools": "^15.34.2"
+  }
+}

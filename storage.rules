@@ -1,0 +1,41 @@
+rules_version = '2';
+
+// Regras do Storage — Fase 1.
+service firebase.storage {
+  match /b/{bucket}/o {
+
+    function signedIn() {
+      return request.auth != null;
+    }
+
+    function petMemberDoc(petId) {
+      return /databases/(default)/documents/pet_members/$(petId + '_' + request.auth.uid);
+    }
+
+    function isPetMember(petId) {
+      return signedIn() && firestore.exists(petMemberDoc(petId));
+    }
+
+    function canEditPet(petId) {
+      return isPetMember(petId)
+        && firestore.get(petMemberDoc(petId)).data.role in ['owner', 'caregiver'];
+    }
+
+    function isImageUnder(maxBytes) {
+      return request.resource.contentType.matches('image/.*')
+        && request.resource.size < maxBytes;
+    }
+
+    // Foto de perfil e anexos do pet: membros leem; dono/cuidador gravam.
+    match /pets/{petId}/{allPaths=**} {
+      allow read: if isPetMember(petId);
+      allow write: if canEditPet(petId) && isImageUnder(10 * 1024 * 1024);
+      allow delete: if canEditPet(petId);
+    }
+
+    // Dados privados de uma pessoa (denúncias, resgates): só ela acessa.
+    match /users/{uid}/{allPaths=**} {
+      allow read, write: if signedIn() && request.auth.uid == uid;
+    }
+  }
+}

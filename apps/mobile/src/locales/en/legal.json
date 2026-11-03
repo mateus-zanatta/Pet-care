@@ -1,0 +1,82 @@
+{
+  "draftNotice": "TEMPLATE TEXT — must be reviewed by a lawyer before the app is published. Parts in [brackets] must be filled in.",
+  "updatedAt": "Updated on 11/03/2026",
+  "terms": {
+    "title": "Terms of Use",
+    "sections": [
+      {
+        "title": "1. About Pet Care",
+        "body": "Pet Care helps owners and animal protectors record their animals' health, guides people who find an animal in danger and helps organize information to report animal cruelty. By using the app you agree to these Terms."
+      },
+      {
+        "title": "2. What the app is NOT",
+        "body": "Pet Care is not an official reporting channel and does not replace the police, the Public Prosecutor's Office or environmental agencies. For a crime in progress, call 190. The app also does not replace a veterinarian: it never suggests medicine, dose or diagnosis, it only records what the veterinarian prescribed and reminds you to give it."
+      },
+      {
+        "title": "3. Your account",
+        "body": "Rescue, Report and Nearby can be used without an account. To manage pets you must create an account with truthful information and keep your password safe. You can delete your account and all your data at any time inside the app (Account > Delete my account and data)."
+      },
+      {
+        "title": "4. Content you upload",
+        "body": "Photos, texts and documents you upload remain yours. You declare that you have the right to upload them and must not upload illegal content, content that violates third-party rights or that improperly exposes people."
+      },
+      {
+        "title": "5. Reports and rescues",
+        "body": "Report and rescue information is private. You are responsible for the accuracy of what you record. Making a false accusation may have legal consequences. The app only helps organize evidence and points to official channels; the decision to report and the contact with authorities are yours."
+      },
+      {
+        "title": "6. Paid plans",
+        "body": "[Describe plans, prices, automatic renewal and cancellation when the Premium subscription is launched.]"
+      },
+      {
+        "title": "7. Changes and contact",
+        "body": "We may update these Terms; we will notify you in the app of relevant changes. Contact: [SUPPORT EMAIL]. Responsible party: [NAME/COMPANY AND TAX ID]."
+      }
+    ]
+  },
+  "privacy": {
+    "title": "Privacy Policy",
+    "sections": [
+      {
+        "title": "1. Who handles your data",
+        "body": "The data controller is [NAME/COMPANY AND TAX ID], data protection contact (LGPD): [DPO EMAIL]. We follow Brazil's General Data Protection Law (Law 13,709/2018)."
+      },
+      {
+        "title": "2. What data we collect",
+        "body": "Account: name, email and sign-in method (email, Google or Apple). Pets: name, species, breed, birth date, weight, microchip, Animal ID (RGA) number, health notes and photo. Rescues and reports: whatever you record, including photos, date/time and location. Technical data: device type and app errors, without personal content."
+      },
+      {
+        "title": "3. What we use it for",
+        "body": "To provide the app's features (keep your pet's history, remind you of doses, guide rescues and organize reports), keep your account secure and fix problems. We do not sell your data and do not use report content for advertising."
+      },
+      {
+        "title": "4. Location and photos",
+        "body": "Location is only requested at the moment you use a feature that needs it, and you can decline. Before sharing a photo with other people we remove its location data (EXIF)."
+      },
+      {
+        "title": "5. Reports are never public",
+        "body": "Reports and rescues are visible only to you. No one else sees names, addresses or photos of suspects, and there is no public wall of reports. In anonymous mode, the report is not linked to your account and is saved only on your device."
+      },
+      {
+        "title": "6. Who we share it with",
+        "body": "We use service providers to run the app: Google Firebase (sign-in, database, files and functions), Sentry (error logs, no personal data), PostHog (usage statistics, no personal data) and, when available, RevenueCat (subscriptions) and Resend (emails you request). If you share a pet with someone, they will see that pet's data."
+      },
+      {
+        "title": "7. Animal ID (RGA) documents",
+        "body": "If you import the Animal ID PDF, the file is read to fill in the pet's profile. The tax ID (CPF/CNPJ) in the document is never saved or shown. The owner's name and phone are kept only if you confirm."
+      },
+      {
+        "title": "8. How long we keep it",
+        "body": "As long as your account exists. When you delete your account in the app, we erase your data, pets, files, rescues and reports. Backups are removed within [PERIOD]."
+      },
+      {
+        "title": "9. Your rights",
+        "body": "You may confirm processing, access, correct, port, anonymize or delete your data and withdraw consent (art. 18 of the LGPD). Most of this can be done directly in the app; for the rest, write to [DPO EMAIL]."
+      },
+      {
+        "title": "10. Children and teenagers",
+        "body": "The app is not intended for children under 13. People under 18 should use it with a parent or guardian's consent."
+      }
+    ]
+  }
+}

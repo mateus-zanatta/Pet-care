@@ -1,0 +1,29 @@
+{
+  "generic": "Algo deu errado. Tente novamente.",
+  "network": "Sem conexão com a internet. Confira o sinal e tente de novo.",
+  "auth": {
+    "invalidCredentials": "E-mail ou senha incorretos.",
+    "emailInUse": "Já existe uma conta com este e-mail. Tente entrar.",
+    "weakPassword": "Senha muito fraca. Use pelo menos 8 caracteres, com letras e números.",
+    "invalidEmail": "E-mail inválido.",
+    "tooManyRequests": "Muitas tentativas. Aguarde alguns minutos e tente de novo.",
+    "userDisabled": "Esta conta foi desativada.",
+    "requiresRecentLogin": "Por segurança, confirme sua identidade de novo.",
+    "providerUnavailable": "Este tipo de login não está disponível neste aparelho.",
+    "cancelled": "Login cancelado."
+  },
+  "pets": {
+    "saveFailed": "Não foi possível salvar o pet. Tente de novo.",
+    "photoFailed": "Não foi possível enviar a foto. O pet foi salvo; tente adicionar a foto de novo.",
+    "deleteFailed": "Não foi possível excluir o pet. Tente de novo.",
+    "loadFailed": "Não foi possível carregar seus pets."
+  },
+  "account": {
+    "deleteFailed": "Não foi possível excluir a conta agora. Nada foi apagado por completo; tente de novo.",
+    "wrongPassword": "Senha incorreta."
+  },
+  "permissions": {
+    "cameraDenied": "Sem acesso à câmera. Você pode liberar nas configurações do aparelho.",
+    "photosDenied": "Sem acesso às fotos. Você pode liberar nas configurações do aparelho."
+  }
+}

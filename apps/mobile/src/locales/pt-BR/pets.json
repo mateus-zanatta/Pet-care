@@ -1,0 +1,106 @@
+{
+  "title": "Meus Pets",
+  "empty": {
+    "title": "Nenhum pet por aqui ainda",
+    "body": "Cadastre seu primeiro pet para guardar os dados dele num só lugar.",
+    "cta": "Adicionar pet"
+  },
+  "needAccount": {
+    "title": "Crie uma conta para cuidar do seu pet",
+    "body": "Resgate, Denúncia e Perto de mim funcionam sem cadastro. Para guardar a saúde do seu pet, você precisa de uma conta.",
+    "cta": "Criar conta ou entrar"
+  },
+  "add": "Adicionar pet",
+  "newTitle": "Novo pet",
+  "editTitle": "Editar pet",
+  "detailTitle": "Pet",
+  "notFound": "Pet não encontrado.",
+  "species": {
+    "dog": "Cachorro",
+    "cat": "Gato",
+    "bird": "Ave",
+    "rabbit": "Coelho",
+    "rodent": "Roedor",
+    "reptile": "Réptil",
+    "other": "Outro"
+  },
+  "sex": {
+    "male": "Macho",
+    "female": "Fêmea",
+    "unknown": "Não sei"
+  },
+  "tristate": {
+    "yes": "Sim",
+    "no": "Não",
+    "unknown": "Não sei"
+  },
+  "birthMode": {
+    "date": "Sei a data",
+    "age": "Idade aproximada",
+    "unknown": "Não sei"
+  },
+  "form": {
+    "photo": "Foto",
+    "photoAdd": "Adicionar foto",
+    "photoChange": "Trocar foto",
+    "photoFromGallery": "Escolher da galeria",
+    "photoFromCamera": "Tirar foto",
+    "photoRemove": "Remover foto",
+    "photoHint": "A localização da foto é removida antes de salvar.",
+    "basics": "Dados básicos",
+    "name": "Nome",
+    "species": "Espécie",
+    "breed": "Raça",
+    "sex": "Sexo",
+    "neutered": "Castrado(a)",
+    "birth": "Nascimento",
+    "birthDate": "Data de nascimento",
+    "birthDatePlaceholder": "dd/mm/aaaa",
+    "ageYears": "Anos",
+    "ageMonths": "Meses",
+    "weight": "Peso (kg)",
+    "identification": "Identificação",
+    "microchip": "Nº do microchip",
+    "rga": "Nº do RG Animal (SinPatinhas)",
+    "rgaHint": "Opcional. É o registro oficial do governo federal. Formato: XXX.XXXX.X-UF",
+    "rgaFormatWarning": "Este número foge do formato visto no SinPatinhas (XXX.XXXX.X-UF). Confira, mas você pode salvar assim mesmo.",
+    "cor": "Cor da pelagem",
+    "naturalCity": "Naturalidade (cidade)",
+    "naturalUf": "UF",
+    "health": "Saúde",
+    "allergies": "Alergias",
+    "notes": "Observações",
+    "home": "Onde mora",
+    "address": "Endereço (opcional)",
+    "addressHint": "Usado só para sugerir veterinárias perto de casa. Não é compartilhado.",
+    "save": "Salvar pet",
+    "saving": "Salvando…",
+    "fixErrors": "Confira os campos destacados."
+  },
+  "detail": {
+    "ageYearsMonths_one": "{{years}} ano e {{months}} m",
+    "ageYearsMonths_other": "{{years}} anos e {{months}} m",
+    "ageMonthsOnly_one": "{{count}} mês",
+    "ageMonthsOnly_other": "{{count}} meses",
+    "approx": "aprox.",
+    "weight": "Peso",
+    "microchip": "Microchip",
+    "rga": "RG Animal",
+    "cor": "Cor",
+    "naturalidade": "Naturalidade",
+    "allergies": "Alergias",
+    "notes": "Observações",
+    "address": "Onde mora",
+    "neutered": "Castrado(a)",
+    "age": "Idade",
+    "deleteTitle": "Excluir {{name}}?",
+    "deleteBody": "Isso apaga o pet e tudo o que está ligado a ele (fotos e, nas próximas versões, vacinas e remédios). Não dá para desfazer.",
+    "deleteBodyShared": "Isso apaga o pet para você e para todas as pessoas com quem ele é compartilhado. Não dá para desfazer."
+  },
+  "roles": {
+    "owner": "Dono",
+    "caregiver": "Cuidador(a)",
+    "viewer": "Visualização"
+  },
+  "sharedWithYou": "Compartilhado com você"
+}

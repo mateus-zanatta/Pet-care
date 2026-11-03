@@ -1,0 +1,130 @@
+rules_version = '2';
+
+// Regras do Firestore — Fase 1.
+// Princípio: cada pessoa só acessa os próprios dados; quem recebeu um pet em
+// compartilhamento só acessa AQUELE pet. Tudo o que não está aqui é negado.
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    // ---------- Funções auxiliares ----------
+    function signedIn() {
+      return request.auth != null;
+    }
+
+    function isSelf(uid) {
+      return signedIn() && request.auth.uid == uid;
+    }
+
+    // Conta "de verdade" (e-mail, Google, Apple). Anônimos não criam pets.
+    function isRegisteredUser() {
+      return signedIn() && request.auth.token.firebase.sign_in_provider != 'anonymous';
+    }
+
+    function memberPath(petId, uid) {
+      return /databases/$(database)/documents/pet_members/$(petId + '_' + uid);
+    }
+
+    function isMember(petId) {
+      return signedIn() && exists(memberPath(petId, request.auth.uid));
+    }
+
+    function memberRole(petId) {
+      return get(memberPath(petId, request.auth.uid)).data.role;
+    }
+
+    function canEditPet(petId) {
+      return isMember(petId) && memberRole(petId) in ['owner', 'caregiver'];
+    }
+
+    function isString(v, maxLen) {
+      return v is string && v.size() <= maxLen;
+    }
+
+    // ---------- users/{uid} ----------
+    match /users/{uid} {
+      allow read: if isSelf(uid);
+
+      allow create: if isSelf(uid)
+        && request.resource.data.keys().hasOnly(
+             ['displayName', 'locale', 'isAnonymous', 'consents', 'createdAt', 'updatedAt'])
+        && request.resource.data.locale in ['pt-BR', 'en']
+        && request.resource.data.isAnonymous is bool;
+
+      allow update: if isSelf(uid)
+        && request.resource.data.keys().hasOnly(
+             ['displayName', 'locale', 'isAnonymous', 'consents', 'createdAt', 'updatedAt'])
+        && request.resource.data.createdAt == resource.data.createdAt
+        && request.resource.data.locale in ['pt-BR', 'en'];
+
+      // A exclusão acontece pela Cloud Function deleteAccount.
+      allow delete: if false;
+    }
+
+    // ---------- entitlements/{uid}: premium (escrito só pelo servidor) ----------
+    match /entitlements/{uid} {
+      allow read: if isSelf(uid);
+      allow write: if false;
+    }
+
+    // ---------- pets/{petId} ----------
+    match /pets/{petId} {
+      allow read: if isMember(petId);
+
+      // Criação: o dono cria o pet e, NO MESMO lote, o próprio pet_members de dono.
+      allow create: if isRegisteredUser()
+        && request.resource.data.ownerId == request.auth.uid
+        && existsAfter(memberPath(petId, request.auth.uid))
+        && getAfter(memberPath(petId, request.auth.uid)).data.role == 'owner'
+        && validPet(request.resource.data);
+
+      allow update: if canEditPet(petId)
+        && request.resource.data.ownerId == resource.data.ownerId
+        && request.resource.data.origin == resource.data.origin
+        && request.resource.data.createdAt == resource.data.createdAt
+        && validPet(request.resource.data);
+
+      // Exclusão: apenas pela Cloud Function deletePet (apaga subcoleções e arquivos).
+      allow delete: if false;
+    }
+
+    function validPet(d) {
+      return d.keys().hasOnly([
+               'ownerId', 'origin', 'name', 'species', 'breed', 'sex', 'neutered',
+               'birthDate', 'approxAge', 'weightKg', 'microchip', 'rga', 'cor',
+               'naturalidade', 'allergies', 'notes', 'address', 'photoPath',
+               'photoUpdatedAt', 'sinpatinhas', 'tutor', 'rescueId', 'rescueStatus',
+               'createdAt', 'updatedAt'])
+        && d.keys().hasAll(['ownerId', 'origin', 'name', 'species', 'sex', 'neutered', 'createdAt', 'updatedAt'])
+        && d.origin in ['manual', 'rescue', 'rga_import']
+        && isString(d.name, 60) && d.name.size() >= 1
+        && d.species in ['dog', 'cat', 'bird', 'rabbit', 'rodent', 'reptile', 'other']
+        && d.sex in ['male', 'female', 'unknown']
+        && d.neutered in ['yes', 'no', 'unknown']
+        && (!('breed' in d) || isString(d.breed, 60))
+        && (!('rga' in d) || isString(d.rga, 20))
+        && (!('cor' in d) || isString(d.cor, 40))
+        && (!('allergies' in d) || isString(d.allergies, 500))
+        && (!('notes' in d) || isString(d.notes, 1000))
+        && (!('weightKg' in d) || (d.weightKg is number && d.weightKg > 0 && d.weightKg <= 200));
+    }
+
+    // ---------- pet_members/{petId}_{uid} ----------
+    match /pet_members/{memberId} {
+      // Cada pessoa vê as próprias participações; o dono vê quem participa do seu pet.
+      allow read: if signedIn()
+        && (resource.data.uid == request.auth.uid
+            || (isMember(resource.data.petId) && memberRole(resource.data.petId) == 'owner'));
+
+      // Só o dono se cria como 'owner' (junto do pet). Convites passam pela Cloud Function.
+      allow create: if isRegisteredUser()
+        && memberId == request.resource.data.petId + '_' + request.auth.uid
+        && request.resource.data.uid == request.auth.uid
+        && request.resource.data.role == 'owner'
+        && request.resource.data.keys().hasOnly(['petId', 'uid', 'role', 'displayName', 'addedAt'])
+        && existsAfter(/databases/$(database)/documents/pets/$(request.resource.data.petId))
+        && getAfter(/databases/$(database)/documents/pets/$(request.resource.data.petId)).data.ownerId == request.auth.uid;
+
+      allow update, delete: if false;
+    }
+  }
+}

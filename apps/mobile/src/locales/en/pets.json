@@ -1,0 +1,106 @@
+{
+  "title": "My Pets",
+  "empty": {
+    "title": "No pets here yet",
+    "body": "Add your first pet to keep all their information in one place.",
+    "cta": "Add pet"
+  },
+  "needAccount": {
+    "title": "Create an account to care for your pet",
+    "body": "Rescue, Report and Nearby work without an account. To keep your pet's health records, you need an account.",
+    "cta": "Create account or sign in"
+  },
+  "add": "Add pet",
+  "newTitle": "New pet",
+  "editTitle": "Edit pet",
+  "detailTitle": "Pet",
+  "notFound": "Pet not found.",
+  "species": {
+    "dog": "Dog",
+    "cat": "Cat",
+    "bird": "Bird",
+    "rabbit": "Rabbit",
+    "rodent": "Rodent",
+    "reptile": "Reptile",
+    "other": "Other"
+  },
+  "sex": {
+    "male": "Male",
+    "female": "Female",
+    "unknown": "Not sure"
+  },
+  "tristate": {
+    "yes": "Yes",
+    "no": "No",
+    "unknown": "Not sure"
+  },
+  "birthMode": {
+    "date": "I know the date",
+    "age": "Approximate age",
+    "unknown": "Not sure"
+  },
+  "form": {
+    "photo": "Photo",
+    "photoAdd": "Add photo",
+    "photoChange": "Change photo",
+    "photoFromGallery": "Choose from gallery",
+    "photoFromCamera": "Take a photo",
+    "photoRemove": "Remove photo",
+    "photoHint": "The photo's location data is removed before saving.",
+    "basics": "Basics",
+    "name": "Name",
+    "species": "Species",
+    "breed": "Breed",
+    "sex": "Sex",
+    "neutered": "Neutered",
+    "birth": "Birth",
+    "birthDate": "Date of birth",
+    "birthDatePlaceholder": "mm/dd/yyyy",
+    "ageYears": "Years",
+    "ageMonths": "Months",
+    "weight": "Weight (kg)",
+    "identification": "Identification",
+    "microchip": "Microchip number",
+    "rga": "Animal ID number (Brazil's SinPatinhas)",
+    "rgaHint": "Optional. It is the federal government's official pet registry. Format: XXX.XXXX.X-UF",
+    "rgaFormatWarning": "This number differs from the format seen in SinPatinhas (XXX.XXXX.X-UF). Please check it, but you can still save it.",
+    "cor": "Coat color",
+    "naturalCity": "Place of birth (city)",
+    "naturalUf": "State",
+    "health": "Health",
+    "allergies": "Allergies",
+    "notes": "Notes",
+    "home": "Where it lives",
+    "address": "Address (optional)",
+    "addressHint": "Used only to suggest vets near home. It is not shared.",
+    "save": "Save pet",
+    "saving": "Saving…",
+    "fixErrors": "Please check the highlighted fields."
+  },
+  "detail": {
+    "ageYearsMonths_one": "{{years}} year and {{months}} mo",
+    "ageYearsMonths_other": "{{years}} years and {{months}} mo",
+    "ageMonthsOnly_one": "{{count}} month",
+    "ageMonthsOnly_other": "{{count}} months",
+    "approx": "approx.",
+    "weight": "Weight",
+    "microchip": "Microchip",
+    "rga": "Animal ID (RGA)",
+    "cor": "Color",
+    "naturalidade": "Place of birth",
+    "allergies": "Allergies",
+    "notes": "Notes",
+    "address": "Where it lives",
+    "neutered": "Neutered",
+    "age": "Age",
+    "deleteTitle": "Delete {{name}}?",
+    "deleteBody": "This deletes the pet and everything linked to it (photos and, in future versions, vaccines and medicines). This cannot be undone.",
+    "deleteBodyShared": "This deletes the pet for you and everyone it is shared with. This cannot be undone."
+  },
+  "roles": {
+    "owner": "Owner",
+    "caregiver": "Caregiver",
+    "viewer": "View only"
+  },
+  "sharedWithYou": "Shared with you"
+}

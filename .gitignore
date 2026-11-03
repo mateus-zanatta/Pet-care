@@ -1,0 +1,30 @@
+node_modules/
+.DS_Store
+*.log
+.env
+.env.*
+!.env.example
+
+# Firebase local
+.firebase/
+firebase-debug.log
+firestore-debug.log
+ui-debug.log
+*.local
+
+# Credenciais e configs de projeto Firebase (nunca no git; no EAS use "file secrets")
+google-services.json
+GoogleService-Info.plist
+**/service-account*.json
+
+# PDFs reais do RG Animal e outros dados reais — NUNCA versionar
+fixtures/rga-local/
+*.pdf
+
+# Build
+dist/
+/functions/lib/
+coverage/
+
+# Pacotes de entrega
+*.zip

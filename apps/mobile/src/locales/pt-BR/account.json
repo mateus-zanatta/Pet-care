@@ -1,0 +1,65 @@
+{
+  "title": "Conta",
+  "anonymous": {
+    "title": "Você está usando o app sem cadastro",
+    "body": "Crie uma conta para guardar a saúde do seu pet e não perder seus dados se trocar de aparelho.",
+    "create": "Criar conta",
+    "signIn": "Entrar"
+  },
+  "profile": {
+    "name": "Nome",
+    "email": "E-mail",
+    "provider": "Entrou com",
+    "providers": {
+      "password": "E-mail e senha",
+      "google.com": "Google",
+      "apple.com": "Apple",
+      "anonymous": "Sem cadastro"
+    }
+  },
+  "language": {
+    "title": "Idioma",
+    "system": "Idioma do aparelho",
+    "ptBR": "Português",
+    "en": "English"
+  },
+  "theme": {
+    "title": "Aparência",
+    "system": "Seguir o aparelho",
+    "light": "Claro",
+    "dark": "Escuro"
+  },
+  "about": {
+    "title": "Sobre",
+    "terms": "Termos de Uso",
+    "privacy": "Política de Privacidade",
+    "version": "Versão {{version}}",
+    "disclaimer": "O Pet Care não é um canal oficial de denúncia e nunca sugere medicamento, dose ou diagnóstico: ele só registra o que o veterinário prescreveu e lembra você."
+  },
+  "signOut": "Sair da conta",
+  "signOutConfirmTitle": "Sair da conta?",
+  "signOutConfirmBody": "Seus dados continuam salvos. Para vê-los de novo, é só entrar.",
+  "signOutAnonymousBody": "Você está sem cadastro: ao sair, os dados deste aparelho (ex.: denúncias salvas só nele) podem ser perdidos.",
+  "delete": {
+    "entry": "Excluir minha conta e meus dados",
+    "title": "Excluir conta",
+    "intro": "Esta ação é definitiva. Vamos apagar:",
+    "items": {
+      "profile": "seu perfil e preferências;",
+      "pets": "os pets que você cadastrou, com fotos e histórico (inclusive para quem recebeu o pet em compartilhamento);",
+      "own": "resgates, denúncias, favoritos e sugestões feitos por você;",
+      "login": "o seu acesso (login)."
+    },
+    "sharedNote": "Pets que outras pessoas compartilharam com você não são apagados: só o seu acesso a eles.",
+    "confirmPassword": "Digite sua senha para confirmar",
+    "password": "Senha",
+    "confirmWithGoogle": "Confirmar com Google e excluir",
+    "confirmWithApple": "Confirmar com Apple e excluir",
+    "confirmWithPassword": "Excluir definitivamente",
+    "confirmAnonymous": "Excluir definitivamente",
+    "deleting": "Excluindo…",
+    "done": "Sua conta e seus dados foram excluídos.",
+    "confirmTitle": "Tem certeza?",
+    "confirmBody": "Não será possível recuperar sua conta nem seus dados depois disso."
+  }
+}

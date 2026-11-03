@@ -1,0 +1,82 @@
+{
+  "draftNotice": "TEXTO MODELO — precisa ser revisado por um(a) advogado(a) antes da publicação do app. Trechos entre [colchetes] devem ser preenchidos.",
+  "updatedAt": "Atualizado em 03/11/2026",
+  "terms": {
+    "title": "Termos de Uso",
+    "sections": [
+      {
+        "title": "1. Sobre o Pet Care",
+        "body": "O Pet Care ajuda tutores e protetores a registrar a saúde dos seus animais, a orientar quem encontra um animal em perigo e a organizar informações para denunciar maus-tratos. Ao usar o app você concorda com estes Termos."
+      },
+      {
+        "title": "2. O que o app NÃO é",
+        "body": "O Pet Care não é um canal oficial de denúncia nem substitui a polícia, o Ministério Público ou os órgãos ambientais. Para flagrantes, ligue 190. O app também não substitui o médico-veterinário: ele nunca sugere medicamento, dose ou diagnóstico, apenas registra o que o veterinário prescreveu e lembra você de dar."
+      },
+      {
+        "title": "3. Sua conta",
+        "body": "Resgate, Denúncia e Perto de mim podem ser usados sem cadastro. Para cuidar de pets é preciso criar uma conta com dados verdadeiros e manter a senha em segurança. Você pode excluir a conta e todos os seus dados a qualquer momento, dentro do app (Conta > Excluir minha conta e meus dados)."
+      },
+      {
+        "title": "4. Conteúdo que você envia",
+        "body": "Fotos, textos e documentos que você envia continuam sendo seus. Você declara ter o direito de enviá-los e não deve enviar conteúdo ilegal, que viole direitos de terceiros ou que exponha pessoas de forma indevida."
+      },
+      {
+        "title": "5. Denúncias e resgates",
+        "body": "As informações de denúncias e resgates são privadas. Você é responsável pela veracidade do que registra. Fazer acusação falsa pode ter consequências legais. O app apenas ajuda a organizar as provas e indica canais oficiais; a decisão de denunciar e o contato com as autoridades são seus."
+      },
+      {
+        "title": "6. Planos pagos",
+        "body": "[Descrever planos, preços, renovação automática e cancelamento quando a assinatura Premium for lançada.]"
+      },
+      {
+        "title": "7. Mudanças e contato",
+        "body": "Podemos atualizar estes Termos; avisaremos no app quando houver mudança relevante. Contato: [E-MAIL DE SUPORTE]. Responsável: [NOME/RAZÃO SOCIAL E CNPJ/CPF]."
+      }
+    ]
+  },
+  "privacy": {
+    "title": "Política de Privacidade",
+    "sections": [
+      {
+        "title": "1. Quem cuida dos seus dados",
+        "body": "O controlador dos dados é [NOME/RAZÃO SOCIAL E CNPJ/CPF], contato do encarregado (LGPD): [E-MAIL DO ENCARREGADO]. Seguimos a Lei Geral de Proteção de Dados (Lei 13.709/2018)."
+      },
+      {
+        "title": "2. Quais dados coletamos",
+        "body": "Conta: nome, e-mail e forma de login (e-mail, Google ou Apple). Pets: nome, espécie, raça, nascimento, peso, microchip, número do RG Animal, observações de saúde e foto. Resgates e denúncias: o que você registrar, incluindo fotos, data/hora e localização. Dados técnicos: tipo de aparelho e erros do app, sem conteúdo pessoal."
+      },
+      {
+        "title": "3. Para que usamos",
+        "body": "Para fornecer as funções do app (guardar o histórico do seu pet, lembrar de doses, orientar resgates e organizar denúncias), manter a segurança da conta e corrigir falhas. Não vendemos seus dados e não usamos o conteúdo de denúncias para publicidade."
+      },
+      {
+        "title": "4. Localização e fotos",
+        "body": "A localização só é pedida na hora em que você usa uma função que precisa dela, e você pode recusar. Antes de compartilhar uma foto com outras pessoas, removemos os dados de localização (EXIF) dela."
+      },
+      {
+        "title": "5. Denúncias nunca são públicas",
+        "body": "Denúncias e resgates ficam visíveis apenas para você. Nenhuma outra pessoa vê nomes, endereços ou fotos de suspeitos, e não existe mural público de denúncias. No modo anônimo, a denúncia não é ligada à sua conta e fica salva só no seu aparelho."
+      },
+      {
+        "title": "6. Com quem compartilhamos",
+        "body": "Usamos prestadores de serviço para operar o app: Google Firebase (login, banco de dados, arquivos e funções), Sentry (registro de erros, sem dados pessoais), PostHog (estatísticas de uso, sem dados pessoais) e, quando disponível, RevenueCat (assinaturas) e Resend (envio de e-mails que você pedir). Se você compartilhar um pet com outra pessoa, ela verá os dados desse pet."
+      },
+      {
+        "title": "7. Documentos do RG Animal",
+        "body": "Se você importar o PDF do RG Animal, o arquivo é lido para preencher o cadastro do pet. O CPF/CNPJ que consta no documento nunca é salvo nem exibido. Nome e telefone do responsável só são guardados se você confirmar."
+      },
+      {
+        "title": "8. Por quanto tempo guardamos",
+        "body": "Enquanto sua conta existir. Ao excluir a conta no app, apagamos seus dados, pets, arquivos, resgates e denúncias. Cópias de segurança são eliminadas em até [PRAZO]."
+      },
+      {
+        "title": "9. Seus direitos",
+        "body": "Você pode confirmar o tratamento, acessar, corrigir, portar, anonimizar ou eliminar seus dados e revogar consentimentos (art. 18 da LGPD). A maior parte você faz direto no app; para o restante, escreva para [E-MAIL DO ENCARREGADO]."
+      },
+      {
+        "title": "10. Crianças e adolescentes",
+        "body": "O app não é destinado a menores de 13 anos. Menores de 18 anos devem usá-lo com o consentimento de um responsável."
+      }
+    ]
+  }
+}

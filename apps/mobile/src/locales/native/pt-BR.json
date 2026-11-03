@@ -1,0 +1,10 @@
+{
+  "ios": {
+    "CFBundleDisplayName": "Pet Care",
+    "NSCameraUsageDescription": "Usamos a câmera para você fotografar o seu pet.",
+    "NSPhotoLibraryUsageDescription": "Usamos suas fotos para você escolher a foto do seu pet."
+  },
+  "android": {
+    "app_name": "Pet Care"
+  }
+}

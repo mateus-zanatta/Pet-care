@@ -1,0 +1,65 @@
+{
+  "title": "Account",
+  "anonymous": {
+    "title": "You are using the app without an account",
+    "body": "Create an account to keep your pet's health records and not lose your data if you switch devices.",
+    "create": "Create account",
+    "signIn": "Sign in"
+  },
+  "profile": {
+    "name": "Name",
+    "email": "Email",
+    "provider": "Signed in with",
+    "providers": {
+      "password": "Email and password",
+      "google.com": "Google",
+      "apple.com": "Apple",
+      "anonymous": "No account"
+    }
+  },
+  "language": {
+    "title": "Language",
+    "system": "Device language",
+    "ptBR": "Português",
+    "en": "English"
+  },
+  "theme": {
+    "title": "Appearance",
+    "system": "Follow device",
+    "light": "Light",
+    "dark": "Dark"
+  },
+  "about": {
+    "title": "About",
+    "terms": "Terms of Use",
+    "privacy": "Privacy Policy",
+    "version": "Version {{version}}",
+    "disclaimer": "Pet Care is not an official reporting channel and never suggests medicine, dose or diagnosis: it only records what the veterinarian prescribed and reminds you."
+  },
+  "signOut": "Sign out",
+  "signOutConfirmTitle": "Sign out?",
+  "signOutConfirmBody": "Your data stays saved. To see it again, just sign in.",
+  "signOutAnonymousBody": "You have no account: if you sign out, data kept only on this device (e.g. saved reports) may be lost.",
+  "delete": {
+    "entry": "Delete my account and data",
+    "title": "Delete account",
+    "intro": "This action is permanent. We will erase:",
+    "items": {
+      "profile": "your profile and preferences;",
+      "pets": "the pets you registered, with photos and history (including for people the pet was shared with);",
+      "own": "rescues, reports, favorites and suggestions made by you;",
+      "login": "your access (login)."
+    },
+    "sharedNote": "Pets that other people shared with you are not deleted: only your access to them.",
+    "confirmPassword": "Enter your password to confirm",
+    "password": "Password",
+    "confirmWithGoogle": "Confirm with Google and delete",
+    "confirmWithApple": "Confirm with Apple and delete",
+    "confirmWithPassword": "Delete permanently",
+    "confirmAnonymous": "Delete permanently",
+    "deleting": "Deleting…",
+    "done": "Your account and data were deleted.",
+    "confirmTitle": "Are you sure?",
+    "confirmBody": "You will not be able to recover your account or data after this."
+  }
+}
