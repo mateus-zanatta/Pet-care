@@ -21,9 +21,17 @@ import { Platform } from 'react-native';
 import { auth } from '@/core/firebase';
 import { AppAuthError } from './errors';
 
+const GOOGLE_WEB_CLIENT_ID = process.env.EXPO_PUBLIC_GOOGLE_WEB_CLIENT_ID;
+
+/** O login com Google só aparece quando o "ID do cliente da Web" foi configurado (veja SETUP.md). */
+export function isGoogleSignInAvailable(): boolean {
+  return Boolean(GOOGLE_WEB_CLIENT_ID);
+}
+
 /** Chamar uma vez na inicialização do app. */
 export function configureGoogleSignIn(): void {
-  GoogleSignin.configure({ webClientId: process.env.EXPO_PUBLIC_GOOGLE_WEB_CLIENT_ID });
+  if (!GOOGLE_WEB_CLIENT_ID) return;
+  GoogleSignin.configure({ webClientId: GOOGLE_WEB_CLIENT_ID });
 }
 
 /* ------------------------------ Credenciais ------------------------------ */

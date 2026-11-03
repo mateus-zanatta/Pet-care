@@ -4,12 +4,12 @@ import { petMemberId } from '@petcare/shared';
 import { z } from 'zod';
 import { bucket, db } from '../admin';
 import { deletePetCascade } from '../account/deletion';
-import { enforceAppCheck } from '../config';
+import { callableOptions } from '../config';
 
 const inputSchema = z.object({ petId: z.string().min(1).max(128) });
 
 /** Exclui um pet inteiro (dados de saúde, vínculos e arquivos). Somente o dono pode. */
-export const deletePet = onCall({ enforceAppCheck, memory: '512MiB', timeoutSeconds: 120 }, async (request) => {
+export const deletePet = onCall({ ...callableOptions, memory: '512MiB', timeoutSeconds: 120 }, async (request) => {
   if (!request.auth) throw new HttpsError('unauthenticated', 'auth-required');
 
   const parsed = inputSchema.safeParse(request.data);

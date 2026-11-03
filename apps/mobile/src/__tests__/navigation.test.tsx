@@ -27,13 +27,14 @@ jest.mock('@/features/auth/AuthProvider', () => ({
 }));
 jest.mock('@/features/auth/auth.service', () => ({
   configureGoogleSignIn: jest.fn(),
+  isGoogleSignInAvailable: () => false,
   signInAnonymouslyNow: jest.fn(),
   signInWithEmail: jest.fn(),
   signInWithGoogle: jest.fn(),
   signInWithApple: jest.fn(),
   signOut: jest.fn(),
 }));
-jest.mock('@/core/firebase', () => ({ connectEmulatorsIfEnabled: jest.fn() }));
+jest.mock('@/core/firebase', () => ({ connectEmulatorsIfEnabled: jest.fn(), isUsingEmulators: () => false }));
 jest.mock('@/features/pets/pets.repo', () => ({
   subscribeMemberships: (_uid: string, onData: (m: unknown[]) => void) => {
     onData([]);

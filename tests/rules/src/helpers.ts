@@ -10,7 +10,7 @@ export const PROJECT_ID = 'demo-petcare';
 const root = resolve(__dirname, '../../..');
 
 export async function createEnv(): Promise<RulesTestEnvironment> {
-  const [firestoreHost, firestorePort] = (process.env.FIRESTORE_EMULATOR_HOST ?? '127.0.0.1:8080').split(':');
+  const [firestoreHost, firestorePort] = (process.env.FIRESTORE_EMULATOR_HOST ?? '127.0.0.1:8085').split(':');
   const [storageHost, storagePort] = (process.env.FIREBASE_STORAGE_EMULATOR_HOST ?? '127.0.0.1:9199').split(':');
   return initializeTestEnvironment({
     projectId: PROJECT_ID,

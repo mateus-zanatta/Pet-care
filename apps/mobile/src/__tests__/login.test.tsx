@@ -1,11 +1,14 @@
 import { fireEvent, screen, waitFor } from '@testing-library/react-native';
 import React from 'react';
+import { Platform } from 'react-native';
 import { renderWithProviders, setupTestI18n } from '@/test/render';
 import LoginScreen from '@/app/login';
 
 const mockSignIn = jest.fn();
+const mockGoogleAvailable = jest.fn(() => true);
 jest.mock('@/features/auth/auth.service', () => ({
   signInWithEmail: (...args: unknown[]) => mockSignIn(...args),
+  isGoogleSignInAvailable: () => mockGoogleAvailable(),
   signInWithGoogle: jest.fn(),
   signInWithApple: jest.fn(),
 }));
@@ -17,7 +20,11 @@ jest.mock('@/core/errors/report', () => ({ reportError: jest.fn() }));
 beforeAll(async () => {
   await setupTestI18n('pt-BR');
 });
-beforeEach(() => mockSignIn.mockReset());
+afterEach(() => jest.restoreAllMocks());
+beforeEach(() => {
+  mockSignIn.mockReset();
+  mockGoogleAvailable.mockReturnValue(true);
+});
 
 describe('LoginScreen', () => {
   it('valida e-mail e senha antes de chamar o servidor', async () => {
@@ -48,5 +55,21 @@ describe('LoginScreen', () => {
   it('oferece o login com Google', async () => {
     await renderWithProviders(<LoginScreen />);
     expect(screen.getByRole('button', { name: 'Continuar com Google' })).toBeTruthy();
+  });
+
+  it('sem Google configurado, no iOS só sobra o botão da Apple', async () => {
+    mockGoogleAvailable.mockReturnValue(false);
+    jest.replaceProperty(Platform, 'OS', 'ios');
+    await renderWithProviders(<LoginScreen />);
+    expect(screen.queryByRole('button', { name: 'Continuar com Google' })).toBeNull();
+    expect(screen.getByRole('button', { name: 'Continuar com Apple' })).toBeTruthy();
+  });
+
+  it('sem Google configurado, no Android a seção de login social some por inteiro', async () => {
+    mockGoogleAvailable.mockReturnValue(false);
+    jest.replaceProperty(Platform, 'OS', 'android');
+    await renderWithProviders(<LoginScreen />);
+    expect(screen.queryByRole('button', { name: 'Continuar com Google' })).toBeNull();
+    expect(screen.queryByText('ou entre com')).toBeNull();
   });
 });

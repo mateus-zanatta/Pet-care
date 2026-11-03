@@ -1,6 +1,6 @@
 import { revokeToken } from '@react-native-firebase/auth';
-import { httpsCallable } from '@react-native-firebase/functions';
-import { auth, functions } from '@/core/firebase';
+import { auth } from '@/core/firebase';
+import { callFunction } from '@/core/firebase/callable';
 import { reportError } from '@/core/errors/report';
 import { signOut } from '@/features/auth/auth.service';
 
@@ -18,7 +18,7 @@ export async function deleteMyAccount({ appleAuthorizationCode }: { appleAuthori
       reportError('account.appleRevoke', error);
     }
   }
-  await httpsCallable<undefined, { ok: true }>(functions(), 'deleteAccount')();
+  await callFunction<undefined, { ok: true }>('deleteAccount');
   try {
     await signOut(); // a sessão já não vale mais; isto só limpa o aparelho
   } catch {

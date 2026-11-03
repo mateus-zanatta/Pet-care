@@ -61,5 +61,6 @@
     "done": "Sua conta e seus dados foram excluídos.",
     "confirmTitle": "Tem certeza?",
     "confirmBody": "Não será possível recuperar sua conta nem seus dados depois disso."
-  }
+  },
+  "devEmulators": "Modo de desenvolvimento: o app está conectado aos emuladores no seu computador. Os dados são de teste e somem quando você fecha os emuladores."
 }

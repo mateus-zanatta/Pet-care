@@ -61,5 +61,6 @@
     "done": "Your account and data were deleted.",
     "confirmTitle": "Are you sure?",
     "confirmBody": "You will not be able to recover your account or data after this."
-  }
+  },
+  "devEmulators": "Development mode: the app is connected to the emulators on your computer. The data is test data and disappears when you close the emulators."
 }

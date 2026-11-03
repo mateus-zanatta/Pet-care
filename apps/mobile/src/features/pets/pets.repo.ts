@@ -9,7 +9,6 @@ import {
   where,
   writeBatch,
 } from '@react-native-firebase/firestore';
-import { httpsCallable } from '@react-native-firebase/functions';
 import {
   deleteObject,
   getDownloadURL,
@@ -17,7 +16,8 @@ import {
   ref as storageRef,
 } from '@react-native-firebase/storage';
 import { type Pet, type PetData, type PetMember, type PetOrigin, petMemberId } from '@petcare/shared';
-import { db, functions, storage } from '@/core/firebase';
+import { db, storage } from '@/core/firebase';
+import { callFunction } from '@/core/firebase/callable';
 import { prepareImageForUpload } from '@/core/media/image';
 import { buildPetUpdate, parseMember, parsePet } from './pets.mapper';
 
@@ -75,7 +75,7 @@ export async function updatePet(petId: string, data: PetData) {
 
 /** Exclusão completa (pet, saúde, vínculos e arquivos) feita pelo servidor. */
 export async function deletePet(petId: string): Promise<void> {
-  await httpsCallable<{ petId: string }, { ok: true }>(functions(), 'deletePet')({ petId });
+  await callFunction<{ petId: string }, { ok: true }>('deletePet', { petId });
 }
 
 /* -------------------------------- Foto -------------------------------- */

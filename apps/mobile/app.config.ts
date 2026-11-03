@@ -1,11 +1,23 @@
 import fs from 'node:fs';
 import path from 'node:path';
 import type { ConfigContext, ExpoConfig } from 'expo/config';
+import { fakeGoogleServiceInfoPlist, fakeGoogleServicesJson } from './config/fakeFirebaseConfig';
 
 /**
  * Configuração do app. Valores que dependem de VOCÊ vêm de variáveis de ambiente
  * (veja .env.example e docs/SETUP.md) — nada secreto fica no repositório.
  */
+/**
+ * DADOS DO PROJETO NO EXPO — copie da página do projeto em expo.dev (botão "Details").
+ * Nada disso é segredo. O Expo confere se batem com o projeto; se um deles estiver errado,
+ * o build para com uma mensagem dizendo qual.
+ */
+const EAS_PROJECT_ID = process.env.EAS_PROJECT_ID ?? 'COLE-AQUI-O-PROJECT-ID';
+/** "Slug" do projeto no Expo (aparece em Details). Precisa ser idêntico ao do site. */
+const EXPO_SLUG = process.env.EXPO_SLUG ?? 'petcare';
+/** Nome da conta/organização dona do projeto (aparece em Details). Deixe vazio se for a sua conta pessoal. */
+const EXPO_OWNER = process.env.EXPO_OWNER ?? '';
+
 const DEFAULT_IDENTIFIER = 'com.example.petcare';
 const IDENTIFIER = process.env.APP_IDENTIFIER ?? DEFAULT_IDENTIFIER;
 
@@ -23,8 +35,49 @@ function existingFile(envVar: string, localFallback: string): string | undefined
   return fs.existsSync(path.resolve(__dirname, candidate)) ? candidate : undefined;
 }
 
-const googleServicesAndroid = existingFile('GOOGLE_SERVICES_JSON', './firebase/google-services.json');
-const googleServicesIos = existingFile('GOOGLE_SERVICES_PLIST', './firebase/GoogleService-Info.plist');
+/**
+ * MODO SÓ EMULADORES (FIREBASE_EMULATOR_ONLY=true): não precisa de projeto Firebase nem de
+ * cartão. O React Native Firebase exige os arquivos de configuração para abrir o app; aqui
+ * geramos arquivos FALSOS (projeto "demo-petcare", o mesmo dos emuladores) na hora do build.
+ * Nunca é aceito em build de preview/produção.
+ */
+const EMULATOR_ONLY = process.env.FIREBASE_EMULATOR_ONLY === 'true';
+const BUILD_PROFILE = process.env.EAS_BUILD_PROFILE;
+if (EMULATOR_ONLY && (BUILD_PROFILE === 'production' || BUILD_PROFILE === 'preview')) {
+  throw new Error('FIREBASE_EMULATOR_ONLY não pode ser usado em builds de preview ou produção.');
+}
+
+const GENERATED_DIR = path.resolve(__dirname, 'firebase/.generated');
+const GENERATED_ANDROID = './firebase/.generated/google-services.json';
+const GENERATED_IOS = './firebase/.generated/GoogleService-Info.plist';
+
+function writeFakeFirebaseFiles(): void {
+  fs.mkdirSync(GENERATED_DIR, { recursive: true });
+  fs.writeFileSync(path.join(GENERATED_DIR, 'google-services.json'), fakeGoogleServicesJson(IDENTIFIER));
+  fs.writeFileSync(path.join(GENERATED_DIR, 'GoogleService-Info.plist'), fakeGoogleServiceInfoPlist(IDENTIFIER));
+}
+
+if (EMULATOR_ONLY) writeFakeFirebaseFiles();
+
+const googleServicesAndroid = EMULATOR_ONLY
+  ? GENERATED_ANDROID
+  : existingFile('GOOGLE_SERVICES_JSON', './firebase/google-services.json');
+const googleServicesIos = EMULATOR_ONLY
+  ? GENERATED_IOS
+  : existingFile('GOOGLE_SERVICES_PLIST', './firebase/GoogleService-Info.plist');
+
+/** Builds de desenvolvimento precisam falar com os emuladores por HTTP (sem https) na rede local. */
+const ALLOW_CLEARTEXT = EMULATOR_ONLY || BUILD_PROFILE === 'development';
+
+/**
+ * Arquiteturas Android a compilar (ex.: "arm64-v8a"). Por padrão são 4 (armeabi-v7a, arm64-v8a,
+ * x86, x86_64), o que deixa o build bem mais lento. Em desenvolvimento, só "arm64-v8a" cobre
+ * praticamente todo celular Android moderno. Em produção, deixe vazio (compila todas).
+ */
+const ANDROID_ARCHS = (process.env.ANDROID_BUILD_ARCHS ?? '')
+  .split(',')
+  .map((arch: string) => arch.trim())
+  .filter(Boolean);
 
 /** O esquema de URL do login Google no iOS é o REVERSED_CLIENT_ID do GoogleService-Info.plist. */
 function googleIosUrlScheme(): string {
@@ -40,7 +93,8 @@ function googleIosUrlScheme(): string {
 export default ({ config }: ConfigContext): ExpoConfig => ({
   ...config,
   name: 'Pet Care',
-  slug: 'petcare',
+  slug: EXPO_SLUG,
+  ...(EXPO_OWNER ? { owner: EXPO_OWNER } : {}),
   scheme: 'petcare',
   version: '1.0.0',
   orientation: 'portrait',
@@ -88,6 +142,11 @@ export default ({ config }: ConfigContext): ExpoConfig => ({
       {
         // Exigido pelo React Native Firebase no iOS.
         ios: { useFrameworks: 'static' },
+        // Só em desenvolvimento: permite HTTP para os emuladores na rede local.
+        android: {
+          usesCleartextTraffic: ALLOW_CLEARTEXT,
+          ...(ANDROID_ARCHS.length > 0 ? { buildArchs: ANDROID_ARCHS } : {}),
+        },
       },
     ],
     [
@@ -114,7 +173,7 @@ export default ({ config }: ConfigContext): ExpoConfig => ({
     reactCompiler: true,
   },
   extra: {
-    // Preenchido por `eas init`.
-    eas: { projectId: process.env.EAS_PROJECT_ID },
+    // Preenchido por `eas init` (veja EAS_PROJECT_ID no topo deste arquivo).
+    eas: { projectId: EAS_PROJECT_ID },
   },
 });

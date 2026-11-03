@@ -2,7 +2,12 @@
 
 Este guia leva você de "baixei o código" até "o app rodando no meu celular". Cada passo explica **o que é** e **por que existe**, porque o Firebase e o Expo têm vários nomes que se confundem no começo.
 
-> Você **não precisa de nenhuma conta** para os passos 1 e 2: dá para rodar todos os testes e os emuladores só no seu computador. As contas só entram a partir do passo 3.
+Há **dois caminhos**:
+
+- **Caminho A — sem Firebase na nuvem** (passos 1 e 2): o app no seu celular conversa com os **emuladores** rodando no seu computador. Não precisa de cartão nem do plano Blaze; só de uma conta gratuita do Expo. **Funciona hoje.**
+- **Caminho B — Firebase de verdade** (passos 3 a 7): para publicar o app, usar o login do Google e testar o App Check. Exige o plano Blaze.
+
+Comece pelo A.
 
 ---
 
@@ -38,24 +43,72 @@ Se tudo passou, o projeto está saudável. `npm run test:emulators` testa, por e
 
 ---
 
-## 2. Ver o app funcionando com emuladores (ainda sem contas)
+## 2. Caminho A — o app no celular, sem Firebase na nuvem
 
-O app usa Firebase "nativo", então não roda no app Expo Go: precisa de um **development build** (passo 6). Quando tiver um, você pode apontar o app para os emuladores:
+**Como funciona:** os emuladores (passo 1) imitam Auth, banco, arquivos e funções no seu computador. O celular acessa o computador pela rede Wi-Fi. Os dados são **de teste** e somem quando você fecha os emuladores. O login com Google fica oculto (precisa do Firebase real); e-mail/senha e "continuar sem cadastro" funcionam, assim como foto, edição e exclusão de pet e de conta.
+
+**O que você precisa:** Node, Java 21, uma conta gratuita em <https://expo.dev>, um celular **Android** na mesma rede Wi-Fi do computador (sem VPN) e a opção "instalar apps de fontes desconhecidas" liberada.
+
+### 2.1 Gerar o app (uma vez)
 
 ```bash
-npm run emulators      # em um terminal; painel em http://localhost:4000
+cd apps/mobile
+npx eas-cli login
+npx eas-cli init
 ```
 
-No `apps/mobile/.env.local` (copie de `.env.example`):
+O `eas init` cria o projeto no Expo e mostra um `projectId`. Como o `app.config.ts` é um arquivo de código, o Expo não consegue escrevê-lo sozinho: **cole o ID** na constante `EAS_PROJECT_ID`, no topo do `apps/mobile/app.config.ts` (no lugar de `COLE-AQUI-O-PROJECT-ID`). Na mesma página do projeto (botão **Details** em expo.dev) confira também o **slug** e o **dono** (conta ou organização) e copie para `EXPO_SLUG` e `EXPO_OWNER`. Nada disso é segredo.
+
+Escolha o **identificador do app** (ex.: `br.com.seunome.petcare`) e cadastre-o como variável do projeto:
+
+```bash
+npx eas-cli env:set --name APP_IDENTIFIER --value br.com.seunome.petcare --environment development --visibility plaintext
+```
+
+Gere o app. O perfil `development-emulators` cria arquivos Firebase **falsos** automaticamente (por isso não precisa de conta Firebase):
+
+```bash
+npx eas-cli build --profile development-emulators --platform android
+```
+
+Quando terminar (leva alguns minutos; o plano gratuito tem uma cota mensal de builds e fila mais lenta), o Expo mostra um link/QR Code: abra no celular e instale o `.apk`.
+
+### 2.2 Todo dia que for desenvolver
+
+**Terminal 1** — na raiz do projeto, suba os emuladores abertos para a rede local:
+
+```bash
+npm run emulators:lan
+```
+
+Na primeira vez o Windows pergunta sobre o Firewall (para "Java" e "Node"): **permita em redes privadas**.
+
+**Terminal 2** — suba o Metro, na pasta `apps/mobile`:
+
+```bash
+npx expo start --dev-client --clear
+```
+
+**Não precisa configurar IP nem `.env.local`.** O app gerado com o perfil `development-emulators` usa um projeto Firebase falso (`demo-petcare`); ao detectá-lo, liga os emuladores sozinho e usa o **mesmo endereço do Metro** (é o mesmo computador). Ao abrir, o terminal mostra linhas como:
 
 ```
-EXPO_PUBLIC_USE_EMULATORS=true
-EXPO_PUBLIC_EMULATOR_HOST=10.0.2.2   # emulador Android. iOS Simulator: localhost. Celular físico: o IP do seu computador
+[firebase] emuladores LIGADOS em 192.168.0.10 (projeto de demonstração "demo-petcare"...)
+[firebase] OK    Auth (login) :9099 -> respondeu (HTTP 404)
 ```
+
+Se alguma porta aparecer como `FALHA`, é rede ou Firewall (veja abaixo). Só se a descoberta automática do endereço falhar, defina manualmente `EXPO_PUBLIC_EMULATOR_HOST=SEU.IP` em `apps/mobile/.env.local` (no Windows, o IP aparece em `ipconfig`).
+
+Abra o app instalado no celular e leia o QR Code. Na aba **Conta** aparece um aviso amarelo confirmando que você está nos emuladores. O painel dos emuladores abre no computador em <http://localhost:4000> e mostra usuários, documentos e arquivos criados pelo app — ótimo para conferir, por exemplo, se "Excluir conta" realmente apagou tudo.
+
+> **Segurança:** `emulators:lan` aceita conexões de qualquer aparelho da sua rede e os emuladores **não têm senha**. Use só em rede de casa/confiável, nunca em Wi-Fi público, e feche quando terminar (`Ctrl+C`).
+
+> **Se o emulador não subir ("port taken" / "Port 8085 is not open"):** outro programa está usando a porta. Descubra qual no PowerShell (`netstat -ano | findstr :8085`, depois `tasklist /FI "PID eq NÚMERO"`) e feche-o — muitas vezes é um emulador antigo que ficou aberto (feche o Java no Gerenciador de Tarefas). Para trocar a porta, edite `firebase.json` e `firebase.lan.json` **e** `EMULATOR_PORT` em `apps/mobile/src/core/firebase/diagnostics.ts`.
+
+> **Se o app não conectar:** confirme que celular e computador estão na mesma rede, que o IP no `.env.local` é o atual (ele pode mudar), que o Firewall permitiu o Java e o Node, e que você reiniciou o `expo start` depois de mudar o `.env.local` (use `--clear`).
 
 ---
 
-## 3. Criar o projeto no Firebase
+## 3. Caminho B — criar o projeto no Firebase (quando o plano Blaze estiver disponível)
 
 1. Acesse <https://console.firebase.google.com> → **Adicionar projeto**. Pode desligar o Google Analytics.
 2. **Atualize para o plano Blaze** (Configurações do projeto → Uso e faturamento). É exigido para Cloud Functions e para o Storage em projetos novos.
@@ -118,7 +171,7 @@ Sem conta Apple Developer você ainda pode desenvolver e testar tudo no **Androi
    npx eas-cli login
    npx eas-cli init                  # cria o projeto no Expo e mostra um "projectId"
    ```
-   Guarde o `projectId` na variável `EAS_PROJECT_ID` (no `.env.local` e nas variáveis do projeto no Expo).
+   Cole o `projectId` na constante `EAS_PROJECT_ID` no topo do `app.config.ts`.
 3. **Defina o identificador do app** — é ele que identifica o app nas lojas e **não pode mudar depois de publicado**:
    ```bash
    # exemplo; use um domínio SEU, ao contrário: br.com.seunome.petcare

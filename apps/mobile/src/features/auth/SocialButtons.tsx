@@ -5,7 +5,7 @@ import { AppText } from '@/components/ui/AppText';
 import { Button } from '@/components/ui/Button';
 import { track } from '@/core/analytics';
 import { useAuth } from './AuthProvider';
-import { signInWithApple, signInWithGoogle } from './auth.service';
+import { isGoogleSignInAvailable, signInWithApple, signInWithGoogle } from './auth.service';
 import type { useAuthAction } from './useAuthAction';
 
 type Props = { action: ReturnType<typeof useAuthAction>; mode: 'sign_in' | 'sign_up' };
@@ -19,11 +19,16 @@ export function SocialButtons({ action, mode }: Props) {
     track(mode === 'sign_up' ? { name: 'sign_up', method } : { name: 'sign_in', method });
   };
 
+  const showGoogle = isGoogleSignInAvailable();
+  const showApple = Platform.OS === 'ios';
+  if (!showGoogle && !showApple) return null; // nenhum login social disponível: não mostra a seção
+
   return (
     <View style={{ gap: 12 }}>
       <AppText color="textMuted" align="center">
         {t('login.orWith')}
       </AppText>
+      {showGoogle ? (
       <Button
         variant="secondary"
         icon="logo-google"
@@ -31,7 +36,8 @@ export function SocialButtons({ action, mode }: Props) {
         disabled={action.busy}
         onPress={() => void action.run('auth.google', async () => { await signInWithGoogle(); event('google'); })}
       />
-      {Platform.OS === 'ios' ? (
+      ) : null}
+      {showApple ? (
         <Button
           variant="secondary"
           icon="logo-apple"

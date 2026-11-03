@@ -1,7 +1,7 @@
 import { HttpsError, onCall } from 'firebase-functions/v2/https';
 import * as logger from 'firebase-functions/logger';
 import { auth, bucket, db } from '../admin';
-import { enforceAppCheck } from '../config';
+import { callableOptions } from '../config';
 import { isRecentLogin } from '../lib/recentLogin';
 import { deleteAccountCascade } from './deletion';
 
@@ -9,7 +9,7 @@ import { deleteAccountCascade } from './deletion';
  * Exclui a conta e TODOS os dados da pessoa (exigência da LGPD e das lojas de apps).
  * O app reautentica a pessoa imediatamente antes de chamar esta função.
  */
-export const deleteAccount = onCall({ enforceAppCheck, memory: '512MiB', timeoutSeconds: 300 }, async (request) => {
+export const deleteAccount = onCall({ ...callableOptions, memory: '512MiB', timeoutSeconds: 300 }, async (request) => {
   if (!request.auth) throw new HttpsError('unauthenticated', 'auth-required');
 
   // Conta anônima não tem senha/conta para reconfirmar; as demais precisam de login recente.

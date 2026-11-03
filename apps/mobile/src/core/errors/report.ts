@@ -14,7 +14,8 @@ export function errorCodeOf(error: unknown): string {
 
 export function reportError(context: string, error?: unknown): void {
   const code = errorCodeOf(error);
-  if (__DEV__) console.warn(`[erro] ${context} (${code})`);
+  // No console de desenvolvimento (nunca enviado ao Sentry) mostramos também a mensagem original.
+  if (__DEV__) console.warn(`[erro] ${context} (${code})`, (error as Error | undefined)?.message ?? '');
   Sentry.captureMessage(`${context} (${code})`, { level: 'error', tags: { context, code } });
 }
 

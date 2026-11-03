@@ -15,6 +15,8 @@ import { type ThemePreference, useTheme } from '@/core/theme/ThemeProvider';
 import { useUser } from '@/features/auth/AuthProvider';
 import { signOut } from '@/features/auth/auth.service';
 import { reportError } from '@/core/errors/report';
+import { isUsingEmulators } from '@/core/firebase';
+import { Banner } from '@/components/ui/Banner';
 
 export default function AccountScreen() {
   const { t } = useTranslation('account');
@@ -60,6 +62,8 @@ export default function AccountScreen() {
   return (
     <Screen edges={['top', 'left', 'right']}>
       <AppText variant="display">{t('title')}</AppText>
+
+      {isUsingEmulators() ? <Banner tone="warning">{t('devEmulators')}</Banner> : null}
 
       {user.isAnonymous ? (
         <Card tone="primary">
