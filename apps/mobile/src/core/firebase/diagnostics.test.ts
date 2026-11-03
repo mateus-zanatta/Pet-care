@@ -1,4 +1,11 @@
-import { EMULATOR_PORTS, hostFromUri, pingEmulators, resolveEmulatorSettings } from './diagnostics';
+import {
+  EMULATOR_PORTS,
+  classifyFirestoreProbe,
+  hostFromUri,
+  pingEmulators,
+  resolveEmulatorSettings,
+  withTimeout,
+} from './diagnostics';
 
 describe('pingEmulators', () => {
   it('marca como alcançável qualquer porta que responda (mesmo com 404)', async () => {
@@ -75,5 +82,41 @@ describe('resolveEmulatorSettings', () => {
     expect(
       resolveEmulatorSettings({ projectId: 'pet-care-1234', flag: 'true', metroHostUri: '192.168.0.10:8081' }),
     ).toMatchObject({ enabled: true, host: '192.168.0.10' });
+  });
+});
+
+describe('classifyFirestoreProbe', () => {
+  it('considera alcançado quando o servidor responde, inclusive recusando pelas regras', () => {
+    expect(classifyFirestoreProbe(null).reached).toBe(true);
+    expect(classifyFirestoreProbe({ code: 'firestore/permission-denied', message: 'x' }).reached).toBe(true);
+  });
+
+  it('considera NÃO alcançado em unavailable ou tempo esgotado', () => {
+    const unavailable = classifyFirestoreProbe({ code: 'firestore/unavailable', message: 'x' });
+    expect(unavailable.reached).toBe(false);
+    expect(unavailable.detail).toContain('firestore/unavailable');
+    expect(classifyFirestoreProbe(new Error('Firestore: sem resposta em 12s')).reached).toBe(false);
+  });
+
+  it('não esconde erros desconhecidos', () => {
+    const other = classifyFirestoreProbe({ code: 'firestore/internal', message: 'boom' });
+    expect(other.reached).toBe(false);
+    expect(other.detail).toContain('firestore/internal');
+  });
+});
+
+describe('withTimeout', () => {
+  afterEach(() => jest.useRealTimers());
+
+  it('devolve o resultado quando termina a tempo', async () => {
+    await expect(withTimeout(Promise.resolve(7), 1000)).resolves.toBe(7);
+  });
+
+  it('rejeita quando a promessa não termina a tempo', async () => {
+    jest.useFakeTimers();
+    const pending = withTimeout(new Promise(() => undefined), 2000, 'Teste');
+    const assertion = expect(pending).rejects.toThrow('Teste: sem resposta em 2s');
+    await jest.advanceTimersByTimeAsync(2000);
+    await assertion;
   });
 });

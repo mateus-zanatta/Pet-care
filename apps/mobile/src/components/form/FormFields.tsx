@@ -3,6 +3,7 @@ import { type Control, Controller, type FieldValues, type Path } from 'react-hoo
 import { useTranslation } from 'react-i18next';
 import { type DateOrder } from '@/core/dates';
 import { ChoiceChips } from '../ui/ChoiceChips';
+import type { FieldBadgeInfo } from '../ui/FieldBadge';
 import { DateField } from '../ui/DateField';
 import { TextField } from '../ui/TextField';
 
@@ -47,7 +48,8 @@ export function FormChoice<T extends FieldValues, V extends string>({
   name,
   label,
   options,
-}: FieldProps<T> & { label: string; options: readonly { value: V; label: string }[] }) {
+  badge,
+}: FieldProps<T> & { label: string; options: readonly { value: V; label: string }[]; badge?: FieldBadgeInfo }) {
   const errorText = useErrorText();
   return (
     <Controller
@@ -60,6 +62,7 @@ export function FormChoice<T extends FieldValues, V extends string>({
           value={field.value as V}
           onChange={field.onChange}
           error={errorText(fieldState.error?.message)}
+          badge={badge}
         />
       )}
     />
@@ -72,7 +75,8 @@ export function FormDate<T extends FieldValues>({
   label,
   order,
   placeholder,
-}: FieldProps<T> & { label: string; order: DateOrder; placeholder: string }) {
+  badge,
+}: FieldProps<T> & { label: string; order: DateOrder; placeholder: string; badge?: FieldBadgeInfo }) {
   const errorText = useErrorText();
   return (
     <Controller
@@ -86,6 +90,7 @@ export function FormDate<T extends FieldValues>({
           order={order}
           placeholder={placeholder}
           error={errorText(fieldState.error?.message)}
+          badge={badge}
         />
       )}
     />

@@ -1,4 +1,4 @@
-import { buildEmulatorCallableUrl, callableErrorCode, unwrapCallableBody } from './callableProtocol';
+import { buildEmulatorCallableUrl, callableErrorCode, isNetworkError, unwrapCallableBody } from './callableProtocol';
 
 describe('protocolo callable por HTTP', () => {
   it('monta a URL do emulador de Functions', () => {
@@ -25,5 +25,20 @@ describe('protocolo callable por HTTP', () => {
       expect((error as Error).message).toBe('owner-only');
       expect((error as { code: string }).code).toBe('functions/permission-denied');
     }
+  });
+});
+
+describe('isNetworkError', () => {
+  it('reconhece falhas de rede do login, das funções e do fetch', () => {
+    expect(isNetworkError({ code: 'auth/network-request-failed', message: '[auth/network-request-failed] A network error' })).toBe(true);
+    expect(isNetworkError({ code: 'functions/unavailable' })).toBe(true);
+    expect(isNetworkError({ code: 'functions/deadline-exceeded' })).toBe(true);
+    expect(isNetworkError(new TypeError('Network request failed'))).toBe(true);
+    expect(isNetworkError(new Error('Request timed out'))).toBe(true);
+  });
+  it('NÃO confunde com recusa do servidor', () => {
+    expect(isNetworkError({ code: 'functions/permission-denied', message: 'owner-only' })).toBe(false);
+    expect(isNetworkError({ code: 'functions/invalid-argument' })).toBe(false);
+    expect(isNetworkError(null)).toBe(false);
   });
 });

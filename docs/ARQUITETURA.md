@@ -57,10 +57,34 @@ Pontos de projeto:
 - Nenhum texto fixo no código: o ESLint falha se houver texto em JSX; um teste confere que `pt-BR` e `en` têm as mesmas chaves.
 - Acessibilidade: alvos de toque ≥ 48 dp, `accessibilityRole/Label/State` nos controles, erros anunciados, fonte do sistema respeitada (até 1,6×), contraste WCAG AA conferido por teste nos dois temas.
 
+## Importação do RG Animal (Fase 1.5)
+
+Fluxo: o app envia o PDF (ou uma foto/print com o QR) **direto na chamada** da Cloud Function `importRga` (sem gravar no Storage); a função devolve os campos em JSON; o app abre o formulário **pré-preenchido** com selos "lido do RG" / "confira"; só salva quando a pessoa confirma.
+
+| Peça | Onde | Observações |
+|---|---|---|
+| Contrato (Zod) | `packages/shared/src/schemas/rgaImport.ts` | Não tem campo para CPF/CNPJ: não há como ele trafegar. |
+| Leitura do PDF | `functions/src/rga/pdfReader.ts` | pdf.js v6 (build legacy), só 1 página A4, `isEvalSupported:false`*, sem fontes do sistema, sem XFA. |
+| Texto → campos | `textItems.ts` + `mapRgaFields.ts` | Pela **posição** (±4 pt), nunca por rótulo (os rótulos são imagem). Nome longo que quebra linha é reunido. |
+| Validação | `normalize.ts` | Enums internos (Felina → `cat`), datas ISO com nascimento ≤ emissão ≤ hoje, "Cidade - UF", telefone 10/11 dígitos. RGA fora do formato só **avisa**. |
+| QR | `qr.ts` | jsQR; conferência **exata** de host e caminho (`sinpatinhas.mma.gov.br` não aceita `...golpe.com`). QR ≠ texto → "este arquivo pode ter sido alterado". |
+| Foto | `photo.ts` | pixels → JPEG com sharp (descarta metadados). |
+| Fluxo no app | `apps/mobile/src/features/rga/` | Duplicado por RGA → oferece **atualizar** mostrando o que mudaria. |
+
+\* O pdf.js v6 removeu por completo o caminho que usava `eval`; a opção é passada mesmo assim, para o caso de a dependência ser trocada.
+
+**Privacidade:** CPF/CNPJ é lido só para ser descartado e nunca sai da função (há testes que procuram o CPF fictício em todo o resultado). Nome/telefone do responsável só são salvos com a caixa marcada. Nenhum valor vai para log, Sentry ou PostHog: a função registra só `ok`, `mode`, `reason`, `creator` (nome do gerador do PDF) e códigos de aviso. A pasta com o PDF real fica fora do git.
+
+**Seletor de arquivos:** usa o `File.pickFileAsync` do `expo-file-system` (já presente no app), então esta fase **não exige novo build**. Fotos/prints são reduzidos e recodificados antes do envio (tira o EXIF).
+
+**Pendente (precisa do Firebase real):** App Check no **app** (Play Integrity / App Attest). A função já tem o interruptor `ENFORCE_APP_CHECK` (desligado). O módulo nativo `@react-native-firebase/app-check` entra junto com o projeto real, porque sem ele não há como testar.
+
+**Não validado:** só um PDF real foi analisado pelo autor do documento de requisitos, e eu **não tive acesso a ele**. Os testes usam PDFs fictícios com os valores nas posições da tabela. Rode `npm run rga:inspect` no seu arquivo para confirmar.
+
 ## Limitações conhecidas (honestidade)
 
 - **Não foi testado em aparelho/simulador.** O ambiente de desenvolvimento desta fase não tem celular. Foi validado: tipos, lint, 86 testes do app (incluindo telas reais e navegação com as rotas verdadeiras), 31 do pacote compartilhado, 3 das Functions, 28 de regras e 4 de exclusão de dados nos emuladores, o *bundle* Metro (Android e iOS) e o `expo prebuild` com todos os plugins. O primeiro teste real é o seu, com o development build.
 - **Login Google/Apple e App Check** dependem de configuração no console e só podem ser exercitados com as suas contas (veja `SETUP.md`).
-- **Sem internet** o Firestore guarda localmente e sincroniza depois. Ao criar um pet offline a foto **não** é enviada (precisa de rede); a pessoa adiciona editando o pet depois.
+- **Sem internet** o Firestore guarda localmente e sincroniza depois. Ao criar um pet sem o servidor confirmar a gravação (offline, ou emulador inacessível) a foto **não** é enviada (precisa de rede) e o app **avisa** com um alerta; a pessoa adiciona editando o pet depois.
 - A sessão "sem cadastro" é descartada se a pessoa **entrar** numa conta já existente (o Firebase troca de conta); só o *cadastro* e o login social "novo" preservam os dados anônimos.
 - Os ícones/splash são os do template.

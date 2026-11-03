@@ -15,8 +15,10 @@
   "pets": {
     "saveFailed": "Could not save the pet. Please try again.",
     "photoFailed": "Could not upload the photo. The pet was saved; try adding the photo again.",
+    "photoPending": "The server did not confirm saving the pet in time, so the photo was not uploaded. The pet is only on this device for now. When the connection is back, open the pet, tap Edit and add the photo.",
     "deleteFailed": "Could not delete the pet. Please try again.",
-    "loadFailed": "Could not load your pets."
+    "loadFailed": "Could not load your pets.",
+    "deleteNotOwner": "Could not delete: the server did not find this pet in your account. This happens when the pet was saved only on this device (no connection to the server) or when the emulators were restarted. Close the app, clear its data and register the pet again."
   },
   "account": {
     "deleteFailed": "Could not delete the account right now. Nothing was fully erased; please try again.",

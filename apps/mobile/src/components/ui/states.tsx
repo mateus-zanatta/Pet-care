@@ -26,12 +26,16 @@ export function EmptyState({
   body,
   actionLabel,
   onAction,
+  secondaryLabel,
+  onSecondary,
 }: {
   icon: IconName;
   title: string;
   body: string;
   actionLabel?: string;
   onAction?: () => void;
+  secondaryLabel?: string;
+  onSecondary?: () => void;
 }) {
   return (
     <View style={{ alignItems: 'center', gap: 12, paddingVertical: 32, paddingHorizontal: 8 }}>
@@ -43,6 +47,7 @@ export function EmptyState({
         {body}
       </AppText>
       {actionLabel && onAction ? <Button label={actionLabel} onPress={onAction} /> : null}
+      {secondaryLabel && onSecondary ? <Button variant="secondary" label={secondaryLabel} onPress={onSecondary} /> : null}
     </View>
   );
 }

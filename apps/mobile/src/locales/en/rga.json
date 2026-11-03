@@ -1,0 +1,78 @@
+{
+  "entry": "Import Animal ID (RGA)",
+  "title": "Import Animal ID (RGA)",
+  "titleUpdate": "Update from the Animal ID",
+  "intro": "Choose the PDF card you downloaded from the SinPatinhas website. The app fills in the profile for you to review. Nothing is saved before you confirm.",
+  "accepted": "We accept the 1-page PDF (up to 5 MB). If you only have a photo or screenshot of the card, or of the collar tag, that works too: the app reads the QR code and fills in only the RGA.",
+  "privacy": "Your file is sent only to read the data and is not stored. The owner's tax ID (CPF/CNPJ) is never saved or shown.",
+  "pick": "Choose file",
+  "reading": "Reading the file…",
+  "tryAnother": "Choose another file",
+  "fillManually": "Fill in manually",
+  "notRecognized": "I did not recognize this file as a SinPatinhas Animal ID.",
+  "partial": "I filled in what I could and marked it \"check\". Review everything and complete what is missing.",
+  "badge": {
+    "rga": "read from ID",
+    "check": "check"
+  },
+  "reasons": {
+    "not_a_pdf": "The file does not look like a PDF.",
+    "too_large": "The file is larger than 5 MB.",
+    "multiple_pages": "The PDF has more than one page. The card has only 1 page.",
+    "unexpected_page_size": "The page size is different from the card's.",
+    "unreadable": "I could not read the file. It may be damaged.",
+    "missing_required_fields": "Essential data is missing (name, RGA or species).",
+    "qr_not_found": "I did not find a SinPatinhas QR code in the image."
+  },
+  "warnings": {
+    "rga_format": "The RGA has a format different from what we know (XXX.XXXX.X-UF). Please check it, but you can still save it.",
+    "microchip_confirm": "The document has a value in the microchip field. Please confirm it is the chip number.",
+    "qr_mismatch": "The QR code's RGA differs from the RGA printed on the document. This file may have been altered. Use \"Validate on SinPatinhas\" before trusting it.",
+    "qr_missing": "I did not find the expected QR code in the document.",
+    "qr_unexpected": "The document has a QR code that is not from SinPatinhas. It was ignored.",
+    "creator_unexpected": "This document's layout seems different from what we know. Please check the data carefully.",
+    "date_invalid": "A date was unreadable or out of order (birth, issue, today) and was not filled in.",
+    "phone_invalid": "The owner's phone does not look like a full area code and number.",
+    "place_invalid": "A city/state was unreadable and was not filled in.",
+    "value_unrecognized": "Some value was not recognized (e.g. species, sex). Please fill it in manually.",
+    "ignored_items": "The document had text in unexpected places. It was ignored."
+  },
+  "review": {
+    "photo": "Use the ID photo as the profile picture",
+    "tutor": "Also save the owner's name and phone shown on the ID",
+    "tutorHint": "Optional. The tax ID (CPF/CNPJ) is never saved.",
+    "save": "Save pet",
+    "saveUpdate": "Save changes",
+    "saving": "Saving…"
+  },
+  "duplicate": {
+    "title": "This RGA is already registered",
+    "body": "You already have a pet with this RGA: {{name}}. Instead of creating another one, you can update its profile. Here is what would change:",
+    "noChanges": "The file's data is the same as the profile.",
+    "update": "Update this pet",
+    "cancel": "Cancel",
+    "change": "{{field}}: {{from}} → {{to}}",
+    "empty": "(empty)"
+  },
+  "fields": {
+    "name": "Name",
+    "species": "Species",
+    "sex": "Sex",
+    "neutered": "Neutered",
+    "birthDate": "Birth",
+    "microchip": "Microchip",
+    "rga": "Animal ID",
+    "cor": "Color",
+    "naturalidade": "Place of birth"
+  },
+  "errors": {
+    "unsupported": "Choose a PDF, a photo (JPG) or a screenshot (PNG).",
+    "tooLarge": "The file is larger than 5 MB. Choose a smaller one.",
+    "network": "No connection. The file must be uploaded to be read; try again with internet.",
+    "accountRequired": "To import the ID, sign in with an account (email, Google or Apple).",
+    "generic": "Could not read the file right now. Please try again."
+  },
+  "validate": "Validate on SinPatinhas",
+  "validateHint": "Opens the government's official website to check this RGA.",
+  "qrMismatchSaved": "When importing, the file's QR code did not match the RGA. Validate on the official website before trusting this profile."
+}

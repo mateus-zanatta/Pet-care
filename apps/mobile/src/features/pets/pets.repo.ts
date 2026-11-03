@@ -2,6 +2,8 @@ import {
   collection,
   deleteField,
   doc,
+  getDoc,
+  getDocs,
   onSnapshot,
   query,
   serverTimestamp,
@@ -14,8 +16,16 @@ import {
   getDownloadURL,
   putFile,
   ref as storageRef,
+  uploadString,
 } from '@react-native-firebase/storage';
-import { type Pet, type PetData, type PetMember, type PetOrigin, petMemberId } from '@petcare/shared';
+import {
+  type Pet,
+  type PetData,
+  type PetMember,
+  type PetOrigin,
+  type SinpatinhasMeta,
+  petMemberId,
+} from '@petcare/shared';
 import { db, storage } from '@/core/firebase';
 import { callFunction } from '@/core/firebase/callable';
 import { prepareImageForUpload } from '@/core/media/image';
@@ -36,19 +46,28 @@ async function settleOrOffline(write: Promise<unknown>, timeoutMs = 10_000): Pro
   }
 }
 
+/** Dados que só chegam pela importação do RG Animal (o tutor só entra se a pessoa confirmar). */
+export type PetExtra = {
+  sinpatinhas?: SinpatinhasMeta;
+  tutor?: { nome?: string; telefone?: string };
+};
+
 export type CreatePetInput = {
   uid: string;
   displayName: string | null;
   data: PetData;
   origin?: PetOrigin;
+  extra?: PetExtra;
 };
 
 /** Cria o pet e o vínculo de dono no MESMO lote (as regras de segurança exigem os dois). */
-export async function createPet({ uid, displayName, data, origin = 'manual' }: CreatePetInput) {
+export async function createPet({ uid, displayName, data, origin = 'manual', extra }: CreatePetInput) {
   const petRef = doc(collection(db(), 'pets'));
   const batch = writeBatch(db());
   batch.set(petRef, {
     ...data,
+    ...(extra?.sinpatinhas ? { sinpatinhas: extra.sinpatinhas } : {}),
+    ...(extra?.tutor ? { tutor: extra.tutor } : {}),
     ownerId: uid,
     origin,
     createdAt: serverTimestamp(),
@@ -65,9 +84,11 @@ export async function createPet({ uid, displayName, data, origin = 'manual' }: C
   return { petId: petRef.id, status };
 }
 
-export async function updatePet(petId: string, data: PetData) {
+export async function updatePet(petId: string, data: PetData, extra?: PetExtra) {
   const write = updateDoc(doc(db(), 'pets', petId), {
     ...buildPetUpdate(data, deleteField()),
+    ...(extra?.sinpatinhas ? { sinpatinhas: extra.sinpatinhas } : {}),
+    ...(extra?.tutor ? { tutor: extra.tutor } : {}),
     updatedAt: serverTimestamp(),
   });
   return settleOrOffline(write);
@@ -80,15 +101,22 @@ export async function deletePet(petId: string): Promise<void> {
 
 /* -------------------------------- Foto -------------------------------- */
 
-export type PickedPhoto = { uri: string; width: number; height: number };
+/** `base64`: foto já pronta (JPEG limpo, sem EXIF) que dispensa arquivo local, como a lida do RG Animal. */
+export type PickedPhoto = { uri: string; width: number; height: number; base64?: string };
 
 const photoPath = (petId: string) => `pets/${petId}/profile.jpg`;
 
 /** Reduz, remove a localização (EXIF) e envia a foto de perfil. */
 export async function uploadPetPhoto(petId: string, photo: PickedPhoto): Promise<void> {
-  const prepared = await prepareImageForUpload(photo.uri, photo.width, photo.height);
-  const localPath = prepared.uri.replace(/^file:\/\//, '');
-  await putFile(storageRef(storage(), photoPath(petId)), localPath, { contentType: 'image/jpeg' });
+  const target = storageRef(storage(), photoPath(petId));
+  if (photo.base64) {
+    // Já é um JPEG reduzido e sem metadados (gerado pelo servidor): envia direto.
+    await uploadString(target, photo.base64, 'base64', { contentType: 'image/jpeg' });
+  } else {
+    const prepared = await prepareImageForUpload(photo.uri, photo.width, photo.height);
+    const localPath = prepared.uri.replace(/^file:\/\//, '');
+    await putFile(target, localPath, { contentType: 'image/jpeg' });
+  }
   await updateDoc(doc(db(), 'pets', petId), {
     photoPath: photoPath(petId),
     photoUpdatedAt: serverTimestamp(),
@@ -122,6 +150,24 @@ export function getPhotoUrl(path: string, version: number): Promise<string> {
     urlCache.set(key, cached);
   }
   return cached;
+}
+
+/* ------------------------------ Consultas ------------------------------ */
+
+/**
+ * Procura, entre os pets que a pessoa pode editar, um com o mesmo RGA. Não existe "listar todos os
+ * pets" (as regras não deixam): parte dos vínculos da própria pessoa e lê cada pet pelo ID.
+ */
+export async function findPetByRga(uid: string, rga: string): Promise<Pet | null> {
+  const memberships = await getDocs(query(collection(db(), 'pet_members'), where('uid', '==', uid)));
+  for (const member of memberships.docs) {
+    const { petId, role } = member.data() as { petId?: string; role?: string };
+    if (!petId || role === 'viewer') continue;
+    const snap = await getDoc(doc(db(), 'pets', petId));
+    const pet = snap.exists() ? parsePet(snap.id, snap.data()) : null;
+    if (pet && pet.rga === rga) return pet;
+  }
+  return null;
 }
 
 /* ------------------------------ Assinaturas ------------------------------ */

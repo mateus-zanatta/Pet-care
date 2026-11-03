@@ -10,6 +10,15 @@ await build({
   target: 'node22',
   format: 'cjs',
   sourcemap: true,
-  external: ['firebase-admin', 'firebase-admin/*', 'firebase-functions', 'firebase-functions/*'],
+  // pdfjs-dist (ESM com arquivos de dados) e sharp (binário nativo) ficam fora do pacote: o Firebase os instala.
+  external: [
+    'firebase-admin',
+    'firebase-admin/*',
+    'firebase-functions',
+    'firebase-functions/*',
+    'pdfjs-dist',
+    'pdfjs-dist/*',
+    'sharp',
+  ],
   logLevel: 'info',
 });

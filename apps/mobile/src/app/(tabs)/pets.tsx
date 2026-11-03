@@ -15,6 +15,7 @@ import { sortMembersByAddedAt } from '@/features/pets/pets.mapper';
 export default function PetsScreen() {
   const { t } = useTranslation('pets');
   const { t: te } = useTranslation('errors');
+  const { t: tr } = useTranslation('rga');
   const router = useRouter();
   const user = useUser();
   const memberships = useMemberships(user.uid);
@@ -38,7 +39,14 @@ export default function PetsScreen() {
   return (
     <Screen
       edges={['top', 'left', 'right']}
-      footer={members.length > 0 ? <Button label={t('add')} icon="add" onPress={() => router.push('/pet/new')} /> : undefined}
+      footer={
+        members.length > 0 ? (
+          <View style={{ gap: 8 }}>
+            <Button label={t('add')} icon="add" onPress={() => router.push('/pet/new')} />
+            <Button variant="secondary" icon="document-text" label={tr('entry')} onPress={() => router.push('/pet/import-rga')} />
+          </View>
+        ) : undefined
+      }
     >
       <AppText variant="display">{t('title')}</AppText>
       {memberships.loading ? <LoadingView /> : null}
@@ -50,6 +58,8 @@ export default function PetsScreen() {
           body={t('empty.body')}
           actionLabel={t('empty.cta')}
           onAction={() => router.push('/pet/new')}
+          secondaryLabel={tr('entry')}
+          onSecondary={() => router.push('/pet/import-rga')}
         />
       ) : null}
       <View style={{ gap: 12 }}>

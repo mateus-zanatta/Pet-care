@@ -5,3 +5,4 @@ export * from './rga';
 export * from './schemas/pet';
 export * from './schemas/user';
 export * from './schemas/petMember';
+export * from './schemas/rgaImport';

@@ -28,3 +28,16 @@ export function unwrapCallableBody<T>(body: CallableBody): T {
   }
   return body.result as T;
 }
+
+/** O erro é de rede (sem resposta do servidor), e não uma recusa do servidor? */
+export function isNetworkError(error: unknown): boolean {
+  const e = error as { code?: unknown; message?: unknown } | null;
+  const code = typeof e?.code === 'string' ? e.code : '';
+  const message = typeof e?.message === 'string' ? e.message : '';
+  return (
+    code === 'auth/network-request-failed' ||
+    code === 'functions/unavailable' ||
+    code === 'functions/deadline-exceeded' ||
+    /network request failed|network error|timed? ?out|unreachable host/i.test(message)
+  );
+}

@@ -139,6 +139,46 @@ describe('pets: criação', () => {
   });
 });
 
+describe('pets: dados da importação do RG Animal', () => {
+  const rgaPet = (uid: string, overrides: Record<string, unknown> = {}) =>
+    validPet(uid, {
+      origin: 'rga_import',
+      rga: 'ABC.1D23.C-SP',
+      sinpatinhas: { importadoEm: '2026-11-03T12:00:00.000Z', origem: 'pdf', emitidoEm: '2026-10-01', qrConfere: true },
+      ...overrides,
+    });
+  const createWith = (uid: string, petId: string, pet: Record<string, unknown>) => {
+    const fs = db(uid);
+    const batch = writeBatch(fs);
+    batch.set(doc(fs, 'pets', petId), pet);
+    batch.set(doc(fs, 'pet_members', `${petId}_${uid}`), { petId, uid, role: 'owner', addedAt: new Date() });
+    return batch.commit();
+  };
+
+  it('aceita pet importado, com os dados do SinPatinhas e (se a pessoa confirmou) o responsável', async () => {
+    await assertSucceeds(createWith('alice', 'r1', rgaPet('alice')));
+    await assertSucceeds(
+      createWith('alice', 'r2', rgaPet('alice', { tutor: { nome: 'Fulano', telefone: '19987654321' } })),
+    );
+  });
+
+  it('o dono atualiza os dados do SinPatinhas (ex.: ao reimportar)', async () => {
+    await assertSucceeds(createWith('alice', 'r1', rgaPet('alice')));
+    await assertSucceeds(
+      updateDoc(doc(db('alice'), 'pets/r1'), {
+        sinpatinhas: { importadoEm: '2026-11-04T09:00:00.000Z', origem: 'pdf', qrConfere: false },
+      }),
+    );
+  });
+
+  it('PRIVACIDADE: não existe como gravar CPF/CNPJ (campo recusado nas regras)', async () => {
+    await assertFails(createWith('alice', 'r1', rgaPet('alice', { cpf: '12345678909' })));
+    await assertFails(createWith('alice', 'r2', rgaPet('alice', { cnpj: '12345678000199' })));
+    await createWith('alice', 'r3', rgaPet('alice'));
+    await assertFails(updateDoc(doc(db('alice'), 'pets/r3'), { cpf: '12345678909' }));
+  });
+});
+
 describe('pets: leitura e edição por papel', () => {
   beforeEach(async () => {
     await seedPet('p1', 'alice', { carol: 'caregiver', vera: 'viewer' });

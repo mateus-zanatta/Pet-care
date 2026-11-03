@@ -1,0 +1,78 @@
+{
+  "entry": "Importar RG Animal",
+  "title": "Importar RG Animal",
+  "titleUpdate": "Atualizar com o RG Animal",
+  "intro": "Escolha o PDF da carteira que você baixou do site do SinPatinhas. O app preenche o cadastro para você revisar. Nada é salvo antes de você confirmar.",
+  "accepted": "Aceitamos o PDF de 1 página (até 5 MB). Se você só tem uma foto ou print da carteira, ou da plaquinha da coleira, também serve: o app lê o QR e preenche só o RGA.",
+  "privacy": "Seu arquivo é enviado só para ler os dados e não fica guardado. O CPF/CNPJ do responsável nunca é salvo nem mostrado.",
+  "pick": "Escolher arquivo",
+  "reading": "Lendo o arquivo…",
+  "tryAnother": "Escolher outro arquivo",
+  "fillManually": "Preencher manualmente",
+  "notRecognized": "Não reconheci este arquivo como RG Animal do SinPatinhas.",
+  "partial": "Preenchi o que foi possível e marquei com \"confira\". Revise tudo e complete o que faltar.",
+  "badge": {
+    "rga": "lido do RG",
+    "check": "confira"
+  },
+  "reasons": {
+    "not_a_pdf": "O arquivo não parece ser um PDF.",
+    "too_large": "O arquivo passa de 5 MB.",
+    "multiple_pages": "O PDF tem mais de uma página. A carteira tem só 1 página.",
+    "unexpected_page_size": "O tamanho da página é diferente do da carteira.",
+    "unreadable": "Não consegui ler o arquivo. Ele pode estar danificado.",
+    "missing_required_fields": "Faltaram dados essenciais (nome, RGA ou espécie).",
+    "qr_not_found": "Não encontrei um QR Code do SinPatinhas na imagem."
+  },
+  "warnings": {
+    "rga_format": "O RGA está num formato diferente do que conhecemos (XXX.XXXX.X-UF). Confira, mas você pode salvar assim mesmo.",
+    "microchip_confirm": "O documento traz um valor no campo do microchip. Confirme se é o número do chip.",
+    "qr_mismatch": "O RGA do QR Code é diferente do RGA escrito no documento. Este arquivo pode ter sido alterado. Use \"Validar no SinPatinhas\" antes de confiar nele.",
+    "qr_missing": "Não encontrei o QR Code esperado no documento.",
+    "qr_unexpected": "O documento tem um QR Code que não é do SinPatinhas. Ele foi ignorado.",
+    "creator_unexpected": "O modelo deste documento parece diferente do que conhecemos. Confira os dados com atenção.",
+    "date_invalid": "Alguma data estava ilegível ou fora de ordem (nascimento, emissão, hoje) e não foi preenchida.",
+    "phone_invalid": "O telefone do responsável não parece ter DDD e número completos.",
+    "place_invalid": "Uma cidade/UF estava ilegível e não foi preenchida.",
+    "value_unrecognized": "Algum valor não foi reconhecido (ex.: espécie, sexo). Preencha manualmente.",
+    "ignored_items": "Havia textos no documento em lugares inesperados. Foram ignorados."
+  },
+  "review": {
+    "photo": "Usar a foto do RG como foto de perfil",
+    "tutor": "Salvar também o nome e o telefone do responsável que constam no RG",
+    "tutorHint": "Opcional. O CPF/CNPJ nunca é salvo.",
+    "save": "Salvar pet",
+    "saveUpdate": "Salvar alterações",
+    "saving": "Salvando…"
+  },
+  "duplicate": {
+    "title": "Este RGA já está cadastrado",
+    "body": "Você já tem um pet com este RGA: {{name}}. Em vez de criar outro, você pode atualizar o cadastro dele. Veja o que mudaria:",
+    "noChanges": "Os dados do arquivo são iguais aos do cadastro.",
+    "update": "Atualizar este pet",
+    "cancel": "Cancelar",
+    "change": "{{field}}: {{from}} → {{to}}",
+    "empty": "(vazio)"
+  },
+  "fields": {
+    "name": "Nome",
+    "species": "Espécie",
+    "sex": "Sexo",
+    "neutered": "Castrado(a)",
+    "birthDate": "Nascimento",
+    "microchip": "Microchip",
+    "rga": "RG Animal",
+    "cor": "Cor",
+    "naturalidade": "Naturalidade"
+  },
+  "errors": {
+    "unsupported": "Escolha um PDF, uma foto (JPG) ou um print (PNG).",
+    "tooLarge": "O arquivo passa de 5 MB. Escolha um menor.",
+    "network": "Sem conexão. O arquivo precisa ser enviado para ser lido; tente de novo com internet.",
+    "accountRequired": "Para importar o RG, entre com uma conta (e-mail, Google ou Apple).",
+    "generic": "Não foi possível ler o arquivo agora. Tente de novo."
+  },
+  "validate": "Validar no SinPatinhas",
+  "validateHint": "Abre o site oficial do governo para conferir este RGA.",
+  "qrMismatchSaved": "Ao importar, o QR Code do arquivo não batia com o RGA. Valide no site oficial antes de confiar neste cadastro."
+}

@@ -3,6 +3,7 @@ import { Pressable, StyleSheet, TextInput, type TextInputProps, View } from 'rea
 import { useTheme } from '@/core/theme/ThemeProvider';
 import { MAX_FONT_SCALE, MIN_TOUCH } from '@/core/theme/tokens';
 import { AppText } from './AppText';
+import { FieldBadge, type FieldBadgeInfo } from './FieldBadge';
 import { Icon } from './Icon';
 
 type Props = Omit<TextInputProps, 'style' | 'ref'> & {
@@ -11,6 +12,8 @@ type Props = Omit<TextInputProps, 'style' | 'ref'> & {
   error?: string;
   hint?: string;
   optional?: string;
+  /** Selo "lido do RG" / "confira". */
+  badge?: FieldBadgeInfo;
   /** Mostra o botão de revelar/ocultar (campos de senha). */
   secureToggleLabels?: { show: string; hide: string };
 };
@@ -21,6 +24,7 @@ export function TextField({
   error,
   hint,
   optional,
+  badge,
   secureToggleLabels,
   secureTextEntry,
   multiline,
@@ -33,10 +37,13 @@ export function TextField({
 
   return (
     <View style={styles.wrapper}>
-      <AppText variant="label">
-        {label}
-        {optional ? <AppText variant="caption" color="textMuted">{`  (${optional})`}</AppText> : null}
-      </AppText>
+      <View style={styles.labelRow}>
+        <AppText variant="label">
+          {label}
+          {optional ? <AppText variant="caption" color="textMuted">{`  (${optional})`}</AppText> : null}
+        </AppText>
+        {badge ? <FieldBadge {...badge} /> : null}
+      </View>
       <View
         style={[
           styles.inputBox,
@@ -49,7 +56,7 @@ export function TextField({
       >
         <TextInput
           ref={inputRef}
-          accessibilityLabel={label}
+          accessibilityLabel={badge ? `${label}, ${badge.label}` : label}
           accessibilityHint={error ?? hint}
           maxFontSizeMultiplier={MAX_FONT_SCALE}
           placeholderTextColor={colors.textMuted}
@@ -89,6 +96,7 @@ export function TextField({
 
 const styles = StyleSheet.create({
   wrapper: { gap: 6 },
+  labelRow: { flexDirection: 'row', alignItems: 'center', flexWrap: 'wrap', gap: 8 },
   inputBox: { borderWidth: 1.5, flexDirection: 'row', alignItems: 'center' },
   input: { flex: 1, fontSize: 16, paddingHorizontal: 14, paddingVertical: 10 },
   toggle: { minWidth: MIN_TOUCH, minHeight: MIN_TOUCH, alignItems: 'center', justifyContent: 'center' },

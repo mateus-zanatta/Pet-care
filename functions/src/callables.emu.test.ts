@@ -2,6 +2,7 @@ import { getApps, initializeApp } from 'firebase-admin/app';
 import { getAuth } from 'firebase-admin/auth';
 import { getFirestore } from 'firebase-admin/firestore';
 import { beforeAll, beforeEach, describe, expect, it } from 'vitest';
+import { buildSyntheticRgaPdf } from './rga/testing/syntheticPdf';
 
 /**
  * Testa as funções do jeito que o app as chama: HTTP callable no emulador de Functions,
@@ -126,5 +127,46 @@ describe('deletePet (callable)', () => {
     const { idToken } = await signUp('ana@exemplo.com');
     expect((await call('deletePet', idToken, {})).error?.status).toBe('INVALID_ARGUMENT');
     expect((await call('deletePet', null, { petId: 'p1' })).error?.status).toBe('UNAUTHENTICATED');
+  });
+});
+
+describe('importRga (callable)', () => {
+  const pdfBase64 = async () => Buffer.from(await buildSyntheticRgaPdf()).toString('base64');
+
+  it('exige login e conta de verdade (anônimo não importa)', async () => {
+    const file = { fileBase64: await pdfBase64(), mimeType: 'application/pdf' };
+    expect((await call('importRga', null, file)).error?.status).toBe('UNAUTHENTICATED');
+    const anonymous = await signUpAnonymous();
+    expect((await call('importRga', anonymous.idToken, file)).error?.status).toBe('PERMISSION_DENIED');
+  });
+
+  it('recusa pedido malformado (tipo não aceito, arquivo vazio)', async () => {
+    const { idToken } = await signUp('ana@exemplo.com');
+    expect((await call('importRga', idToken, { fileBase64: await pdfBase64(), mimeType: 'text/html' })).error?.status).toBe(
+      'INVALID_ARGUMENT',
+    );
+    expect((await call('importRga', idToken, {})).error?.status).toBe('INVALID_ARGUMENT');
+  });
+
+  it('lê o RG Animal fictício enviado direto na chamada e NÃO devolve o CPF', async () => {
+    const { idToken } = await signUp('ana@exemplo.com');
+    const response = await call('importRga', idToken, { fileBase64: await pdfBase64(), mimeType: 'application/pdf' });
+    const result = response.result as { recognized: boolean; fields: { name: string; species: string }; qr: { matches: boolean }; photoJpegBase64?: string };
+
+    expect(result.recognized).toBe(true);
+    expect(result.fields).toMatchObject({ name: 'REX DE TESTE', species: 'dog' });
+    expect(result.qr.matches).toBe(true);
+    expect(result.photoJpegBase64).toBeTruthy();
+    expect(JSON.stringify(response)).not.toContain('123.456.789-09');
+    expect(JSON.stringify(response)).not.toContain('12345678909');
+  });
+
+  it('arquivo estranho vira "não reconheci", e não erro do servidor', async () => {
+    const { idToken } = await signUp('ana@exemplo.com');
+    const response = await call('importRga', idToken, {
+      fileBase64: Buffer.from('nada a ver com PDF').toString('base64'),
+      mimeType: 'application/pdf',
+    });
+    expect(response.result).toMatchObject({ recognized: false, reason: 'not_a_pdf' });
   });
 });

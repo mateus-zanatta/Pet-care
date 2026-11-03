@@ -15,7 +15,6 @@ import { configureGoogleSignIn } from '@/features/auth/auth.service';
 SplashScreen.preventAutoHideAsync();
 initErrorReporting();
 initAnalytics();
-connectEmulatorsIfEnabled();
 configureGoogleSignIn();
 
 export { ErrorBoundary } from 'expo-router';
@@ -25,12 +24,23 @@ function RootLayout() {
 
   useEffect(() => {
     (async () => {
+      // Os emuladores (só em desenvolvimento) precisam estar ligados ANTES de qualquer uso de Auth/Firestore.
+      // A função nunca lança erro; mesmo assim, qualquer imprevisto aqui não pode deixar a tela parada.
+      await connectEmulatorsIfEnabled().catch((error) =>
+        console.warn('[firebase] falha ao preparar os emuladores:', (error as Error)?.message ?? error),
+      );
       // Idioma e tema são lidos ANTES da primeira tela, para não "piscar" na aparência errada.
       const [language, theme] = await Promise.all([loadLanguagePreference(), loadThemePreference()]);
       await initI18n(language);
       setBoot({ theme });
       track({ name: 'app_opened' });
-    })();
+    })().catch((error) => {
+      // Último recurso: abre o app com os padrões em vez de ficar parado na abertura.
+      console.warn('[boot] falha na preparação inicial; abrindo com os padrões:', (error as Error)?.message ?? error);
+      void initI18n('system')
+        .catch(() => undefined)
+        .finally(() => setBoot({ theme: 'system' }));
+    });
   }, []);
 
   if (!boot) return null; // a tela de abertura continua visível
@@ -55,6 +65,7 @@ function Navigation() {
   const { t: tp } = useTranslation('pets');
   const { t: tc } = useTranslation('account');
   const { t: tl } = useTranslation('legal');
+  const { t: tr } = useTranslation('rga');
 
   useEffect(() => {
     if (status !== 'loading') void SplashScreen.hideAsync();
@@ -108,6 +119,8 @@ function Navigation() {
           <Stack.Screen name="pet/new" options={{ title: tp('newTitle') }} />
           <Stack.Screen name="pet/[id]/index" options={{ title: tp('detailTitle') }} />
           <Stack.Screen name="pet/[id]/edit" options={{ title: tp('editTitle') }} />
+          <Stack.Screen name="pet/import-rga" options={{ title: tr('title') }} />
+          <Stack.Screen name="pet/[id]/import-rga" options={{ title: tr('titleUpdate') }} />
           <Stack.Screen name="rescue/index" options={{ title: th('rescue.title') }} />
           <Stack.Screen name="report/index" options={{ title: th('report.title') }} />
           <Stack.Screen name="account/delete" options={{ title: tc('delete.title') }} />

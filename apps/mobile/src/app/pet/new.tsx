@@ -5,13 +5,16 @@ import { Alert } from 'react-native';
 import { useTranslation } from 'react-i18next';
 import { track } from '@/core/analytics';
 import { reportError } from '@/core/errors/report';
+import { Button } from '@/components/ui/Button';
 import { useUser } from '@/features/auth/AuthProvider';
 import { PetForm, type PhotoChange } from '@/features/pets/PetForm';
-import { createPet, uploadPetPhoto } from '@/features/pets/pets.repo';
+import { createPet } from '@/features/pets/pets.repo';
+import { uploadPhotoAfterSave } from '@/features/pets/photoUpload';
 import type { PetFormValues } from '@petcare/shared';
 
 export default function NewPetScreen() {
   const { t: te } = useTranslation('errors');
+  const { t: tr } = useTranslation('rga');
   const router = useRouter();
   const user = useUser();
   const [submitting, setSubmitting] = useState(false);
@@ -28,14 +31,11 @@ export default function NewPetScreen() {
       });
       track({ name: 'pet_created', origin: 'manual' });
 
-      // A foto só sobe se o pet foi confirmado no servidor (sem internet, fica para depois).
-      if (photo.kind === 'picked' && status === 'committed') {
-        try {
-          await uploadPetPhoto(petId, photo.photo);
-        } catch (e) {
-          reportError('pets.photoUpload', e);
-          Alert.alert(te('pets.photoFailed'));
-        }
+      // A foto só sobe se o pet foi confirmado no servidor; se não foi, a pessoa é avisada (nada de falha silenciosa).
+      if (photo.kind === 'picked') {
+        const outcome = await uploadPhotoAfterSave(petId, photo.photo, status, 'pets.photoUpload');
+        if (outcome === 'failed') Alert.alert(te('pets.photoFailed'));
+        else if (outcome === 'deferred') Alert.alert(te('pets.photoPending'));
       }
       router.replace({ pathname: '/pet/[id]', params: { id: petId } });
     } catch (e) {
@@ -53,6 +53,7 @@ export default function NewPetScreen() {
       submitting={submitting}
       submitError={error}
       onSubmit={onSubmit}
+      headerSlot={<Button variant="secondary" icon="document-text" label={tr('entry')} onPress={() => router.replace('/pet/import-rga')} />}
     />
   );
 }

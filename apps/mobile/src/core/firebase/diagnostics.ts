@@ -42,6 +42,42 @@ export async function pingEmulators(
 }
 
 /* -------------------------------------------------------------------------- */
+/*  Sonda do Firestore (o canal das gravações)                                 */
+/* -------------------------------------------------------------------------- */
+
+/** Rejeita se `promise` não terminar em `ms` (o resultado original é ignorado depois). */
+export function withTimeout<T>(promise: Promise<T>, ms: number, label = 'operação'): Promise<T> {
+  let timer: ReturnType<typeof setTimeout> | undefined;
+  const timeout = new Promise<never>((_resolve, reject) => {
+    timer = setTimeout(() => reject(new Error(`${label}: sem resposta em ${ms / 1000}s`)), ms);
+  });
+  return Promise.race([promise, timeout]).finally(() => {
+    if (timer) clearTimeout(timer);
+  });
+}
+
+export type FirestoreProbeResult = { reached: boolean; detail: string };
+
+/**
+ * Interpreta o resultado de uma leitura de teste feita DIRETO NO SERVIDOR do Firestore.
+ * O ping HTTP não prova que as gravações chegam (elas usam outro protocolo, o gRPC): esta leitura prova.
+ * - Sem erro, ou "permission-denied": o servidor RESPONDEU (recusar por regras também é resposta).
+ * - "unavailable" ou tempo esgotado: o celular não alcançou o Firestore.
+ */
+export function classifyFirestoreProbe(error: unknown): FirestoreProbeResult {
+  if (error === null || error === undefined) return { reached: true, detail: 'o servidor respondeu' };
+  const code = (error as { code?: string })?.code ?? '';
+  const message = String((error as Error)?.message ?? error);
+  if (code === 'firestore/permission-denied') {
+    return { reached: true, detail: 'o servidor respondeu (recusou a leitura de teste pelas regras, o esperado)' };
+  }
+  if (code === 'firestore/unavailable' || /sem resposta/.test(message)) {
+    return { reached: false, detail: `o celular NÃO alcançou o Firestore (${code || message})` };
+  }
+  return { reached: false, detail: `erro inesperado (${code || message})` };
+}
+
+/* -------------------------------------------------------------------------- */
 /*  Configuração automática dos emuladores                                     */
 /* -------------------------------------------------------------------------- */
 

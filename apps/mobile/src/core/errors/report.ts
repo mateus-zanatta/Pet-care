@@ -19,6 +19,19 @@ export function reportError(context: string, error?: unknown): void {
   Sentry.captureMessage(`${context} (${code})`, { level: 'error', tags: { context, code } });
 }
 
+/**
+ * Falha na importação do RG Animal: registra SÓ o motivo (código fixo) e o texto do metadado
+ * "Creator" do PDF (nome do gerador do documento, para notar mudança de modelo). Nunca valores do RG.
+ */
+export function reportRgaImportFailure(reason: string, creator?: string): void {
+  const safeCreator = (creator ?? '').replace(/[^A-Za-z0-9 ._()/+-]/g, '').slice(0, 80);
+  if (__DEV__) console.warn(`[rga] importação não reconhecida: ${reason}`);
+  Sentry.captureMessage('rga_import_failed', {
+    level: 'warning',
+    tags: { reason, ...(safeCreator ? { creator: safeCreator } : {}) },
+  });
+}
+
 /** Remove de cada evento tudo o que poderia identificar a pessoa. */
 export function scrubSentryEvent<T extends Sentry.ErrorEvent>(event: T): T {
   delete event.user;

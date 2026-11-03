@@ -15,8 +15,10 @@
   "pets": {
     "saveFailed": "Não foi possível salvar o pet. Tente de novo.",
     "photoFailed": "Não foi possível enviar a foto. O pet foi salvo; tente adicionar a foto de novo.",
+    "photoPending": "O servidor não confirmou a gravação do pet a tempo, então a foto não foi enviada. O pet está só neste aparelho por enquanto. Quando a conexão voltar, abra o pet, toque em Editar e adicione a foto.",
     "deleteFailed": "Não foi possível excluir o pet. Tente de novo.",
-    "loadFailed": "Não foi possível carregar seus pets."
+    "loadFailed": "Não foi possível carregar seus pets.",
+    "deleteNotOwner": "Não foi possível excluir: o servidor não encontrou este pet na sua conta. Isso acontece quando o pet ficou salvo só neste aparelho (sem conexão com o servidor) ou quando os emuladores foram reiniciados. Feche o app, limpe os dados dele e cadastre o pet de novo."
   },
   "account": {
     "deleteFailed": "Não foi possível excluir a conta agora. Nada foi apagado por completo; tente de novo.",

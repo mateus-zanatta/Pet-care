@@ -1,4 +1,5 @@
-import { isRgaFormatValid } from '@petcare/shared';
+import { buildSinpatinhasValidationUrl, isRgaFormatValid } from '@petcare/shared';
+import * as WebBrowser from 'expo-web-browser';
 import { Stack, useLocalSearchParams, useRouter } from 'expo-router';
 import React, { useState } from 'react';
 import { Alert, View } from 'react-native';
@@ -12,6 +13,7 @@ import { Screen } from '@/components/ui/Screen';
 import { EmptyState, LoadingView } from '@/components/ui/states';
 import { track } from '@/core/analytics';
 import { reportError } from '@/core/errors/report';
+import { isNetworkError } from '@/core/firebase/callableProtocol';
 import { useUser } from '@/features/auth/AuthProvider';
 import { formatAge, petSummary } from '@/features/pets/format';
 import { useMemberships, usePet, usePetPhotoUrl } from '@/features/pets/hooks';
@@ -23,6 +25,7 @@ export default function PetDetailScreen() {
   const { t } = useTranslation('pets');
   const { t: tc } = useTranslation();
   const { t: te } = useTranslation('errors');
+  const { t: tr } = useTranslation('rga');
   const router = useRouter();
   const user = useUser();
   const { data: pet, loading } = usePet(id);
@@ -59,7 +62,10 @@ export default function PetDetailScreen() {
             router.back();
           } catch (e) {
             reportError('pets.delete', e);
-            setError(te('pets.deleteFailed'));
+            // O servidor só aceita o dono do pet. Se recusar, o app costuma estar mostrando um pet que o
+            // servidor não conhece (ex.: dados antigos de antes de reiniciar os emuladores).
+            const denied = (e as { code?: string }).code === 'functions/permission-denied';
+            setError(te(denied ? 'pets.deleteNotOwner' : isNetworkError(e) ? 'network' : 'pets.deleteFailed'));
             setDeleting(false);
           }
         },
@@ -100,6 +106,16 @@ export default function PetDetailScreen() {
             {pet.microchip ? <InfoRow label={t('detail.microchip')} value={pet.microchip} /> : null}
             {pet.rga ? <InfoRow label={t('detail.rga')} value={pet.rga} /> : null}
             {pet.rga && !isRgaFormatValid(pet.rga) ? <Banner tone="warning">{t('form.rgaFormatWarning')}</Banner> : null}
+            {pet.sinpatinhas?.qrConfere === false ? <Banner tone="error">{tr('qrMismatchSaved')}</Banner> : null}
+            {pet.rga ? (
+              <Button
+                variant="secondary"
+                icon="shield-checkmark"
+                label={tr('validate')}
+                accessibilityHint={tr('validateHint')}
+                onPress={() => void WebBrowser.openBrowserAsync(buildSinpatinhasValidationUrl(pet.rga as string))}
+              />
+            ) : null}
           </View>
         </Card>
       ) : null}
@@ -120,6 +136,15 @@ export default function PetDetailScreen() {
             label={tc('actions.edit')}
             icon="create"
             onPress={() => router.push({ pathname: '/pet/[id]/edit', params: { id: pet.id } })}
+            disabled={deleting}
+          />
+        ) : null}
+        {canEdit ? (
+          <Button
+            variant="secondary"
+            icon="document-text"
+            label={tr('entry')}
+            onPress={() => router.push({ pathname: '/pet/[id]/import-rga', params: { id: pet.id } })}
             disabled={deleting}
           />
         ) : null}

@@ -102,9 +102,49 @@ Abra o app instalado no celular e leia o QR Code. Na aba **Conta** aparece um av
 
 > **Segurança:** `emulators:lan` aceita conexões de qualquer aparelho da sua rede e os emuladores **não têm senha**. Use só em rede de casa/confiável, nunca em Wi-Fi público, e feche quando terminar (`Ctrl+C`).
 
-> **Se o emulador não subir ("port taken" / "Port 8085 is not open"):** outro programa está usando a porta. Descubra qual no PowerShell (`netstat -ano | findstr :8085`, depois `tasklist /FI "PID eq NÚMERO"`) e feche-o — muitas vezes é um emulador antigo que ficou aberto (feche o Java no Gerenciador de Tarefas). Para trocar a porta, edite `firebase.json` e `firebase.lan.json` **e** `EMULATOR_PORT` em `apps/mobile/src/core/firebase/diagnostics.ts`.
+> **Se o emulador não subir ("port taken" / "Port 8085 is not open") ou o app perder a conexão:** quase sempre sobrou um emulador antigo rodando (a janela foi fechada, o PC entrou em suspensão ou o `Ctrl+C` não terminou o Java). Os comandos `npm run emulators` e `npm run emulators:lan` já **limpam isso sozinhos antes de subir** (encerram só processos Java/Node nas portas dos emuladores; se outro programa estiver na porta, avisam qual é). Para limpar sem subir:
+>
+> ```bash
+> npm run emulators:free
+> ```
+>
+> Para encerrar os emuladores **sempre use `Ctrl+C` na janela deles**, e não feche a janela. Para trocar uma porta, edite `firebase.json` e `firebase.lan.json` **e** `EMULATOR_PORT` em `apps/mobile/src/core/firebase/diagnostics.ts`.
+
+> **O pet aparece no app, mas a foto não é salva e "Excluir" dá `owner-only`:** o app mostra o pet, só que **ele não chegou ao servidor** (emulador do Firestore). O app grava pelo Firestore (protocolo gRPC, que é diferente do `ping` HTTP das outras portas). Ao abrir, o terminal do `expo start` agora mostra uma linha **a mais**, que prova se esse canal funciona:
+>
+> ```text
+> [firebase] OK    Firestore (canal das gravações) -> o servidor respondeu ...
+> [firebase] FALHA Firestore (canal das gravações) -> o celular NÃO alcançou o Firestore (firestore/unavailable)
+> ```
+>
+> - **`OK`**: o canal funciona. Se mesmo assim algo faltar, abra <http://localhost:4000/firestore> no computador e veja se a coleção `pets` tem o pet. Se estiver lá, o problema é outro (me mande o log `[erro] ...`).
+> - **`FALHA`**: o Firestore do emulador (um programa **Java**) não está acessível ao celular. No Windows, abra *Firewall do Windows Defender → Permitir um aplicativo* e marque **Redes privadas** para o **OpenJDK Platform binary / Java** (o Node é outro item; os dois precisam). Depois feche os emuladores (`Ctrl+C`) e rode `npm run emulators:lan` de novo.
+>
+> Quando o servidor não confirma a gravação em 10 s, o app avisa com um alerta ("o servidor não confirmou a gravação... a foto não foi enviada") em vez de falhar em silêncio. Pets antigos que ficaram só no celular (ou de antes de reiniciar os emuladores) não podem ser excluídos: **limpe os dados do app** (Android: Configurações → Apps → o app → Armazenamento → Limpar dados) e cadastre de novo.
 
 > **Se o app não conectar:** confirme que celular e computador estão na mesma rede, que o IP no `.env.local` é o atual (ele pode mudar), que o Firewall permitiu o Java e o Node, e que você reiniciou o `expo start` depois de mudar o `.env.local` (use `--clear`).
+
+---
+
+### 2.3 Testar a importação do RG Animal (Fase 1.5)
+
+A importação lê o PDF no **servidor** (função `importRga`), que no seu caso roda no emulador do seu PC. Nenhum build novo é necessário: é só atualizar o JavaScript.
+
+**Sem usar o seu documento real**, gere um RG Animal **fictício** (todos os dados são inventados) e passe para o celular (cabo USB, Google Drive, WhatsApp para você mesmo...):
+
+```bash
+npm run rga:sample
+```
+
+Ele cria, em `fixtures/rga-sample/`, o `rga-ficticio.pdf` (para testar o PDF) e o `qr-ficticio.png` (para testar "só imagem com QR"). No app: **Pets → Importar RG Animal → Escolher arquivo**.
+
+**Conferir o SEU PDF real** (sem enviar nada a lugar nenhum): o comando abaixo roda só no seu computador, compara o arquivo com a tabela de posições e mostra, para cada campo, se foi encontrado — **sem imprimir nenhum valor** (nome, RGA, CPF, telefone...), só tamanho e "formato" (`A` = letra, `9` = número):
+
+```bash
+npm run rga:inspect -- "C:\\caminho\\do\\seu-rga.pdf"
+```
+
+Se algum campo aparecer como `NÃO ENCONTRADO`, ou se o `Creator` for diferente de `JasperReports...`, me mande a saída: ela não tem dado pessoal e me diz exatamente o que ajustar. **Nunca coloque o PDF real no repositório** (a pasta `fixtures/rga-local/` e todo `*.pdf` já estão no `.gitignore`).
 
 ---
 

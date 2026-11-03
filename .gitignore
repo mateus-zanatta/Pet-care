@@ -19,6 +19,8 @@ GoogleService-Info.plist
 
 # PDFs reais do RG Animal e outros dados reais — NUNCA versionar
 fixtures/rga-local/
+fixtures/rga-sample/
+functions/.tmp/
 *.pdf
 
 # Build
