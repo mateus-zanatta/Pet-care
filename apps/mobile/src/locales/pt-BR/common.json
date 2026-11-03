@@ -28,6 +28,13 @@
     "emailInvalid": "Digite um e-mail válido.",
     "passwordTooShort": "A senha precisa ter pelo menos 8 caracteres.",
     "passwordWeak": "Use letras e números na senha.",
-    "termsRequired": "Para criar a conta, aceite os Termos e a Política de Privacidade."
+    "termsRequired": "Para criar a conta, aceite os Termos e a Política de Privacidade.",
+    "endBeforeStart": "A data final não pode ser antes do início.",
+    "hoursInvalid": "Digite um número de horas entre 1 e 168.",
+    "timeInvalid": "Horário inválido. Use o formato 08:00.",
+    "timesRequired": "Adicione pelo menos um horário.",
+    "timesTooMany": "Use no máximo 12 horários.",
+    "timesDuplicate": "Há horários repetidos.",
+    "crmvInvalid": "O número do CRMV deve ter apenas dígitos."
   }
 }

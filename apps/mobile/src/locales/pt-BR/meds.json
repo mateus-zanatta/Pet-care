@@ -1,0 +1,172 @@
+{
+  "title": "Medicamentos",
+  "disclaimer": "Registre exatamente o que o veterinário prescreveu. O app não sugere medicamentos, doses nem diagnósticos.",
+  "status": {
+    "active": "Em uso",
+    "completed": "Concluído",
+    "suspended": "Suspenso"
+  },
+  "route": {
+    "oral": "Oral (pela boca)",
+    "topical": "Tópica (na pele)",
+    "injectable": "Injetável",
+    "ophthalmic": "Colírio (olhos)",
+    "otic": "Otológica (ouvidos)",
+    "other": "Outra"
+  },
+  "place": {
+    "home": "Em casa",
+    "clinic": "Clínica",
+    "address": "Outro endereço"
+  },
+  "frequency": {
+    "interval": "A cada X horas",
+    "fixed": "Horários fixos",
+    "summaryInterval": "A cada {{hours}} h",
+    "summaryFixed": "Todo dia às {{times}}"
+  },
+  "list": {
+    "empty": {
+      "title": "Nenhum medicamento registrado",
+      "body": "Registre o que o veterinário prescreveu para receber lembretes das doses."
+    },
+    "add": "Adicionar medicamento",
+    "sections": {
+      "active": "Em uso",
+      "suspended": "Suspensos",
+      "completed": "Concluídos"
+    },
+    "next": "Próxima dose: {{when}}",
+    "noNext": "Sem próximas doses",
+    "viewerOnly": "Você só pode visualizar os medicamentos deste pet.",
+    "loadFailed": "Não foi possível carregar os medicamentos.",
+    "permission": {
+      "title": "Ative as notificações para receber os lembretes",
+      "body": "Sem a permissão, o app não consegue avisar a hora das doses.",
+      "ask": "Permitir notificações",
+      "settings": "Abrir configurações",
+      "unavailable": "Os lembretes não estão disponíveis nesta versão do app. Atualize o app para recebê-los."
+    }
+  },
+  "form": {
+    "newTitle": "Novo medicamento",
+    "editTitle": "Editar medicamento",
+    "sectionMedicine": "Medicamento",
+    "sectionDose": "Dose (como prescrita)",
+    "sectionSchedule": "Quando dar",
+    "sectionVet": "Prescrição",
+    "sectionOther": "Outras informações",
+    "name": "Nome do medicamento",
+    "barcode": "Código de barras (opcional)",
+    "batch": "Lote",
+    "expiresOn": "Validade",
+    "doseAmount": "Dose",
+    "doseAmountHint": "Como está na receita. Exemplos: 1, 1/2, 2,5",
+    "doseUnit": "Unidade",
+    "doseUnitHint": "Exemplos: comprimido, ml, gotas, mg",
+    "route": "Via",
+    "frequencyKind": "Frequência",
+    "everyHours": "A cada quantas horas",
+    "startTime": "Horário da 1ª dose",
+    "times": "Horários",
+    "timesHint": "Digite o horário (ex.: 08:00) e toque em Adicionar.",
+    "timePlaceholder": "HH:MM",
+    "addTime": "Adicionar horário",
+    "removeTime": "Remover horário {{time}}",
+    "startDate": "Início do tratamento",
+    "duration": "Duração",
+    "durationEnds": "Até uma data",
+    "durationContinuous": "Uso contínuo",
+    "endDate": "Último dia do tratamento",
+    "prescribedOn": "Data da prescrição ou aplicação",
+    "vetName": "Veterinário(a)",
+    "crmvNumber": "CRMV (número)",
+    "crmvUf": "CRMV (UF)",
+    "placeKind": "Onde é dado",
+    "placeClinic": "Nome da clínica",
+    "placeAddress": "Endereço",
+    "status": "Situação",
+    "notes": "Observações (ex.: reações)",
+    "save": "Salvar medicamento",
+    "saving": "Salvando…",
+    "saveFailed": "Não foi possível salvar o medicamento. Tente de novo.",
+    "savePending": "O servidor ainda não confirmou. O medicamento está salvo neste aparelho e será enviado quando a conexão voltar.",
+    "reminderHint": "Você receberá um lembrete na hora de cada dose.",
+    "fixErrors": "Corrija os campos destacados.",
+    "timeLabel": "Novo horário"
+  },
+  "detail": {
+    "title": "Medicamento",
+    "notFound": "Medicamento não encontrado.",
+    "dose": "Dose",
+    "route": "Via",
+    "frequency": "Frequência",
+    "period": "Período",
+    "periodContinuous": "Desde {{start}} (uso contínuo)",
+    "periodEnds": "De {{start}} até {{end}}",
+    "code": "Código de barras",
+    "batch": "Lote",
+    "expiresOn": "Validade",
+    "prescribedOn": "Prescrição",
+    "vet": "Veterinário(a)",
+    "crmv": "CRMV {{number}}/{{uf}}",
+    "place": "Local",
+    "notes": "Observações",
+    "nextDose": "Próxima dose",
+    "none": "—",
+    "expired": "Vencido em {{date}}. Não use e fale com o veterinário.",
+    "expiresSoon": "Vence em {{date}}.",
+    "treatmentOver": "O tratamento terminou em {{date}}. Marque como concluído.",
+    "dueTitle": "Doses para registrar",
+    "dueAt": "Dose das {{time}}",
+    "dueAtDay": "Dose de {{day}}, {{time}}",
+    "give": "Dei a dose",
+    "skip": "Pulei",
+    "logFailed": "Não foi possível registrar a dose. Tente de novo.",
+    "logPending": "Registrada neste aparelho; será enviada quando a conexão voltar.",
+    "historyTitle": "Histórico de doses",
+    "historyEmpty": "Nenhuma dose registrada ainda.",
+    "given": "Dada às {{time}}",
+    "skipped": "Pulada ({{time}})",
+    "by": "por {{name}}",
+    "undo": "Desfazer",
+    "undoFailed": "Não foi possível desfazer.",
+    "complete": "Marcar como concluído",
+    "suspend": "Suspender",
+    "reactivate": "Voltar a usar",
+    "statusFailed": "Não foi possível mudar a situação.",
+    "deleteTitle": "Excluir {{name}}?",
+    "deleteBody": "O medicamento e o histórico das doses serão apagados. Isso não pode ser desfeito.",
+    "deleteFailed": "Não foi possível excluir o medicamento."
+  },
+  "notify": {
+    "channel": "Lembretes de medicamentos",
+    "given": "Dei a dose",
+    "skipped": "Pulei",
+    "dose": {
+      "title": "{{pet}}: hora do medicamento",
+      "body": "{{name}} — {{amount}} {{unit}}"
+    },
+    "ends_tomorrow": {
+      "title": "{{pet}}: tratamento termina amanhã",
+      "body": "Amanhã é o último dia de {{name}}."
+    },
+    "ends_today": {
+      "title": "{{pet}}: último dia do tratamento",
+      "body": "Hoje é o último dia de {{name}}."
+    },
+    "expires_soon": {
+      "title": "{{pet}}: medicamento perto de vencer",
+      "body": "{{name}} vence em {{date}}."
+    },
+    "expires_today": {
+      "title": "{{pet}}: medicamento vence hoje",
+      "body": "{{name}} vence hoje ({{date}}). Não use depois da validade."
+    }
+  },
+  "when": {
+    "today": "hoje às {{time}}",
+    "tomorrow": "amanhã às {{time}}",
+    "other": "{{date}} às {{time}}"
+  }
+}

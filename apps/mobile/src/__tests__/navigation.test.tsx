@@ -43,6 +43,22 @@ jest.mock('@/features/pets/pets.repo', () => ({
   subscribePet: jest.fn(() => () => undefined),
   getPhotoUrl: jest.fn(),
 }));
+jest.mock('@/features/medications/medications.repo', () => ({
+  subscribeMedications: jest.fn(() => () => undefined),
+  subscribeDoseLogs: jest.fn(() => () => undefined),
+  logDose: jest.fn(),
+  undoDose: jest.fn(),
+  createMedication: jest.fn(),
+  updateMedication: jest.fn(),
+  setMedicationStatus: jest.fn(),
+  deleteMedication: jest.fn(),
+}));
+// Lembretes (notificações nativas) não existem no Jest.
+jest.mock('@/features/reminders/ReminderSync', () => ({ ReminderSync: () => null }));
+jest.mock('@/features/reminders/NotificationBridge', () => ({ NotificationBridge: () => null }));
+jest.mock('@/features/reminders/usePermission', () => ({
+  useReminderPermission: () => ({ state: 'granted', request: jest.fn() }),
+}));
 jest.mock('@/core/analytics', () => ({ initAnalytics: jest.fn(), track: jest.fn() }));
 jest.mock('@/core/errors/report', () => ({ initErrorReporting: jest.fn(), reportError: jest.fn() }));
 // Abas nativas não existem no Jest: usamos um contêiner simples que mostra a aba atual.

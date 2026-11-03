@@ -35,3 +35,22 @@ export type AppLocale = (typeof LOCALES)[number];
 
 /** Versão dos textos legais aceitos pelo usuário (muda quando os textos mudam). */
 export const LEGAL_VERSION = '2026-11-03';
+
+/* ----------------------------- Medicamentos (Fase 2) ----------------------------- */
+
+/** Via de administração, como prescrita pelo veterinário (o app nunca sugere). */
+export const MEDICATION_ROUTE = ['oral', 'topical', 'injectable', 'ophthalmic', 'otic', 'other'] as const;
+export type MedicationRoute = (typeof MEDICATION_ROUTE)[number];
+
+export const MEDICATION_STATUS = ['active', 'completed', 'suspended'] as const;
+export type MedicationStatus = (typeof MEDICATION_STATUS)[number];
+
+/** Onde o medicamento é aplicado. Favoritos do "Perto de mim" entram na Fase 3. */
+export const MEDICATION_PLACE = ['home', 'clinic', 'address'] as const;
+export type MedicationPlace = (typeof MEDICATION_PLACE)[number];
+
+export const FREQUENCY_KIND = ['interval', 'fixed'] as const;
+export type FrequencyKind = (typeof FREQUENCY_KIND)[number];
+
+export const DOSE_OUTCOME = ['given', 'skipped'] as const;
+export type DoseOutcome = (typeof DOSE_OUTCOME)[number];

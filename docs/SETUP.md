@@ -118,7 +118,13 @@ Abra o app instalado no celular e leia o QR Code. Na aba **Conta** aparece um av
 > ```
 >
 > - **`OK`**: o canal funciona. Se mesmo assim algo faltar, abra <http://localhost:4000/firestore> no computador e veja se a coleção `pets` tem o pet. Se estiver lá, o problema é outro (me mande o log `[erro] ...`).
-> - **`FALHA`**: o Firestore do emulador (um programa **Java**) não está acessível ao celular. No Windows, abra *Firewall do Windows Defender → Permitir um aplicativo* e marque **Redes privadas** para o **OpenJDK Platform binary / Java** (o Node é outro item; os dois precisam). Depois feche os emuladores (`Ctrl+C`) e rode `npm run emulators:lan` de novo.
+> - **`FALHA`** (e só o Firestore, `:8085`, aparece como `FALHA` enquanto Auth/Storage/Functions respondem): o Firestore do emulador é um programa **Java** e o Firewall do Windows costuma liberar o Node (Auth, Storage, Functions) mas não o Java. Para conferir sem ferramentas: no **navegador do celular** abra `http://IP-DO-PC:8085` — deve aparecer `Ok`; se der "sem resposta", é o Firewall. Para liberar, abra o **PowerShell como Administrador** e rode (libera só a porta 8085 e só em rede **privada**):
+>
+>   ```powershell
+>   New-NetFirewallRule -DisplayName "Emulador Firestore 8085" -Direction Inbound -Protocol TCP -LocalPort 8085 -Action Allow -Profile Private
+>   ```
+>
+>   Se o seu Wi-Fi estiver classificado como **Pública** (Configurações → Rede e Internet → Wi-Fi → Propriedades da rede → *Tipo de perfil de rede*), troque para **Privada** — é o que o `-Profile Private` exige. Para remover a regra depois: `Remove-NetFirewallRule -DisplayName "Emulador Firestore 8085"`. Não precisa reiniciar nada: abra o app de novo e confira a linha `OK Firestore (canal das gravações)`.
 >
 > Quando o servidor não confirma a gravação em 10 s, o app avisa com um alerta ("o servidor não confirmou a gravação... a foto não foi enviada") em vez de falhar em silêncio. Pets antigos que ficaram só no celular (ou de antes de reiniciar os emuladores) não podem ser excluídos: **limpe os dados do app** (Android: Configurações → Apps → o app → Armazenamento → Limpar dados) e cadastre de novo.
 
@@ -145,6 +151,47 @@ npm run rga:inspect -- "C:\\caminho\\do\\seu-rga.pdf"
 ```
 
 Se algum campo aparecer como `NÃO ENCONTRADO`, ou se o `Creator` for diferente de `JasperReports...`, me mande a saída: ela não tem dado pessoal e me diz exatamente o que ajustar. **Nunca coloque o PDF real no repositório** (a pasta `fixtures/rga-local/` e todo `*.pdf` já estão no `.gitignore`).
+
+### 2.4 Testar medicamentos e lembretes (Fase 2A)
+
+Esta fase usa **notificações**, que são um módulo nativo: é preciso **gerar um novo development build** (uma vez; ele já inclui também a câmera, a impressão e o compartilhamento da Fase 2B, para você não precisar de outro build depois).
+
+1. Instale as dependências novas (o `package-lock.json` mudou):
+
+   ```bash
+   npm install
+   ```
+
+2. Gere o novo app e instale no celular (o mesmo comando de antes):
+
+   ```bash
+   cd apps/mobile
+   eas build --profile development-emulators --platform android
+   ```
+
+   Enquanto o build não termina, **o app antigo continua abrindo normalmente** com o código novo; só a parte de lembretes avisa "não disponíveis nesta versão".
+
+3. Suba os emuladores e o Metro como sempre (`npm run emulators:lan` e `npx expo start --dev-client --clear`).
+
+**Roteiro de teste (no celular):**
+
+1. Entre com uma conta (e-mail), abra um pet → **Medicamentos** → **Adicionar medicamento**. Preencha nome, dose (ex.: `1/2`), unidade (`comprimido`) e, em "A cada quantas horas", `1` (só para ver os lembretes chegando logo no teste; o app não sugere nada, quem decide é você).
+2. Ao salvar, o app **pede permissão de notificações**: aceite.
+3. Veja na lista a **próxima dose**. Entre no medicamento: as doses que já passaram aparecem em **"Doses para registrar"** → toque **Dei a dose** ou **Pulei**; elas vão para o **Histórico** (com quem registrou). **Desfazer** apaga o registro.
+4. Espere a hora de uma dose: a **notificação** chega com os botões **Dei a dose** / **Pulei**. Toque num botão: o app abre e a dose aparece no histórico. Toque na notificação em si: abre o medicamento.
+5. Feche o app por completo e repita o item 4 (a notificação tem que chegar com o app fechado).
+6. Teste **Concluir**, **Suspender**, **Voltar a usar** e **Excluir** (os lembretes do medicamento param ao concluir/suspender/excluir).
+7. Teste com **horários fixos** (ex.: `08:00` e `20:00`) e com **validade** próxima (os avisos chegam às 09:00).
+
+> Lembrete: com o **Firewall do Windows** bloqueando o Firestore (veja acima), os dados ficam só no celular e não chegam ao servidor — o teste dos itens 1 a 7 funciona, mas nada é gravado no emulador. Libere a porta 8085 para ver os dados em <http://localhost:4000/firestore>.
+
+**Ícone da notificação no Android (opcional, uma linha):** sem isto, o ícone pequeno da notificação aparece como um quadrado cinza. Em `apps/mobile/app.config.ts`, na lista `plugins`, acrescente:
+
+```ts
+['expo-notifications', { icon: './assets/images/android-icon-monochrome.png', color: '#0F6B5C' }],
+```
+
+Isso muda a configuração nativa, então vale fazer **antes** de gerar o build do passo 2. (Não alterei o seu `app.config.ts` para não sobrescrever os dados do seu projeto Expo.)
 
 ---
 

@@ -1,0 +1,172 @@
+{
+  "title": "Medications",
+  "disclaimer": "Record exactly what the veterinarian prescribed. The app never suggests medications, doses or diagnoses.",
+  "status": {
+    "active": "In use",
+    "completed": "Completed",
+    "suspended": "Suspended"
+  },
+  "route": {
+    "oral": "Oral (by mouth)",
+    "topical": "Topical (on the skin)",
+    "injectable": "Injectable",
+    "ophthalmic": "Eye drops",
+    "otic": "Ear (otic)",
+    "other": "Other"
+  },
+  "place": {
+    "home": "At home",
+    "clinic": "Clinic",
+    "address": "Another address"
+  },
+  "frequency": {
+    "interval": "Every X hours",
+    "fixed": "Fixed times",
+    "summaryInterval": "Every {{hours}} h",
+    "summaryFixed": "Every day at {{times}}"
+  },
+  "list": {
+    "empty": {
+      "title": "No medications recorded",
+      "body": "Record what the veterinarian prescribed to get dose reminders."
+    },
+    "add": "Add medication",
+    "sections": {
+      "active": "In use",
+      "suspended": "Suspended",
+      "completed": "Completed"
+    },
+    "next": "Next dose: {{when}}",
+    "noNext": "No upcoming doses",
+    "viewerOnly": "You can only view this pet's medications.",
+    "loadFailed": "Could not load the medications.",
+    "permission": {
+      "title": "Turn on notifications to get reminders",
+      "body": "Without permission, the app cannot tell you when a dose is due.",
+      "ask": "Allow notifications",
+      "settings": "Open settings",
+      "unavailable": "Reminders are not available in this version of the app. Update the app to receive them."
+    }
+  },
+  "form": {
+    "newTitle": "New medication",
+    "editTitle": "Edit medication",
+    "sectionMedicine": "Medication",
+    "sectionDose": "Dose (as prescribed)",
+    "sectionSchedule": "When to give",
+    "sectionVet": "Prescription",
+    "sectionOther": "Other information",
+    "name": "Medication name",
+    "barcode": "Barcode (optional)",
+    "batch": "Batch",
+    "expiresOn": "Expiry date",
+    "doseAmount": "Dose",
+    "doseAmountHint": "As written in the prescription. Examples: 1, 1/2, 2.5",
+    "doseUnit": "Unit",
+    "doseUnitHint": "Examples: tablet, ml, drops, mg",
+    "route": "Route",
+    "frequencyKind": "Frequency",
+    "everyHours": "Every how many hours",
+    "startTime": "Time of the 1st dose",
+    "times": "Times",
+    "timesHint": "Type a time (e.g. 08:00) and tap Add.",
+    "timePlaceholder": "HH:MM",
+    "addTime": "Add time",
+    "removeTime": "Remove time {{time}}",
+    "startDate": "Treatment start",
+    "duration": "Duration",
+    "durationEnds": "Until a date",
+    "durationContinuous": "Continuous use",
+    "endDate": "Last day of treatment",
+    "prescribedOn": "Prescription or application date",
+    "vetName": "Veterinarian",
+    "crmvNumber": "CRMV (number)",
+    "crmvUf": "CRMV (state)",
+    "placeKind": "Where it is given",
+    "placeClinic": "Clinic name",
+    "placeAddress": "Address",
+    "status": "Status",
+    "notes": "Notes (e.g. reactions)",
+    "save": "Save medication",
+    "saving": "Saving…",
+    "saveFailed": "Could not save the medication. Please try again.",
+    "savePending": "The server has not confirmed yet. The medication is saved on this device and will be sent when the connection is back.",
+    "reminderHint": "You will get a reminder when each dose is due.",
+    "fixErrors": "Fix the highlighted fields.",
+    "timeLabel": "New time"
+  },
+  "detail": {
+    "title": "Medication",
+    "notFound": "Medication not found.",
+    "dose": "Dose",
+    "route": "Route",
+    "frequency": "Frequency",
+    "period": "Period",
+    "periodContinuous": "Since {{start}} (continuous use)",
+    "periodEnds": "From {{start}} to {{end}}",
+    "code": "Barcode",
+    "batch": "Batch",
+    "expiresOn": "Expiry date",
+    "prescribedOn": "Prescribed",
+    "vet": "Veterinarian",
+    "crmv": "CRMV {{number}}/{{uf}}",
+    "place": "Place",
+    "notes": "Notes",
+    "nextDose": "Next dose",
+    "none": "—",
+    "expired": "Expired on {{date}}. Do not use it and talk to the veterinarian.",
+    "expiresSoon": "Expires on {{date}}.",
+    "treatmentOver": "The treatment ended on {{date}}. Mark it as completed.",
+    "dueTitle": "Doses to record",
+    "dueAt": "Dose at {{time}}",
+    "dueAtDay": "Dose on {{day}}, {{time}}",
+    "give": "Gave the dose",
+    "skip": "Skipped",
+    "logFailed": "Could not record the dose. Please try again.",
+    "logPending": "Recorded on this device; it will be sent when the connection is back.",
+    "historyTitle": "Dose history",
+    "historyEmpty": "No doses recorded yet.",
+    "given": "Given at {{time}}",
+    "skipped": "Skipped ({{time}})",
+    "by": "by {{name}}",
+    "undo": "Undo",
+    "undoFailed": "Could not undo.",
+    "complete": "Mark as completed",
+    "suspend": "Suspend",
+    "reactivate": "Use again",
+    "statusFailed": "Could not change the status.",
+    "deleteTitle": "Delete {{name}}?",
+    "deleteBody": "The medication and its dose history will be erased. This cannot be undone.",
+    "deleteFailed": "Could not delete the medication."
+  },
+  "notify": {
+    "channel": "Medication reminders",
+    "given": "Gave the dose",
+    "skipped": "Skipped",
+    "dose": {
+      "title": "{{pet}}: medication time",
+      "body": "{{name}} — {{amount}} {{unit}}"
+    },
+    "ends_tomorrow": {
+      "title": "{{pet}}: treatment ends tomorrow",
+      "body": "Tomorrow is the last day of {{name}}."
+    },
+    "ends_today": {
+      "title": "{{pet}}: last day of treatment",
+      "body": "Today is the last day of {{name}}."
+    },
+    "expires_soon": {
+      "title": "{{pet}}: medication about to expire",
+      "body": "{{name}} expires on {{date}}."
+    },
+    "expires_today": {
+      "title": "{{pet}}: medication expires today",
+      "body": "{{name}} expires today ({{date}}). Do not use it after the expiry date."
+    }
+  },
+  "when": {
+    "today": "today at {{time}}",
+    "tomorrow": "tomorrow at {{time}}",
+    "other": "{{date}} at {{time}}"
+  }
+}

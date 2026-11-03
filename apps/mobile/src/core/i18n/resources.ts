@@ -4,6 +4,7 @@ import enCommon from '@/locales/en/common.json';
 import enErrors from '@/locales/en/errors.json';
 import enHome from '@/locales/en/home.json';
 import enLegal from '@/locales/en/legal.json';
+import enMeds from '@/locales/en/meds.json';
 import enPets from '@/locales/en/pets.json';
 import enRga from '@/locales/en/rga.json';
 import ptAccount from '@/locales/pt-BR/account.json';
@@ -12,6 +13,7 @@ import ptCommon from '@/locales/pt-BR/common.json';
 import ptErrors from '@/locales/pt-BR/errors.json';
 import ptHome from '@/locales/pt-BR/home.json';
 import ptLegal from '@/locales/pt-BR/legal.json';
+import ptMeds from '@/locales/pt-BR/meds.json';
 import ptPets from '@/locales/pt-BR/pets.json';
 import ptRga from '@/locales/pt-BR/rga.json';
 
@@ -28,6 +30,7 @@ export const resources = {
     account: ptAccount,
     legal: ptLegal,
     rga: ptRga,
+    meds: ptMeds,
   },
   en: {
     common: enCommon,
@@ -38,6 +41,7 @@ export const resources = {
     account: enAccount,
     legal: enLegal,
     rga: enRga,
+    meds: enMeds,
   },
 } as const;
 

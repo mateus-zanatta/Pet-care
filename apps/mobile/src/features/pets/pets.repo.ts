@@ -28,23 +28,11 @@ import {
 } from '@petcare/shared';
 import { db, storage } from '@/core/firebase';
 import { callFunction } from '@/core/firebase/callable';
+import { settleOrOffline } from '@/core/firebase/settle';
 import { prepareImageForUpload } from '@/core/media/image';
 import { buildPetUpdate, parseMember, parsePet } from './pets.mapper';
 
 /* ------------------------------- Escrita ------------------------------- */
-
-/** Espera a gravação confirmada; sem internet, segue em frente (o Firestore sincroniza depois). */
-async function settleOrOffline(write: Promise<unknown>, timeoutMs = 10_000): Promise<'committed' | 'pending'> {
-  let timer: ReturnType<typeof setTimeout> | undefined;
-  const timeout = new Promise<'pending'>((resolve) => {
-    timer = setTimeout(() => resolve('pending'), timeoutMs);
-  });
-  try {
-    return await Promise.race([write.then(() => 'committed' as const), timeout]);
-  } finally {
-    if (timer) clearTimeout(timer);
-  }
-}
 
 /** Dados que só chegam pela importação do RG Animal (o tutor só entra se a pessoa confirmar). */
 export type PetExtra = {

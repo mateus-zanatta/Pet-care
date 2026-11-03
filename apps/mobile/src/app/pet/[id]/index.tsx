@@ -26,6 +26,7 @@ export default function PetDetailScreen() {
   const { t: tc } = useTranslation();
   const { t: te } = useTranslation('errors');
   const { t: tr } = useTranslation('rga');
+  const { t: tm } = useTranslation('meds');
   const router = useRouter();
   const user = useUser();
   const { data: pet, loading } = usePet(id);
@@ -131,6 +132,13 @@ export default function PetDetailScreen() {
       ) : null}
 
       <View style={{ gap: 8 }}>
+        <Button
+          icon="medkit"
+          label={tm('title')}
+          accessibilityHint={tm('disclaimer')}
+          onPress={() => router.push({ pathname: '/pet/[id]/medications', params: { id: pet.id } })}
+          disabled={deleting}
+        />
         {canEdit ? (
           <Button
             label={tc('actions.edit')}

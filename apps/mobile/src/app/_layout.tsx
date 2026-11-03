@@ -11,6 +11,8 @@ import { initI18n, loadLanguagePreference } from '@/core/i18n';
 import { ThemeProvider, type ThemePreference, loadThemePreference, useTheme } from '@/core/theme/ThemeProvider';
 import { AuthProvider, useAuth } from '@/features/auth/AuthProvider';
 import { configureGoogleSignIn } from '@/features/auth/auth.service';
+import { NotificationBridge } from '@/features/reminders/NotificationBridge';
+import { ReminderSync } from '@/features/reminders/ReminderSync';
 
 SplashScreen.preventAutoHideAsync();
 initErrorReporting();
@@ -66,6 +68,7 @@ function Navigation() {
   const { t: tc } = useTranslation('account');
   const { t: tl } = useTranslation('legal');
   const { t: tr } = useTranslation('rga');
+  const { t: tm } = useTranslation('meds');
 
   useEffect(() => {
     if (status !== 'loading') void SplashScreen.hideAsync();
@@ -92,6 +95,13 @@ function Navigation() {
 
   return (
     <NavigationThemeProvider value={navTheme}>
+      {/* Lembretes de dose: só para quem tem conta (cadastro) e está logado. */}
+      {signedIn && user && !user.isAnonymous ? (
+        <>
+          <ReminderSync />
+          <NotificationBridge />
+        </>
+      ) : null}
       <StatusBar style={scheme === 'dark' ? 'light' : 'dark'} />
       <Stack
         screenOptions={{
@@ -121,6 +131,10 @@ function Navigation() {
           <Stack.Screen name="pet/[id]/edit" options={{ title: tp('editTitle') }} />
           <Stack.Screen name="pet/import-rga" options={{ title: tr('title') }} />
           <Stack.Screen name="pet/[id]/import-rga" options={{ title: tr('titleUpdate') }} />
+          <Stack.Screen name="pet/[id]/medications/index" options={{ title: tm('title') }} />
+          <Stack.Screen name="pet/[id]/medications/new" options={{ title: tm('form.newTitle') }} />
+          <Stack.Screen name="pet/[id]/medications/[medId]/index" options={{ title: tm('detail.title') }} />
+          <Stack.Screen name="pet/[id]/medications/[medId]/edit" options={{ title: tm('form.editTitle') }} />
           <Stack.Screen name="rescue/index" options={{ title: th('rescue.title') }} />
           <Stack.Screen name="report/index" options={{ title: th('report.title') }} />
           <Stack.Screen name="account/delete" options={{ title: tc('delete.title') }} />

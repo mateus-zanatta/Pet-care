@@ -28,6 +28,13 @@
     "emailInvalid": "Enter a valid email address.",
     "passwordTooShort": "The password must have at least 8 characters.",
     "passwordWeak": "Use letters and numbers in your password.",
-    "termsRequired": "To create an account, accept the Terms and the Privacy Policy."
+    "termsRequired": "To create an account, accept the Terms and the Privacy Policy.",
+    "endBeforeStart": "The end date cannot be before the start.",
+    "hoursInvalid": "Enter a number of hours between 1 and 168.",
+    "timeInvalid": "Invalid time. Use the format 08:00.",
+    "timesRequired": "Add at least one time.",
+    "timesTooMany": "Use at most 12 times.",
+    "timesDuplicate": "There are repeated times.",
+    "crmvInvalid": "The CRMV number must contain digits only."
   }
 }

@@ -11,5 +11,7 @@ export type AnalyticsEvent =
   | { name: 'account_deleted' }
   | { name: 'pet_created'; origin: 'manual' | 'rescue' | 'rga_import' }
   | { name: 'pet_deleted' }
+  | { name: 'medication_created' }
+  | { name: 'dose_logged'; outcome: 'given' | 'skipped' }
   | { name: 'rga_import_ok' }
   | { name: 'rga_import_falhou'; reason: string };

@@ -1,7 +1,7 @@
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
 /** Preferências locais do aparelho (não sensíveis). Falhas de leitura/escrita são toleradas. */
-type PrefKey = 'language' | 'theme';
+type PrefKey = 'language' | 'theme' | 'handledNotifications';
 
 const KEY_PREFIX = 'petcare.pref.';
 

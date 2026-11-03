@@ -6,3 +6,6 @@ export * from './schemas/pet';
 export * from './schemas/user';
 export * from './schemas/petMember';
 export * from './schemas/rgaImport';
+export * from './schemas/medication';
+export * from './schemas/doseLog';
+export * from './medicationSchedule';

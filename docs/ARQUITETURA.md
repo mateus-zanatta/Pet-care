@@ -9,7 +9,7 @@ Pet-care/
 │  ├─ eas.json                  Perfis de build (development, preview, production)
 │  └─ src/
 │     ├─ app/                   Só ROTAS (telas finas). Nunca coloque testes aqui: viram rotas.
-│     ├─ features/              Um módulo por assunto: auth, pets, account, legal
+│     ├─ features/              Um módulo por assunto: auth, pets, rga, medications, reminders, account, legal
 │     ├─ components/ui + form/  Botões, campos, chips... acessíveis e com tema
 │     ├─ core/                  firebase, i18n, theme, analytics, errors, media, storage, dates
 │     ├─ locales/{pt-BR,en}/    TODOS os textos (um JSON por área) + textos nativos (permissões)
@@ -56,6 +56,34 @@ Pontos de projeto:
 - Mensagens de login **não revelam** se um e-mail tem conta.
 - Nenhum texto fixo no código: o ESLint falha se houver texto em JSX; um teste confere que `pt-BR` e `en` têm as mesmas chaves.
 - Acessibilidade: alvos de toque ≥ 48 dp, `accessibilityRole/Label/State` nos controles, erros anunciados, fonte do sistema respeitada (até 1,6×), contraste WCAG AA conferido por teste nos dois temas.
+
+## Medicamentos e lembretes (Fase 2A)
+
+> **Regra do produto:** o app **nunca** sugere medicamento, dose ou diagnóstico. Só registra o que o veterinário prescreveu e lembra o tutor. Não há lista de medicamentos, dose padrão nem cálculo de dose — e as regras de segurança **rejeitam** qualquer campo fora do esperado (há teste para isso).
+
+| Caminho | Quem acessa | Observações |
+|---|---|---|
+| `pets/{petId}/medications/{medId}` | membros leem; dono/cuidador escrevem; visualizador só lê | nome, código de barras (digitado), lote, validade, **dose** (valor + unidade + via, texto "como prescrito"), frequência, início/fim, veterinário (nome + CRMV), local (casa / clínica / endereço), situação, observações |
+| `pets/{petId}/dose_logs/{medId}_{minutos}` | iguais | "Dei a dose" / "Pulei": horário **agendado**, horário **real**, quem registrou. O ID é remédio + minuto agendado: tocar duas vezes (ou na notificação e no app) **não duplica** |
+
+**Frequência:** "a cada X horas" (1 a 168, a partir de um 1º horário) ou "horários fixos" (até 12 por dia). **Duração:** até uma data (inclusive) ou uso contínuo.
+
+**Cálculo dos horários** (`packages/shared/src/medicationSchedule.ts`, funções puras com testes): `doseTimesBetween` gera as doses em uma janela; `buildReminderPlan` monta o que deve estar agendado (doses ainda não registradas + avisos), ordenado e limitado. Os horários seguem o **relógio local do aparelho**.
+
+**Lembretes** (`apps/mobile/src/features/reminders/`):
+
+- **Janela móvel de 72 h** e **no máximo 60 notificações** (o iOS guarda só 64). O app reagenda tudo quando abre e sempre que medicamentos ou doses mudam. Se a janela ficar sem doses por o app não ser aberto, os lembretes param — por isso a janela é maior que o mínimo de 48 h.
+- Avisos além das doses: **fim do tratamento** (véspera e último dia, 09:00) e **validade** (7 dias antes e no dia, 09:00).
+- Botões **Dei a dose / Pulei** na notificação: abrem o app e registram (quem e quando vêm do aparelho). A mesma ação nunca é tratada duas vezes.
+- Quem só **visualiza** o pet não recebe lembretes de dose. Cada pessoa (dono/cuidador) recebe no **próprio aparelho**.
+- O módulo nativo é carregado com tolerância: um build **antigo** do app (sem `expo-notifications`) continua abrindo; só os lembretes ficam indisponíveis, com um aviso na tela.
+
+**Limitações conhecidas (honestidade):**
+
+- **Android**: sem a permissão especial de "alarme exato" (que o Google Play restringe a apps de alarme/calendário), o sistema pode entregar a notificação **alguns minutos depois** do horário (Android 12+). Para lembrete de remédio é aceitável; se virar problema, dá para pedir a permissão e declarar o uso na Play.
+- Se o aparelho **mudar de fuso**, os lembretes só se ajustam quando o app abrir de novo.
+- **Não validado em aparelho** (veja o roteiro de teste no `SETUP.md`): o cálculo e o texto das notificações têm testes automáticos, mas a entrega real das notificações só dá para conferir no celular.
+- Ficam para a **Fase 2B**: foto da receita, leitura do código de barras pela câmera, vacinas, linha do tempo de saúde e PDF.
 
 ## Importação do RG Animal (Fase 1.5)
 
