@@ -7,6 +7,7 @@ const mockBack = jest.fn();
 jest.mock('expo-router', () => ({ useRouter: () => ({ back: mockBack }), useFocusEffect: jest.fn() }));
 // Simula um build ANTIGO do app: o módulo nativo da câmera não existe.
 jest.mock('expo-camera', () => {
+  jest.spyOn(console, 'warn').mockImplementation(() => undefined); // o aviso de módulo ausente é o esperado aqui
   throw new Error("Cannot find native module 'ExpoCamera'");
 });
 

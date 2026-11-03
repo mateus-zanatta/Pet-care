@@ -1,6 +1,6 @@
 import type { DoseLog, Medication } from '@petcare/shared';
 import { doseLogId } from '@petcare/shared';
-import { fireEvent, screen, waitFor } from '@testing-library/react-native';
+import { act, fireEvent, screen, waitFor } from '@testing-library/react-native';
 import React from 'react';
 import { Alert } from 'react-native';
 import MedicationDetailScreen from '@/app/pet/[id]/medications/[medId]/index';
@@ -191,7 +191,9 @@ describe('detalhe do medicamento', () => {
     await fireEvent.press(screen.getByRole('button', { name: 'Excluir' }));
     expect(mockDelete).not.toHaveBeenCalled();
     const buttons = alert.mock.calls[0]![2]!;
-    await buttons.find((b) => b.style === 'destructive')!.onPress!();
+    await act(async () => {
+      await buttons.find((b) => b.style === 'destructive')!.onPress!();
+    });
     await waitFor(() => expect(mockDelete).toHaveBeenCalledWith('p1', 'm1'));
     expect(mockBack).toHaveBeenCalled();
   });

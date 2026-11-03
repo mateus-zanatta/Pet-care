@@ -34,7 +34,7 @@ jest.mock('@/features/auth/auth.service', () => ({
   signInWithApple: jest.fn(),
   signOut: jest.fn(),
 }));
-jest.mock('@/core/firebase', () => ({ connectEmulatorsIfEnabled: jest.fn(), isUsingEmulators: () => false }));
+jest.mock('@/core/firebase', () => ({ connectEmulatorsIfEnabled: jest.fn().mockResolvedValue(undefined), isUsingEmulators: () => false }));
 jest.mock('@/features/pets/pets.repo', () => ({
   subscribeMemberships: (_uid: string, onData: (m: unknown[]) => void) => {
     onData([]);
@@ -97,6 +97,15 @@ const user = (overrides: Partial<Extract<MockAuth, { status: 'signedIn' }>['user
 });
 
 describe('navegação', () => {
+  it('a abertura segue o caminho NORMAL (não cai no plano B de emergência)', async () => {
+    const warn = jest.spyOn(console, 'warn').mockImplementation(() => undefined);
+    mockAuth = { status: 'signedOut', user: null };
+    await renderRouter('./src/app', { initialUrl: '/' });
+    expect(await screen.findByText('Continuar sem cadastro')).toBeTruthy();
+    expect(warn.mock.calls.filter(([message]) => String(message).startsWith('[boot]'))).toEqual([]);
+    warn.mockRestore();
+  });
+
   it('sem login, a primeira tela é a de boas-vindas', async () => {
     mockAuth = { status: 'signedOut', user: null };
     await renderRouter('./src/app', { initialUrl: '/' });

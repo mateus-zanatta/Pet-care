@@ -28,9 +28,11 @@ function RootLayout() {
     (async () => {
       // Os emuladores (só em desenvolvimento) precisam estar ligados ANTES de qualquer uso de Auth/Firestore.
       // A função nunca lança erro; mesmo assim, qualquer imprevisto aqui não pode deixar a tela parada.
-      await connectEmulatorsIfEnabled().catch((error) =>
-        console.warn('[firebase] falha ao preparar os emuladores:', (error as Error)?.message ?? error),
-      );
+      try {
+        await connectEmulatorsIfEnabled();
+      } catch (error) {
+        console.warn('[firebase] falha ao preparar os emuladores:', (error as Error)?.message ?? error);
+      }
       // Idioma e tema são lidos ANTES da primeira tela, para não "piscar" na aparência errada.
       const [language, theme] = await Promise.all([loadLanguagePreference(), loadThemePreference()]);
       await initI18n(language);

@@ -1,5 +1,5 @@
 import type { AttachmentRef } from '@petcare/shared';
-import { fireEvent, screen, waitFor } from '@testing-library/react-native';
+import { act, fireEvent, screen, waitFor } from '@testing-library/react-native';
 import React from 'react';
 import { Alert } from 'react-native';
 import { renderWithProviders, setupTestI18n } from '@/test/render';
@@ -140,7 +140,9 @@ describe('AttachmentsSection', () => {
     await fireEvent.press(screen.getByRole('button', { name: 'Remover hemograma.pdf' }));
     expect(mockRemove).not.toHaveBeenCalled();
     const destructive = alert.mock.calls[0]![2]!.find((b) => b.style === 'destructive')!;
-    await destructive.onPress!();
+    await act(async () => {
+      destructive.onPress!();
+    });
     await waitFor(() => expect(mockRemove).toHaveBeenCalledWith(target, pdf));
   });
 });

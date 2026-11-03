@@ -1,5 +1,5 @@
 import type { HealthEvent, Vaccine } from '@petcare/shared';
-import { fireEvent, screen, waitFor } from '@testing-library/react-native';
+import { act, fireEvent, screen, waitFor } from '@testing-library/react-native';
 import React from 'react';
 import { Alert } from 'react-native';
 import EventDetailScreen from '@/app/pet/[id]/health/event/[eid]/index';
@@ -62,7 +62,9 @@ const confirmDelete = async () => {
   const alert = jest.spyOn(Alert, 'alert').mockImplementation(() => undefined);
   await fireEvent.press(screen.getByRole('button', { name: 'Excluir' }));
   const destructive = alert.mock.calls[0]![2]!.find((b) => b.style === 'destructive')!;
-  await destructive.onPress!();
+  await act(async () => {
+    await destructive.onPress!();
+  });
 };
 
 describe('detalhe da vacina', () => {

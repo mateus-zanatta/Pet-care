@@ -87,6 +87,7 @@ beforeAll(async () => {
 });
 beforeEach(() => {
   jest.clearAllMocks();
+  jest.spyOn(console, 'log').mockImplementation(() => undefined); // logs [foto] de desenvolvimento
   mockPick.mockResolvedValue({ base64: 'AAAA', mimeType: 'application/pdf' });
   mockImport.mockResolvedValue(recognized);
   mockFind.mockResolvedValue(null);
