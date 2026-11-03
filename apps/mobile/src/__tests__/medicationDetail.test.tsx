@@ -35,6 +35,16 @@ jest.mock('@/features/medications/hooks', () => ({
   useDoseLogs: () => ({ data: mockLogs, loading: false, failed: false }),
 }));
 
+jest.mock('@/features/attachments/attachments.service', () => ({
+  AttachmentError: class extends Error {},
+  addAttachment: jest.fn(),
+  removeAttachment: jest.fn(),
+  openAttachment: jest.fn(),
+  pickPdf: jest.fn(),
+  deleteAllAttachmentFiles: jest.fn(async () => undefined),
+}));
+jest.mock('@/features/pets/usePhotoPicker', () => ({ PermissionDeniedError: class extends Error {}, pickFromGallery: jest.fn(), takePhoto: jest.fn() }));
+
 const mockLogDose = jest.fn();
 const mockUndo = jest.fn();
 const mockSetStatus = jest.fn();

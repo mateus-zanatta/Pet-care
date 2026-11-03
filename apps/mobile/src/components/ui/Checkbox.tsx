@@ -17,7 +17,9 @@ type Props = {
 export function Checkbox({ checked, onChange, accessibilityLabel, children, error }: Props) {
   const { colors, radius } = useTheme();
   return (
-    <View style={{ gap: 6 }}>
+    // alignSelf: 'stretch' é essencial: dentro de um contêiner com alignItems 'center' (como o bloco da foto do pet),
+    // a linha encolhia até o tamanho da caixinha e o texto (flex: 1) ficava com largura ZERO, invisível.
+    <View style={{ gap: 6, alignSelf: 'stretch' }}>
       <View style={styles.row}>
         <Pressable
           onPress={() => onChange(!checked)}

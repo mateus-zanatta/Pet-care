@@ -9,7 +9,7 @@ import {
   isValidTime,
   medicationFormSchema,
 } from '@petcare/shared';
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { View } from 'react-native';
 import { Controller, useForm, useWatch } from 'react-hook-form';
 import { useTranslation } from 'react-i18next';
@@ -28,6 +28,10 @@ type Props = {
   submitError?: string;
   /** Edição: mostra a situação (em uso / concluído / suspenso). */
   showStatus?: boolean;
+  /** Abre a leitura do código de barras pela câmera (some se não houver). */
+  onScan?: () => void;
+  /** Código lido pela câmera: preenche o campo "Código de barras". */
+  scannedCode?: string | null;
   onSubmit: (values: MedicationFormValues) => void;
 };
 
@@ -41,18 +45,27 @@ export function maskTimeInput(raw: string): string {
  * Formulário de medicamento. REGRA DO PRODUTO: o app só REGISTRA o que o veterinário prescreveu —
  * não há sugestões, valores padrão de dose nem listas de medicamentos.
  */
-export function MedicationForm({ initialValues, submitting, submitError, showStatus, onSubmit }: Props) {
+export function MedicationForm({ initialValues, submitting, submitError, showStatus, onScan, scannedCode, onSubmit }: Props) {
   const { t, i18n } = useTranslation('meds');
   const { t: tp } = useTranslation('pets');
   const { t: tc } = useTranslation();
   const locale = i18n.language === 'en' ? 'en' : 'pt-BR';
   const order = dateOrderFor(locale);
 
-  const { control, handleSubmit, formState } = useForm<MedicationFormValues>({
+  const { control, handleSubmit, formState, setValue } = useForm<MedicationFormValues>({
     resolver: zodResolver(medicationFormSchema),
     defaultValues: initialValues,
     mode: 'onTouched',
   });
+
+  // O aviso depende dos ERROS reais (e não de `isValid`): o React Hook Form só calcula `isValid` se ele for lido já
+  // na 1ª renderização, e um formulário válido ficava mostrando "Confira os campos destacados".
+  const { errors, isSubmitted } = formState;
+  const showFixErrors = isSubmitted && Object.keys(errors).length > 0;
+
+  useEffect(() => {
+    if (scannedCode) setValue('barcode', scannedCode, { shouldDirty: true, shouldValidate: true });
+  }, [scannedCode, setValue]);
 
   const frequencyKind = useWatch({ control, name: 'frequencyKind' });
   const continuous = useWatch({ control, name: 'continuous' });
@@ -80,7 +93,7 @@ export function MedicationForm({ initialValues, submitting, submitError, showSta
       }
     >
       <Banner tone="info">{t('disclaimer')}</Banner>
-      {formState.isSubmitted && !formState.isValid ? <Banner tone="error">{t('form.fixErrors')}</Banner> : null}
+      {showFixErrors ? <Banner tone="error">{t('form.fixErrors')}</Banner> : null}
       {submitError ? <Banner tone="error">{submitError}</Banner> : null}
 
       <AppText variant="title">{t('form.sectionMedicine')}</AppText>
@@ -93,6 +106,7 @@ export function MedicationForm({ initialValues, submitting, submitError, showSta
         autoCorrect={false}
         maxLength={64}
       />
+      {onScan ? <Button variant="secondary" icon="barcode" label={t('form.scan')} onPress={onScan} /> : null}
       <View style={{ flexDirection: 'row', gap: 12 }}>
         <View style={{ flex: 1 }}>
           <FormTextField control={control} name="batch" label={t('form.batch')} optional={tc('optional')} autoCapitalize="characters" maxLength={40} />

@@ -53,6 +53,25 @@ jest.mock('@/features/medications/medications.repo', () => ({
   setMedicationStatus: jest.fn(),
   deleteMedication: jest.fn(),
 }));
+jest.mock('@/features/health/health.repo', () => ({
+  subscribeVaccines: jest.fn(() => () => undefined),
+  subscribeHealthEvents: jest.fn(() => () => undefined),
+  createVaccine: jest.fn(),
+  updateVaccine: jest.fn(),
+  deleteVaccine: jest.fn(),
+  createHealthEvent: jest.fn(),
+  updateHealthEvent: jest.fn(),
+  deleteHealthEvent: jest.fn(),
+}));
+jest.mock('@/features/health/report', () => ({ exportHealthReport: jest.fn(), isPdfExportAvailable: () => true }));
+jest.mock('@/features/attachments/attachments.service', () => ({
+  AttachmentError: class extends Error {},
+  addAttachment: jest.fn(),
+  removeAttachment: jest.fn(),
+  openAttachment: jest.fn(),
+  pickPdf: jest.fn(),
+  deleteAllAttachmentFiles: jest.fn(),
+}));
 // Lembretes (notificações nativas) não existem no Jest.
 jest.mock('@/features/reminders/ReminderSync', () => ({ ReminderSync: () => null }));
 jest.mock('@/features/reminders/NotificationBridge', () => ({ NotificationBridge: () => null }));

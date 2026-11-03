@@ -13,5 +13,8 @@ export type AnalyticsEvent =
   | { name: 'pet_deleted' }
   | { name: 'medication_created' }
   | { name: 'dose_logged'; outcome: 'given' | 'skipped' }
+  | { name: 'vaccine_created' }
+  | { name: 'health_event_created' }
+  | { name: 'health_report_exported' }
   | { name: 'rga_import_ok' }
   | { name: 'rga_import_falhou'; reason: string };

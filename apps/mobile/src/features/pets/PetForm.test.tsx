@@ -69,4 +69,22 @@ describe('PetForm', () => {
     await fireEvent.press(screen.getByRole('button', { name: 'Salvar pet' }));
     await waitFor(() => expect(onSubmit).toHaveBeenCalled());
   });
+
+  it('NÃO mostra "Confira os campos destacados" quando o formulário é válido e foi enviado', async () => {
+    const onSubmit = await setup();
+    await fireEvent.changeText(screen.getByLabelText('Nome'), 'Mel');
+    await fireEvent.press(screen.getByRole('button', { name: 'Salvar pet' }));
+    await waitFor(() => expect(onSubmit).toHaveBeenCalled());
+    expect(screen.queryByText('Confira os campos destacados.')).toBeNull();
+  });
+
+  it('mostra "Confira os campos destacados" quando há erro, e some ao corrigir e reenviar', async () => {
+    const onSubmit = await setup();
+    await fireEvent.press(screen.getByRole('button', { name: 'Salvar pet' }));
+    expect(await screen.findByText('Confira os campos destacados.')).toBeTruthy();
+    await fireEvent.changeText(screen.getByLabelText('Nome'), 'Mel');
+    await fireEvent.press(screen.getByRole('button', { name: 'Salvar pet' }));
+    await waitFor(() => expect(onSubmit).toHaveBeenCalled());
+    expect(screen.queryByText('Confira os campos destacados.')).toBeNull();
+  });
 });

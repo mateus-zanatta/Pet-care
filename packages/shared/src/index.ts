@@ -9,3 +9,8 @@ export * from './schemas/rgaImport';
 export * from './schemas/medication';
 export * from './schemas/doseLog';
 export * from './medicationSchedule';
+export * from './schemas/attachment';
+export * from './schemas/vet';
+export * from './schemas/vaccine';
+export * from './schemas/healthEvent';
+export * from './healthTimeline';

@@ -124,6 +124,38 @@ service cloud.firestore {
         // Desfazer um registro feito por engano.
         allow delete: if canEditPet(petId);
       }
+
+      // ---------- pets/{petId}/vaccines/{vaccineId} ----------
+      match /vaccines/{vaccineId} {
+        allow read: if isMember(petId);
+
+        allow create: if canEditPet(petId)
+          && request.resource.data.createdBy == request.auth.uid
+          && validVaccine(request.resource.data);
+
+        allow update: if canEditPet(petId)
+          && request.resource.data.createdBy == resource.data.createdBy
+          && request.resource.data.createdAt == resource.data.createdAt
+          && validVaccine(request.resource.data);
+
+        allow delete: if canEditPet(petId);
+      }
+
+      // ---------- pets/{petId}/health_events/{eventId} (consultas, vermífugos, exames, cirurgias...) ----------
+      match /health_events/{eventId} {
+        allow read: if isMember(petId);
+
+        allow create: if canEditPet(petId)
+          && request.resource.data.createdBy == request.auth.uid
+          && validHealthEvent(request.resource.data);
+
+        allow update: if canEditPet(petId)
+          && request.resource.data.createdBy == resource.data.createdBy
+          && request.resource.data.createdAt == resource.data.createdAt
+          && validHealthEvent(request.resource.data);
+
+        allow delete: if canEditPet(petId);
+      }
     }
 
     function validPet(d) {
@@ -179,7 +211,7 @@ service cloud.firestore {
     function validMedication(d) {
       return d.keys().hasOnly([
                'name', 'barcode', 'batch', 'expiresOn', 'dose', 'frequency', 'startDate', 'startTime',
-               'endDate', 'prescribedOn', 'vet', 'place', 'status', 'notes',
+               'endDate', 'prescribedOn', 'vet', 'place', 'status', 'notes', 'attachments',
                'createdBy', 'createdAt', 'updatedAt'])
         && d.keys().hasAll(['name', 'dose', 'frequency', 'startDate', 'status', 'createdBy', 'createdAt', 'updatedAt'])
         && isString(d.name, 80) && d.name.size() >= 1
@@ -199,10 +231,50 @@ service cloud.firestore {
         && (!('barcode' in d) || isString(d.barcode, 64))
         && (!('batch' in d) || isString(d.batch, 40))
         && (!('notes' in d) || isString(d.notes, 1000))
+        && validAttachments(d)
         && (!('vet' in d) || (d.vet is map && d.vet.keys().hasOnly(['name', 'crmvNumber', 'crmvUf'])))
         && (!('place' in d) || (d.place is map
              && d.place.keys().hasOnly(['kind', 'text'])
              && d.place.kind in ['home', 'clinic', 'address']));
+    }
+
+    // Anexos: lista de referências a arquivos do Storage (o acesso real ao arquivo é decidido pelas regras do Storage).
+    function validAttachments(d) {
+      return !('attachments' in d) || (d.attachments is list && d.attachments.size() <= 10);
+    }
+
+    function validVet(d) {
+      return !('vet' in d) || (d.vet is map && d.vet.keys().hasOnly(['name', 'crmvNumber', 'crmvUf']));
+    }
+
+    function validVaccine(d) {
+      return d.keys().hasOnly([
+               'name', 'appliedOn', 'nextDoseOn', 'batch', 'vet', 'clinic', 'notes', 'attachments',
+               'createdBy', 'createdAt', 'updatedAt'])
+        && d.keys().hasAll(['name', 'appliedOn', 'createdBy', 'createdAt', 'updatedAt'])
+        && isString(d.name, 80) && d.name.size() >= 1
+        && isIsoDate(d.appliedOn)
+        && (!('nextDoseOn' in d) || isIsoDate(d.nextDoseOn))
+        && (!('batch' in d) || isString(d.batch, 40))
+        && (!('clinic' in d) || isString(d.clinic, 120))
+        && (!('notes' in d) || isString(d.notes, 1000))
+        && validVet(d)
+        && validAttachments(d);
+    }
+
+    function validHealthEvent(d) {
+      return d.keys().hasOnly([
+               'type', 'date', 'title', 'description', 'nextDate', 'vet', 'clinic', 'attachments',
+               'createdBy', 'createdAt', 'updatedAt'])
+        && d.keys().hasAll(['type', 'date', 'title', 'createdBy', 'createdAt', 'updatedAt'])
+        && d.type in ['consultation', 'deworming', 'flea_tick', 'exam', 'surgery', 'other']
+        && isIsoDate(d.date)
+        && isString(d.title, 80) && d.title.size() >= 1
+        && (!('description' in d) || isString(d.description, 1000))
+        && (!('nextDate' in d) || isIsoDate(d.nextDate))
+        && (!('clinic' in d) || isString(d.clinic, 120))
+        && validVet(d)
+        && validAttachments(d);
     }
 
     function validDoseLog(petId, logId, d) {

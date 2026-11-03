@@ -7,6 +7,7 @@ import {
   MEDICATION_STATUS,
 } from '../enums';
 import { isAfterIso, isValidIsoDate, isValidTime, todayIso } from '../dates';
+import { attachmentRefSchema, MAX_ATTACHMENTS } from './attachment';
 import { isBrUf } from './pet';
 
 /**
@@ -178,6 +179,8 @@ export const MEDICATION_FORM_OPTIONAL_KEYS = [
 ] as const satisfies readonly (keyof MedicationData)[];
 
 export const medicationDocSchema = medicationDataSchema.extend({
+  /** Foto da receita e outros anexos (gerenciados na tela de anexos, fora do formulário). */
+  attachments: z.array(attachmentRefSchema).max(MAX_ATTACHMENTS).optional(),
   createdBy: z.string().min(1),
   createdAt: z.unknown().optional(),
   updatedAt: z.unknown().optional(),

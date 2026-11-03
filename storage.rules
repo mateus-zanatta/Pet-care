@@ -26,7 +26,19 @@ service firebase.storage {
         && request.resource.size < maxBytes;
     }
 
-    // Foto de perfil e anexos do pet: membros leem; dono/cuidador gravam.
+    function isImageOrPdfUnder(maxBytes) {
+      return (request.resource.contentType.matches('image/.*') || request.resource.contentType == 'application/pdf')
+        && request.resource.size < maxBytes;
+    }
+
+    // Anexos de saúde (foto da receita, exames em PDF...): imagem ou PDF de até 10 MB.
+    match /pets/{petId}/attachments/{allPaths=**} {
+      allow read: if isPetMember(petId);
+      allow write: if canEditPet(petId) && isImageOrPdfUnder(10 * 1024 * 1024);
+      allow delete: if canEditPet(petId);
+    }
+
+    // Foto de perfil e demais arquivos do pet: membros leem; dono/cuidador gravam (só imagens).
     match /pets/{petId}/{allPaths=**} {
       allow read: if isPetMember(petId);
       allow write: if canEditPet(petId) && isImageUnder(10 * 1024 * 1024);

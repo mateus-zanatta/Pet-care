@@ -16,7 +16,7 @@ Stack: Expo (React Native) + TypeScript + Expo Router · Firebase (Auth, Firesto
 | `packages/shared` | Enums e schemas Zod usados pelo app, pelas Functions e (fase 7) pelo painel admin |
 | `functions` | Cloud Functions (exclusão de conta e de pet; nas próximas fases: RG Animal, lugares, e-mail) |
 | `tests/rules` | Testes das regras de segurança do Firestore e do Storage |
-| `docs` | [Configuração passo a passo](docs/SETUP.md) · [Arquitetura e decisões](docs/ARQUITETURA.md) |
+| `docs` | [Configuração passo a passo](docs/SETUP.md) · [Arquitetura e decisões](docs/ARQUITETURA.md) · [Pendências](docs/PENDENCIAS.md) |
 
 ## Comandos (na raiz)
 

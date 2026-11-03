@@ -5,11 +5,23 @@ import { ACTION_GIVEN, ACTION_SKIPPED } from './notifications';
 const DEFAULT_ACTION = 'expo.modules.notifications.actions.DEFAULT';
 
 const dataSchema = z.object({
-  kind: z.enum(['dose', 'ends_tomorrow', 'ends_today', 'expires_soon', 'expires_today']),
+  kind: z.enum([
+    'dose',
+    'ends_tomorrow',
+    'ends_today',
+    'expires_soon',
+    'expires_today',
+    'vaccine_tomorrow',
+    'vaccine_today',
+    'event_tomorrow',
+    'event_today',
+  ]),
   petId: z.string().min(1),
-  medicationId: z.string().min(1),
+  refId: z.string().min(1),
   scheduledFor: z.string().datetime().optional(),
 });
+
+export type ReminderTarget = { kind: z.infer<typeof dataSchema>['kind']; petId: string; refId: string };
 
 export type NotificationResponseLike = {
   actionIdentifier: string;
@@ -27,7 +39,8 @@ export type ActionDeps = {
     uid: string;
     displayName: string | null;
   }) => Promise<unknown>;
-  openMedication: (petId: string, medicationId: string) => void;
+  /** Abre a tela do que a notificação trata (medicamento, vacina ou evento de saúde). */
+  openTarget: (target: ReminderTarget) => void;
   /** Guarda que esta ação já foi tratada. Devolve false se já tinha sido (não repetir). */
   markHandled: (key: string) => Promise<boolean>;
 };
@@ -37,7 +50,7 @@ export type ActionResult = 'logged' | 'opened' | 'duplicate' | 'ignored';
 /**
  * Trata o toque numa notificação:
  * - botão "Dei a dose" / "Pulei" -> registra a dose (quem e quando, do aparelho);
- * - toque comum -> abre o medicamento.
+ * - toque comum -> abre a tela do medicamento, da vacina ou do evento.
  * A mesma ação nunca é tratada duas vezes (o sistema pode devolver a última resposta ao reabrir o app).
  */
 export async function handleNotificationResponse(response: NotificationResponseLike, deps: ActionDeps): Promise<ActionResult> {
@@ -56,7 +69,7 @@ export async function handleNotificationResponse(response: NotificationResponseL
     if (data.kind !== 'dose' || !data.scheduledFor) return 'ignored';
     await deps.logDose({
       petId: data.petId,
-      medicationId: data.medicationId,
+      medicationId: data.refId,
       scheduledFor: new Date(data.scheduledFor),
       outcome,
       uid: deps.uid,
@@ -65,7 +78,7 @@ export async function handleNotificationResponse(response: NotificationResponseL
     return 'logged';
   }
 
-  deps.openMedication(data.petId, data.medicationId);
+  deps.openTarget({ kind: data.kind, petId: data.petId, refId: data.refId });
   return 'opened';
 }
 

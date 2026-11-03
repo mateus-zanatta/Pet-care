@@ -8,6 +8,7 @@ import { reportError } from '@/core/errors/report';
 import { useUser } from '@/features/auth/AuthProvider';
 import { createMedication } from '@/features/medications/medications.repo';
 import { MedicationForm } from '@/features/medications/MedicationForm';
+import { useScannedCode } from '@/features/medications/scanInbox';
 import { useReminderPermission } from '@/features/reminders/usePermission';
 
 export default function NewMedicationScreen() {
@@ -16,6 +17,7 @@ export default function NewMedicationScreen() {
   const router = useRouter();
   const user = useUser();
   const permission = useReminderPermission();
+  const scannedCode = useScannedCode();
   const initialValues = useMemo(() => medicationFormDefaults(), []);
   const [submitting, setSubmitting] = useState(false);
   const [error, setError] = useState<string>();
@@ -38,5 +40,14 @@ export default function NewMedicationScreen() {
     }
   };
 
-  return <MedicationForm initialValues={initialValues} submitting={submitting} submitError={error} onSubmit={onSubmit} />;
+  return (
+    <MedicationForm
+      initialValues={initialValues}
+      submitting={submitting}
+      submitError={error}
+      scannedCode={scannedCode}
+      onScan={() => router.push({ pathname: '/pet/[id]/medications/scan', params: { id } })}
+      onSubmit={onSubmit}
+    />
+  );
 }

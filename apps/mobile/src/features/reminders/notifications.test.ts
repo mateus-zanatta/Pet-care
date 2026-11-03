@@ -5,7 +5,7 @@ const payload = (kind: 'dose' | 'ends_today', id = 'm1_100'): NotificationPayloa
   at: new Date('2026-11-04T17:00:00.000Z'),
   title: 'Mel: hora do medicamento',
   body: 'Amoxicilina — 1/2 comprimido',
-  data: { kind, petId: 'p1', medicationId: 'm1' },
+  data: { kind, petId: 'p1', refId: 'm1' },
 });
 
 /** Carrega `notifications.ts` do zero com (ou sem) o módulo nativo, já que o resultado fica em cache. */

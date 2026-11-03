@@ -35,6 +35,7 @@
     "timesRequired": "Adicione pelo menos um horário.",
     "timesTooMany": "Use no máximo 12 horários.",
     "timesDuplicate": "Há horários repetidos.",
-    "crmvInvalid": "O número do CRMV deve ter apenas dígitos."
+    "crmvInvalid": "O número do CRMV deve ter apenas dígitos.",
+    "nextBeforeDate": "A próxima data precisa ser depois da data do registro."
   }
 }

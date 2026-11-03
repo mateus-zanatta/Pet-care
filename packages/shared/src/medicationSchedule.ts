@@ -19,6 +19,8 @@ export const MAX_SCHEDULED_REMINDERS = 60;
 export const ALERT_TIME = '09:00';
 /** Quantos dias antes do vencimento o aviso é disparado. */
 export const EXPIRY_WARNING_DAYS = 7;
+/** Avisos (fim de tratamento, validade, próxima vacina...) são poucos: agendamos com mais antecedência que as doses. */
+export const ALERT_WINDOW_DAYS = 30;
 /** Até quantos dias antes do vencimento a tela mostra "vence em breve". */
 export const EXPIRY_BADGE_DAYS = 30;
 
@@ -100,20 +102,33 @@ export function isTreatmentOver(med: Pick<MedicationData, 'endDate' | 'status'>,
 /*  Plano de lembretes (o que agendar nas notificações)                        */
 /* -------------------------------------------------------------------------- */
 
-export type ReminderKind = 'dose' | 'ends_tomorrow' | 'ends_today' | 'expires_soon' | 'expires_today';
+export type ReminderKind =
+  | 'dose'
+  | 'ends_tomorrow'
+  | 'ends_today'
+  | 'expires_soon'
+  | 'expires_today'
+  | 'vaccine_tomorrow'
+  | 'vaccine_today'
+  | 'event_tomorrow'
+  | 'event_today';
 
 export type ReminderItem = {
   kind: ReminderKind;
   petId: string;
-  medicationId: string;
+  /** ID do medicamento, da vacina ou do evento de saúde a que o lembrete se refere. */
+  refId: string;
   at: Date;
-  /** Doses: ID do registro de dose. Avisos: `${medicationId}_${kind}`. */
+  /** Doses: ID do registro de dose. Avisos: `${refId}_${kind}`. */
   key: string;
 };
 
 export type PlanMedication = { petId: string; id: string; med: MedicationData };
 
-type PlanOptions = { windowHours?: number; max?: number };
+/** Data combinada para algo acontecer de novo (próxima dose de vacina, próximo vermífugo...). */
+export type PlanDue = { petId: string; id: string; source: 'vaccine' | 'event'; dueOn: string };
+
+type PlanOptions = { windowHours?: number; max?: number; alertDays?: number; dues?: readonly PlanDue[] };
 
 function alertAt(iso: string): Date {
   return localDateTime(iso, ALERT_TIME);
@@ -121,51 +136,48 @@ function alertAt(iso: string): Date {
 
 /**
  * Monta a lista (já ordenada e limitada) do que deve estar agendado agora:
- * doses da janela móvel que ainda não foram registradas + avisos de fim de tratamento e de validade.
+ * - doses da janela móvel (72 h) que ainda não foram registradas;
+ * - avisos de fim de tratamento e de validade dos medicamentos;
+ * - avisos de "próxima dose" de vacinas e de eventos de saúde (véspera e dia, às 09:00).
+ * Os avisos olham mais longe (30 dias) que as doses, porque são poucos.
  */
 export function buildReminderPlan(
   meds: readonly PlanMedication[],
   now: Date,
   loggedKeys: ReadonlySet<string>,
-  { windowHours = REMINDER_WINDOW_HOURS, max = MAX_SCHEDULED_REMINDERS }: PlanOptions = {},
+  { windowHours = REMINDER_WINDOW_HOURS, max = MAX_SCHEDULED_REMINDERS, alertDays = ALERT_WINDOW_DAYS, dues = [] }: PlanOptions = {},
 ): ReminderItem[] {
-  const until = new Date(now.getTime() + windowHours * HOUR_MS);
+  const doseUntil = new Date(now.getTime() + windowHours * HOUR_MS);
+  const alertUntil = new Date(now.getTime() + alertDays * 24 * HOUR_MS);
   const items: ReminderItem[] = [];
-  const consider = (item: ReminderItem) => {
+  const consider = (item: ReminderItem, until: Date) => {
     if (item.at > now && item.at <= until) items.push(item);
   };
+  const alert = (kind: ReminderKind, petId: string, refId: string, day: string) =>
+    consider({ kind, petId, refId, at: alertAt(day), key: `${refId}_${kind}` }, alertUntil);
 
   for (const { petId, id, med } of meds) {
     if (med.status !== 'active') continue;
 
-    for (const at of doseTimesBetween(med, new Date(now.getTime() + 1), until)) {
+    for (const at of doseTimesBetween(med, new Date(now.getTime() + 1), doseUntil)) {
       const key = doseLogId(id, at);
-      if (!loggedKeys.has(key)) consider({ kind: 'dose', petId, medicationId: id, at, key });
+      if (!loggedKeys.has(key)) consider({ kind: 'dose', petId, refId: id, at, key }, doseUntil);
     }
 
     if (med.endDate) {
-      consider({ kind: 'ends_today', petId, medicationId: id, at: alertAt(med.endDate), key: `${id}_ends_today` });
-      if (med.endDate > med.startDate) {
-        consider({
-          kind: 'ends_tomorrow',
-          petId,
-          medicationId: id,
-          at: alertAt(addDaysIso(med.endDate, -1)),
-          key: `${id}_ends_tomorrow`,
-        });
-      }
+      alert('ends_today', petId, id, med.endDate);
+      if (med.endDate > med.startDate) alert('ends_tomorrow', petId, id, addDaysIso(med.endDate, -1));
     }
 
     if (med.expiresOn) {
-      consider({ kind: 'expires_today', petId, medicationId: id, at: alertAt(med.expiresOn), key: `${id}_expires_today` });
-      consider({
-        kind: 'expires_soon',
-        petId,
-        medicationId: id,
-        at: alertAt(addDaysIso(med.expiresOn, -EXPIRY_WARNING_DAYS)),
-        key: `${id}_expires_soon`,
-      });
+      alert('expires_today', petId, id, med.expiresOn);
+      alert('expires_soon', petId, id, addDaysIso(med.expiresOn, -EXPIRY_WARNING_DAYS));
     }
+  }
+
+  for (const { petId, id, source, dueOn } of dues) {
+    alert(`${source}_today`, petId, id, dueOn);
+    alert(`${source}_tomorrow`, petId, id, addDaysIso(dueOn, -1));
   }
 
   items.sort((a, b) => a.at.getTime() - b.at.getTime() || a.key.localeCompare(b.key));

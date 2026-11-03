@@ -24,11 +24,14 @@ async function seedPet(petId: string, ownerId: string, others: Record<string, st
   await db().doc(`pets/${petId}`).set({ ownerId, name: 'Pet', origin: 'manual' });
   await db().doc(`pets/${petId}/medications/m1`).set({ name: 'Remédio' });
   await db().doc(`pets/${petId}/dose_logs/d1`).set({ medicationId: 'm1' });
+  await db().doc(`pets/${petId}/vaccines/v1`).set({ name: 'V10' });
+  await db().doc(`pets/${petId}/health_events/e1`).set({ title: 'Exame' });
   await db().doc(`pet_members/${petId}_${ownerId}`).set({ petId, uid: ownerId, role: 'owner' });
   for (const [uid, role] of Object.entries(others)) {
     await db().doc(`pet_members/${petId}_${uid}`).set({ petId, uid, role });
   }
   await save(`pets/${petId}/profile.jpg`);
+  await save(`pets/${petId}/attachments/m1/receita.pdf`); // anexos de saúde (receitas, exames)
 }
 
 beforeEach(async () => {
@@ -66,13 +69,14 @@ describe('deleteAccountCascade', () => {
 
     // Pets da Alice, com subcoleções, vínculos e arquivos
     for (const path of [
-      'pets/p1', 'pets/p1/medications/m1', 'pets/p1/dose_logs/d1',
-      'pets/p2', 'pets/p2/medications/m1',
+      'pets/p1', 'pets/p1/medications/m1', 'pets/p1/dose_logs/d1', 'pets/p1/vaccines/v1', 'pets/p1/health_events/e1',
+      'pets/p2', 'pets/p2/medications/m1', 'pets/p2/vaccines/v1', 'pets/p2/health_events/e1',
       'pet_members/p1_alice', 'pet_members/p1_bob', 'pet_members/p2_alice',
     ]) {
       expect(await exists(path), path).toBe(false);
     }
     expect(await fileExists('pets/p1/profile.jpg')).toBe(false);
+    expect(await fileExists('pets/p1/attachments/m1/receita.pdf')).toBe(false);
     expect(await fileExists('pets/p2/profile.jpg')).toBe(false);
 
     // Dados pessoais
@@ -83,10 +87,11 @@ describe('deleteAccountCascade', () => {
     await expect(auth().getUser('alice')).rejects.toMatchObject({ code: 'auth/user-not-found' });
 
     // Dados dos outros continuam intactos
-    for (const path of ['pets/p3', 'pets/p3/medications/m1', 'pet_members/p3_carol', 'users/bob', 'reports/r2']) {
+    for (const path of ['pets/p3', 'pets/p3/medications/m1', 'pets/p3/vaccines/v1', 'pets/p3/health_events/e1', 'pet_members/p3_carol', 'users/bob', 'reports/r2']) {
       expect(await exists(path), path).toBe(true);
     }
     expect(await fileExists('pets/p3/profile.jpg')).toBe(true);
+    expect(await fileExists('pets/p3/attachments/m1/receita.pdf')).toBe(true);
     expect(await fileExists('users/carol/report.jpg')).toBe(true);
     expect((await auth().getUser('bob')).uid).toBe('bob');
   });
@@ -101,6 +106,7 @@ describe('deleteAccountCascade', () => {
     expect(await exists('users/bob')).toBe(false);
     expect(await exists('pets/p1')).toBe(true);
     expect(await exists('pets/p1/medications/m1')).toBe(true);
+    expect(await exists('pets/p1/vaccines/v1')).toBe(true);
     expect(await exists('pet_members/p1_alice')).toBe(true);
     expect(await fileExists('pets/p1/profile.jpg')).toBe(true);
   });
@@ -121,8 +127,11 @@ describe('deletePetCascade', () => {
 
     expect(await exists('pets/p1')).toBe(false);
     expect(await exists('pets/p1/dose_logs/d1')).toBe(false);
+    expect(await exists('pets/p1/vaccines/v1')).toBe(false);
+    expect(await exists('pets/p1/health_events/e1')).toBe(false);
     expect(await exists('pet_members/p1_bob')).toBe(false);
     expect(await fileExists('pets/p1/profile.jpg')).toBe(false);
+    expect(await fileExists('pets/p1/attachments/m1/receita.pdf')).toBe(false);
     expect(await exists('pets/p2')).toBe(true);
     expect(await exists('pet_members/p2_alice')).toBe(true);
   });

@@ -4,7 +4,8 @@ import type { ReminderItem, ReminderKind } from '@petcare/shared';
 export type ReminderData = {
   kind: ReminderKind;
   petId: string;
-  medicationId: string;
+  /** ID do medicamento, da vacina ou do evento de saúde. */
+  refId: string;
   /** Doses: horário agendado em ISO UTC (chave do registro de dose). */
   scheduledFor?: string;
 };
@@ -19,9 +20,11 @@ export type NotificationPayload = {
 
 export type ReminderLookupEntry = {
   petName: string;
-  medName: string;
-  doseAmount: string;
-  doseUnit: string;
+  /** Nome do medicamento, da vacina ou título do evento. */
+  name: string;
+  /** Só medicamentos: dose "como prescrita". */
+  doseAmount?: string;
+  doseUnit?: string;
   expiresOn?: string;
 };
 
@@ -29,8 +32,8 @@ export type ReminderLookup = ReadonlyMap<string, ReminderLookupEntry>;
 
 type Translate = (key: string, options?: Record<string, unknown>) => string;
 
-/** Chave do mapa de consulta: um remédio é identificado por pet + ID. */
-export const lookupKey = (petId: string, medicationId: string) => `${petId}/${medicationId}`;
+/** Chave do mapa de consulta: um item é identificado por pet + ID. */
+export const lookupKey = (petId: string, refId: string) => `${petId}/${refId}`;
 
 /**
  * Transforma o plano de lembretes em notificações já com texto no idioma da pessoa.
@@ -44,16 +47,16 @@ export function buildPayloads(
 ): NotificationPayload[] {
   const payloads: NotificationPayload[] = [];
   for (const item of plan) {
-    const info = lookup.get(lookupKey(item.petId, item.medicationId));
+    const info = lookup.get(lookupKey(item.petId, item.refId));
     if (!info) continue;
     const vars = {
       pet: info.petName,
-      name: info.medName,
-      amount: info.doseAmount,
-      unit: info.doseUnit,
+      name: info.name,
+      amount: info.doseAmount ?? '',
+      unit: info.doseUnit ?? '',
       date: info.expiresOn ? formatDate(info.expiresOn) : '',
     };
-    const data: ReminderData = { kind: item.kind, petId: item.petId, medicationId: item.medicationId };
+    const data: ReminderData = { kind: item.kind, petId: item.petId, refId: item.refId };
     if (item.kind === 'dose') data.scheduledFor = item.at.toISOString();
     payloads.push({
       id: item.key,

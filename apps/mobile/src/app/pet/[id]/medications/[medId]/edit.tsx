@@ -9,12 +9,14 @@ import { reportError } from '@/core/errors/report';
 import { useMedications } from '@/features/medications/hooks';
 import { updateMedication } from '@/features/medications/medications.repo';
 import { MedicationForm } from '@/features/medications/MedicationForm';
+import { useScannedCode } from '@/features/medications/scanInbox';
 
 export default function EditMedicationScreen() {
   const { id, medId } = useLocalSearchParams<{ id: string; medId: string }>();
   const { t } = useTranslation('meds');
   const router = useRouter();
   const { data, loading } = useMedications(id);
+  const scannedCode = useScannedCode();
   const [submitting, setSubmitting] = useState(false);
   const [error, setError] = useState<string>();
 
@@ -50,6 +52,8 @@ export default function EditMedicationScreen() {
       submitting={submitting}
       submitError={error}
       showStatus
+      scannedCode={scannedCode}
+      onScan={() => router.push({ pathname: '/pet/[id]/medications/scan', params: { id } })}
       onSubmit={onSubmit}
     />
   );

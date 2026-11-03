@@ -51,8 +51,11 @@ function ActiveBridge({ useLastResponse }: { useLastResponse: () => Notification
         track({ name: 'dose_logged', outcome: input.outcome });
         return result;
       },
-      openMedication: (petId, medicationId) =>
-        router.push({ pathname: '/pet/[id]/medications/[medId]', params: { id: petId, medId: medicationId } }),
+      openTarget: ({ kind, petId, refId }) => {
+        if (kind.startsWith('vaccine_')) router.push({ pathname: '/pet/[id]/health/vaccine/[vid]', params: { id: petId, vid: refId } });
+        else if (kind.startsWith('event_')) router.push({ pathname: '/pet/[id]/health/event/[eid]', params: { id: petId, eid: refId } });
+        else router.push({ pathname: '/pet/[id]/medications/[medId]', params: { id: petId, medId: refId } });
+      },
       markHandled,
     }).catch((error) => reportError('reminders.notificationAction', error));
   }, [response, router, user.uid, user.displayName]);

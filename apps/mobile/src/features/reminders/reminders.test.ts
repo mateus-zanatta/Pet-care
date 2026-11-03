@@ -28,16 +28,16 @@ const med = (over: Partial<MedicationData> = {}): MedicationData => ({
 const plan = (over: Partial<MedicationData> = {}): PlanMedication[] => [{ petId: 'p1', id: 'm1', med: med(over) }];
 
 describe('buildPayloads (texto das notificações)', () => {
-  const lookup = new Map([[lookupKey('p1', 'm1'), { petName: 'Mel', medName: 'Amoxicilina', doseAmount: '1/2', doseUnit: 'comprimido', expiresOn: '2027-03-01' }]]);
+  const lookup = new Map([[lookupKey('p1', 'm1'), { petName: 'Mel', name: 'Amoxicilina', doseAmount: '1/2', doseUnit: 'comprimido', expiresOn: '2027-03-01' }]]);
   const item = (kind: ReminderItem['kind'], at = new Date('2026-11-04T17:00:00.000Z')): ReminderItem => ({
-    kind, petId: 'p1', medicationId: 'm1', at, key: `m1_${kind}`,
+    kind, petId: 'p1', refId: 'm1', at, key: `m1_${kind}`,
   });
 
   it('dose: pet, medicamento e a dose "como prescrita"; o horário agendado vai nos dados', () => {
     const [p] = buildPayloads([item('dose')], lookup, t, formatDate);
     expect(p!.title).toBe('Mel: hora do medicamento');
     expect(p!.body).toBe('Amoxicilina — 1/2 comprimido');
-    expect(p!.data).toEqual({ kind: 'dose', petId: 'p1', medicationId: 'm1', scheduledFor: '2026-11-04T17:00:00.000Z' });
+    expect(p!.data).toEqual({ kind: 'dose', petId: 'p1', refId: 'm1', scheduledFor: '2026-11-04T17:00:00.000Z' });
   });
 
   it.each(['ends_tomorrow', 'ends_today', 'expires_soon', 'expires_today'] as const)('aviso %s tem título e texto, sem horário de dose', (kind) => {
@@ -47,13 +47,27 @@ describe('buildPayloads (texto das notificações)', () => {
     expect(p!.data.scheduledFor).toBeUndefined();
   });
 
+  it('vacina e evento de saúde: título do item e data combinada, sem dados de dose', () => {
+    const l = new Map([
+      [lookupKey('p1', 'v1'), { petName: 'Mel', name: 'V10' }],
+      [lookupKey('p1', 'e1'), { petName: 'Mel', name: 'Vermífugo' }],
+    ]);
+    const mk = (kind: ReminderItem['kind'], refId: string): ReminderItem => ({ kind, petId: 'p1', refId, at: new Date('2026-11-20T12:00:00.000Z'), key: `${refId}_${kind}` });
+    const [vt, vh, et, eh] = buildPayloads([mk('vaccine_tomorrow', 'v1'), mk('vaccine_today', 'v1'), mk('event_tomorrow', 'e1'), mk('event_today', 'e1')], l, t, formatDate);
+    expect(vt).toMatchObject({ title: 'Mel: vacina amanhã', body: 'Amanhã é a data combinada para: V10.', data: { kind: 'vaccine_tomorrow', refId: 'v1' } });
+    expect(vh!.title).toBe('Mel: vacina hoje');
+    expect(et).toMatchObject({ title: 'Mel: compromisso amanhã', body: 'Amanhã: Vermífugo.' });
+    expect(eh!.body).toBe('Hoje: Vermífugo.');
+    expect(vt!.data.scheduledFor).toBeUndefined();
+  });
+
   it('validade usa a data formatada na língua da pessoa', () => {
     const [p] = buildPayloads([item('expires_soon')], lookup, t, formatDate);
     expect(p!.body).toBe('Amoxicilina vence em 01/03/2027.');
   });
 
   it('ignora itens de remédios que não estão mais na lista (apagados)', () => {
-    expect(buildPayloads([{ ...item('dose'), medicationId: 'ghost' }], lookup, t, formatDate)).toEqual([]);
+    expect(buildPayloads([{ ...item('dose'), refId: 'ghost' }], lookup, t, formatDate)).toEqual([]);
   });
 
   it('NENHUM texto do app sugere medicamento, dose ou diagnóstico', () => {
@@ -77,7 +91,7 @@ describe('syncReminders', () => {
     now: () => now, t, formatDate, hasPermission: async () => true, apply, ...over,
   });
   const sources = (over: Partial<MedicationData> = {}, logged: string[] = []) => ({
-    meds: plan(over), petNames: { p1: 'Mel' }, loggedKeys: new Set(logged),
+    meds: plan(over), dues: [], dueTitles: {}, petNames: { p1: 'Mel' }, loggedKeys: new Set(logged),
   });
 
   beforeEach(() => {
@@ -113,6 +127,19 @@ describe('syncReminders', () => {
     await expect(syncReminders(sources({}, [first]), deps())).resolves.toEqual({ scheduled: 8 });
   });
 
+  it('agenda também a próxima dose de vacinas e eventos, com o título certo', async () => {
+    const withDues = {
+      ...sources({}, []),
+      meds: [],
+      dues: [{ petId: 'p1', id: 'v1', source: 'vaccine' as const, dueOn: '2026-11-20' }],
+      dueTitles: { [lookupKey('p1', 'v1')]: 'V10' },
+    };
+    await expect(syncReminders(withDues, deps())).resolves.toEqual({ scheduled: 2 });
+    const payloads = (apply.mock.calls as unknown as [{ title: string; body: string }[]][])[0]![0];
+    expect(payloads.map((p) => p.title)).toEqual(['Mel: vacina amanhã', 'Mel: vacina hoje']);
+    expect(payloads[0]!.body).toContain('V10');
+  });
+
   it('remédio suspenso deixa de ter lembretes: a lista agendada é esvaziada', async () => {
     await syncReminders(sources(), deps());
     await expect(syncReminders(sources({ status: 'suspended' }), deps())).resolves.toEqual({ scheduled: 0 });
@@ -121,7 +148,7 @@ describe('syncReminders', () => {
 });
 
 describe('handleNotificationResponse', () => {
-  const response = (action: string, data: unknown = { kind: 'dose', petId: 'p1', medicationId: 'm1', scheduledFor: '2026-11-04T11:00:00.000Z' }, id = 'n1'): NotificationResponseLike => ({
+  const response = (action: string, data: unknown = { kind: 'dose', petId: 'p1', refId: 'm1', scheduledFor: '2026-11-04T11:00:00.000Z' }, id = 'n1'): NotificationResponseLike => ({
     actionIdentifier: action,
     notification: { request: { identifier: id, content: { data } } },
   });
@@ -131,7 +158,7 @@ describe('handleNotificationResponse', () => {
       uid: 'u1',
       displayName: 'Ana',
       logDose: jest.fn(async () => undefined),
-      openMedication: jest.fn(),
+      openTarget: jest.fn(),
       markHandled: async (key) => {
         if (handled.has(key)) return false;
         handled.add(key);
@@ -158,7 +185,7 @@ describe('handleNotificationResponse', () => {
   it('toque comum abre o medicamento, sem registrar dose', async () => {
     const deps = make();
     await expect(handleNotificationResponse(response('expo.modules.notifications.actions.DEFAULT'), deps)).resolves.toBe('opened');
-    expect(deps.openMedication).toHaveBeenCalledWith('p1', 'm1');
+    expect(deps.openTarget).toHaveBeenCalledWith({ kind: 'dose', petId: 'p1', refId: 'm1' });
     expect(deps.logDose).not.toHaveBeenCalled();
   });
 
@@ -177,9 +204,17 @@ describe('handleNotificationResponse', () => {
     expect(deps.logDose).not.toHaveBeenCalled();
   });
 
+  it('tocar numa notificação de vacina ou evento diz qual tela abrir', async () => {
+    const deps = make();
+    await handleNotificationResponse(response('expo.modules.notifications.actions.DEFAULT', { kind: 'vaccine_today', petId: 'p1', refId: 'v1' }, 'n10'), deps);
+    expect(deps.openTarget).toHaveBeenCalledWith({ kind: 'vaccine_today', petId: 'p1', refId: 'v1' });
+    await handleNotificationResponse(response('expo.modules.notifications.actions.DEFAULT', { kind: 'event_tomorrow', petId: 'p1', refId: 'e1' }, 'n11'), deps);
+    expect(deps.openTarget).toHaveBeenLastCalledWith({ kind: 'event_tomorrow', petId: 'p1', refId: 'e1' });
+  });
+
   it('aviso de validade não tem botão de dose: "Dei a dose" nele é ignorado', async () => {
     const deps = make();
-    const warning = response('given', { kind: 'expires_soon', petId: 'p1', medicationId: 'm1' });
+    const warning = response('given', { kind: 'expires_soon', petId: 'p1', refId: 'm1' });
     await expect(handleNotificationResponse(warning, deps)).resolves.toBe('ignored');
     expect(deps.logDose).not.toHaveBeenCalled();
   });

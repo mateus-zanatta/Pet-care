@@ -1,9 +1,13 @@
-import { type PlanMedication, buildReminderPlan } from '@petcare/shared';
+import { type PlanDue, type PlanMedication, buildReminderPlan } from '@petcare/shared';
 import { type NotificationPayload, type ReminderLookup, buildPayloads, lookupKey, reminderSignature } from './reminderContent';
 
 /** Tudo o que o agendador precisa saber, reunido de todos os pets que a pessoa pode cuidar. */
 export type ReminderSources = {
   meds: PlanMedication[];
+  /** Próximas doses combinadas de vacinas e eventos de saúde (ex.: próximo vermífugo). */
+  dues: PlanDue[];
+  /** Título de cada vacina/evento, por `lookupKey(petId, id)`. */
+  dueTitles: Record<string, string>;
   petNames: Record<string, string>;
   /** IDs dos registros de dose já feitos ("dei" ou "pulei"). */
   loggedKeys: Set<string>;
@@ -38,19 +42,25 @@ export async function syncReminders(sources: ReminderSources, deps: SyncDeps): P
     return 'skipped-permission';
   }
 
-  const plan = buildReminderPlan(sources.meds, deps.now(), sources.loggedKeys);
-  const lookup: ReminderLookup = new Map(
-    sources.meds.map(({ petId, id, med }) => [
+  const plan = buildReminderPlan(sources.meds, deps.now(), sources.loggedKeys, { dues: sources.dues });
+  const lookup: ReminderLookup = new Map([
+    ...sources.meds.map(
+      ({ petId, id, med }): [string, ReminderLookup extends ReadonlyMap<string, infer V> ? V : never] => [
+        lookupKey(petId, id),
+        {
+          petName: sources.petNames[petId] ?? '',
+          name: med.name,
+          doseAmount: med.dose.amount,
+          doseUnit: med.dose.unit,
+          expiresOn: med.expiresOn,
+        },
+      ],
+    ),
+    ...sources.dues.map(({ petId, id }): [string, ReminderLookup extends ReadonlyMap<string, infer V> ? V : never] => [
       lookupKey(petId, id),
-      {
-        petName: sources.petNames[petId] ?? '',
-        medName: med.name,
-        doseAmount: med.dose.amount,
-        doseUnit: med.dose.unit,
-        expiresOn: med.expiresOn,
-      },
+      { petName: sources.petNames[petId] ?? '', name: sources.dueTitles[lookupKey(petId, id)] ?? '' },
     ]),
-  );
+  ]);
   const payloads = buildPayloads(plan, lookup, deps.t, deps.formatDate);
 
   const signature = reminderSignature(payloads);

@@ -1,15 +1,17 @@
-import type { DoseLog, Medication } from '@petcare/shared';
+import type { DoseLog, HealthEvent, Medication, PlanDue, Vaccine } from '@petcare/shared';
 import { doseLogId } from '@petcare/shared';
 import { reportError } from '@/core/errors/report';
 import { subscribeDoseLogs, subscribeMedications } from '@/features/medications/medications.repo';
+import { subscribeHealthEvents, subscribeVaccines } from '@/features/health/health.repo';
 import { subscribeMemberships, subscribePet } from '@/features/pets/pets.repo';
+import { lookupKey } from './reminderContent';
 import type { ReminderSources } from './syncReminders';
 
 const HOUR_MS = 3_600_000;
 /** Registros de dose de até 48 h atrás bastam para saber o que já foi dado nas próximas 72 h. */
 const LOGS_LOOKBACK_HOURS = 48;
 
-type PetState = { stop: () => void; meds?: Medication[]; logs?: DoseLog[] };
+type PetState = { stop: () => void; meds?: Medication[]; logs?: DoseLog[]; vaccines?: Vaccine[]; events?: HealthEvent[] };
 
 /**
  * Acompanha, em tempo real, os pets em que a pessoa dá doses (dono e cuidador) e junta tudo num único
@@ -27,12 +29,24 @@ export function subscribeReminderSources(
   const emit = () => {
     if (stopped) return;
     const meds: ReminderSources['meds'] = [];
+    const dues: PlanDue[] = [];
+    const dueTitles: Record<string, string> = {};
     const loggedKeys = new Set<string>();
     for (const [petId, state] of pets) {
       for (const med of state.meds ?? []) meds.push({ petId, id: med.id, med });
       for (const log of state.logs ?? []) loggedKeys.add(log.id || doseLogId(log.medicationId, new Date(log.scheduledFor)));
+      for (const v of state.vaccines ?? []) {
+        if (!v.nextDoseOn) continue;
+        dues.push({ petId, id: v.id, source: 'vaccine', dueOn: v.nextDoseOn });
+        dueTitles[lookupKey(petId, v.id)] = v.name;
+      }
+      for (const e of state.events ?? []) {
+        if (!e.nextDate) continue;
+        dues.push({ petId, id: e.id, source: 'event', dueOn: e.nextDate });
+        dueTitles[lookupKey(petId, e.id)] = e.title;
+      }
     }
-    onChange({ meds, petNames: { ...names }, loggedKeys });
+    onChange({ meds, dues, dueTitles, petNames: { ...names }, loggedKeys });
   };
 
   const watchPet = (petId: string): PetState => {
@@ -54,6 +68,22 @@ export function subscribeReminderSources(
           emit();
         },
         (e) => reportError('reminders.medications', e),
+      ),
+      subscribeVaccines(
+        petId,
+        (items) => {
+          state.vaccines = items;
+          emit();
+        },
+        (e) => reportError('reminders.vaccines', e),
+      ),
+      subscribeHealthEvents(
+        petId,
+        (items) => {
+          state.events = items;
+          emit();
+        },
+        (e) => reportError('reminders.healthEvents', e),
       ),
       subscribeDoseLogs(
         petId,

@@ -136,4 +136,45 @@ describe('MedicationForm', () => {
     await waitFor(() => expect(onSubmit).toHaveBeenCalledTimes(1));
     expect(medicationFormToData(onSubmit.mock.calls[0]![0]).place).toEqual({ kind: 'clinic', text: 'Clínica Pet Feliz' });
   });
+
+  describe('código de barras pela câmera', () => {
+    it('sem a leitura disponível, o botão não aparece', async () => {
+      await setup();
+      expect(screen.queryByRole('button', { name: 'Ler código de barras com a câmera' })).toBeNull();
+    });
+
+    it('o botão abre a leitura da câmera', async () => {
+      const onScan = jest.fn();
+      await renderWithProviders(
+        <MedicationForm initialValues={medicationFormDefaults('2026-11-04')} submitting={false} onScan={onScan} scannedCode={null} onSubmit={jest.fn()} />,
+      );
+      await fireEvent.press(screen.getByRole('button', { name: 'Ler código de barras com a câmera' }));
+      expect(onScan).toHaveBeenCalledTimes(1);
+    });
+
+    it('o código lido preenche o campo e continua editável', async () => {
+      await renderWithProviders(
+        <MedicationForm initialValues={medicationFormDefaults('2026-11-04')} submitting={false} onScan={jest.fn()} scannedCode="7891234567895" onSubmit={jest.fn()} />,
+      );
+      expect(screen.getByLabelText('Código de barras (opcional)').props.value).toBe('7891234567895');
+      await fireEvent.changeText(screen.getByLabelText('Código de barras (opcional)'), '789');
+      expect(screen.getByLabelText('Código de barras (opcional)').props.value).toBe('789');
+    });
+  });
+
+  it('NÃO mostra "Corrija os campos destacados" quando o formulário é válido e foi enviado', async () => {
+    const onSubmit = await setup();
+    await fillBasics();
+    await fireEvent.changeText(screen.getByLabelText('A cada quantas horas'), '8');
+    await fireEvent.press(screen.getByRole('radio', { name: 'Uso contínuo' }));
+    await fireEvent.press(screen.getByRole('button', { name: 'Salvar medicamento' }));
+    await waitFor(() => expect(onSubmit).toHaveBeenCalledTimes(1));
+    expect(screen.queryByText('Corrija os campos destacados.')).toBeNull();
+  });
+
+  it('mostra "Corrija os campos destacados" quando há erro', async () => {
+    await setup();
+    await fireEvent.press(screen.getByRole('button', { name: 'Salvar medicamento' }));
+    expect(await screen.findByText('Corrija os campos destacados.')).toBeTruthy();
+  });
 });

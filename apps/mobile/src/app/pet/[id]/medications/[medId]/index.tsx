@@ -28,6 +28,8 @@ import { useUser } from '@/features/auth/AuthProvider';
 import { formatClock, formatWhen, frequencySummary } from '@/features/medications/format';
 import { useDoseLogs, useMedications } from '@/features/medications/hooks';
 import { deleteMedication, logDose, setMedicationStatus, undoDose } from '@/features/medications/medications.repo';
+import { AttachmentsSection } from '@/features/attachments/AttachmentsSection';
+import { deleteAllAttachmentFiles } from '@/features/attachments/attachments.service';
 import { useMemberships } from '@/features/pets/hooks';
 
 /** Início do histórico mostrado: 14 dias atrás, à 00:00 UTC (valor estável durante o dia). */
@@ -113,6 +115,7 @@ export default function MedicationDetailScreen() {
         onPress: () =>
           void run(
             async () => {
+              await deleteAllAttachmentFiles(med.attachments);
               await deleteMedication(id, med.id);
               router.back();
             },
@@ -201,6 +204,13 @@ export default function MedicationDetailScreen() {
           ))
         )}
       </View>
+
+      <AttachmentsSection
+        target={{ collection: 'medications', petId: id, recordId: med.id }}
+        attachments={med.attachments ?? []}
+        canEdit={canEdit}
+        title={t('detail.attachments')}
+      />
 
       {canEdit ? (
         <View style={{ gap: 8 }}>

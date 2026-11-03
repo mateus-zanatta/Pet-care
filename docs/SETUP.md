@@ -126,6 +126,22 @@ Abra o app instalado no celular e leia o QR Code. Na aba **Conta** aparece um av
 >
 >   Se o seu Wi-Fi estiver classificado como **Pública** (Configurações → Rede e Internet → Wi-Fi → Propriedades da rede → *Tipo de perfil de rede*), troque para **Privada** — é o que o `-Profile Private` exige. Para remover a regra depois: `Remove-NetFirewallRule -DisplayName "Emulador Firestore 8085"`. Não precisa reiniciar nada: abra o app de novo e confira a linha `OK Firestore (canal das gravações)`.
 >
+>   **Se continuar sem responder**, o motivo mais comum é uma regra de **bloqueio** para o Java (criada quando você clicou em *Cancelar* no aviso "Permitir que o Java acesse a rede?" do Windows). **Regras de bloqueio vencem as de permissão**, então a regra da porta não adianta. No mesmo PowerShell de administrador:
+>
+>   ```powershell
+>   Get-NetFirewallRule -Direction Inbound -Action Block -Enabled True | Where-Object { $_.DisplayName -match 'java|jdk' } | Select-Object DisplayName, Profile
+>   ```
+>
+>   Se aparecer alguma linha, desative essas regras:
+>
+>   ```powershell
+>   Get-NetFirewallRule -Direction Inbound -Action Block -Enabled True | Where-Object { $_.DisplayName -match 'java|jdk' } | Disable-NetFirewallRule
+>   ```
+>
+>   Por fim, confira se o emulador está de fato escutando para a rede (e não só em `127.0.0.1`): rode `netstat -ano | findstr :8085`. Deve aparecer `0.0.0.0:8085` com `LISTENING`. Se aparecer só `127.0.0.1:8085`, você subiu com `npm run emulators` em vez de `npm run emulators:lan`.
+>
+>   Tudo o que ficou pendente está em [`PENDENCIAS.md`](PENDENCIAS.md).
+>
 > Quando o servidor não confirma a gravação em 10 s, o app avisa com um alerta ("o servidor não confirmou a gravação... a foto não foi enviada") em vez de falhar em silêncio. Pets antigos que ficaram só no celular (ou de antes de reiniciar os emuladores) não podem ser excluídos: **limpe os dados do app** (Android: Configurações → Apps → o app → Armazenamento → Limpar dados) e cadastre de novo.
 
 > **Se o app não conectar:** confirme que celular e computador estão na mesma rede, que o IP no `.env.local` é o atual (ele pode mudar), que o Firewall permitiu o Java e o Node, e que você reiniciou o `expo start` depois de mudar o `.env.local` (use `--clear`).
@@ -192,6 +208,27 @@ Esta fase usa **notificações**, que são um módulo nativo: é preciso **gerar
 ```
 
 Isso muda a configuração nativa, então vale fazer **antes** de gerar o build do passo 2. (Não alterei o seu `app.config.ts` para não sobrescrever os dados do seu projeto Expo.)
+
+### 2.5 Testar vacinas, linha do tempo, anexos e PDF (Fase 2B)
+
+**Não precisa de um novo build** se você já gerou o build da Fase 2A (ele já trazia câmera, impressão e compartilhamento). Se ainda não gerou, siga o 2.4 primeiro.
+
+Mas as **regras de segurança mudaram** (vacinas, registros de saúde e anexos em PDF). Os emuladores só leem as regras quando iniciam:
+
+1. Feche os emuladores com `Ctrl+C` e suba de novo: `npm run emulators:lan`.
+2. Atualize o JavaScript do app: `npx expo start --dev-client --clear`.
+
+**Roteiro de teste (no celular):**
+
+1. Abra um pet → **Saúde**. Toque em **Registrar vacina**: preencha nome, data de aplicação e a **data da próxima dose** (aceite a permissão de notificações se pedir). Ao salvar, a vacina abre; ali você anexa documentos.
+2. Em **Anexos**: tire uma foto, escolha uma foto da galeria e escolha um **PDF** (deve ficar sem recorte). Abra cada um (abre no navegador), remova um (pede confirmação).
+3. Volte a **Saúde** → **Registrar consulta, exame ou outro**: escolha o tipo (ex.: *Vermífugo*), título, data e a **próxima aplicação**. Confira a lista **Próximas datas** e o **Histórico** (mais recente primeiro).
+4. Em **Medicamentos** → abra ou crie um medicamento: no formulário, toque em **Ler código de barras com a câmera** e aponte para uma embalagem. O número preenche o campo (você pode editar). Na tela do medicamento, anexe a **foto da receita**.
+5. Em **Saúde** → **Exportar histórico em PDF**: o PDF abre na folha de compartilhamento do sistema. Compartilhe para você mesmo (WhatsApp, e-mail...) e **abra o arquivo**: confira os dados do animal, medicamentos, vacinas e a linha do tempo. Confirme que **não aparecem** nome/telefone do tutor, endereço nem foto.
+6. Teste a **notificação de próxima data**: crie uma vacina com próxima dose **amanhã**; ela avisa hoje às 09:00 se ainda for antes disso, e amanhã às 09:00 (veja a lista de notificações do app).
+7. Exclua uma vacina com anexo e confira (em <http://localhost:4000/storage>) que o arquivo sumiu.
+
+> Sem o Firewall liberado (veja acima), os dados e os anexos ficam só no celular: o teste funciona, mas nada chega ao emulador e o envio de arquivos pode demorar. Se aparecer "o servidor não confirmou", é isso.
 
 ---
 

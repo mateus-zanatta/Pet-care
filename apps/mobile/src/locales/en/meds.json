@@ -93,7 +93,8 @@
     "savePending": "The server has not confirmed yet. The medication is saved on this device and will be sent when the connection is back.",
     "reminderHint": "You will get a reminder when each dose is due.",
     "fixErrors": "Fix the highlighted fields.",
-    "timeLabel": "New time"
+    "timeLabel": "New time",
+    "scan": "Scan barcode with the camera"
   },
   "detail": {
     "title": "Medication",
@@ -137,7 +138,8 @@
     "statusFailed": "Could not change the status.",
     "deleteTitle": "Delete {{name}}?",
     "deleteBody": "The medication and its dose history will be erased. This cannot be undone.",
-    "deleteFailed": "Could not delete the medication."
+    "deleteFailed": "Could not delete the medication.",
+    "attachments": "Prescription photo and attachments"
   },
   "notify": {
     "channel": "Medication reminders",
@@ -162,11 +164,37 @@
     "expires_today": {
       "title": "{{pet}}: medication expires today",
       "body": "{{name}} expires today ({{date}}). Do not use it after the expiry date."
+    },
+    "vaccine_tomorrow": {
+      "title": "{{pet}}: vaccine tomorrow",
+      "body": "Tomorrow is the planned date for: {{name}}."
+    },
+    "vaccine_today": {
+      "title": "{{pet}}: vaccine today",
+      "body": "Today is the planned date for: {{name}}."
+    },
+    "event_tomorrow": {
+      "title": "{{pet}}: appointment tomorrow",
+      "body": "Tomorrow: {{name}}."
+    },
+    "event_today": {
+      "title": "{{pet}}: appointment today",
+      "body": "Today: {{name}}."
     }
   },
   "when": {
     "today": "today at {{time}}",
     "tomorrow": "tomorrow at {{time}}",
     "other": "{{date}} at {{time}}"
+  },
+  "scan": {
+    "title": "Scan barcode",
+    "hint": "Point the camera at the barcode on the package.",
+    "permissionTitle": "We need the camera",
+    "permissionBody": "The camera is only used to read the medication's barcode. Nothing is recorded.",
+    "allow": "Allow camera",
+    "settings": "Open settings",
+    "cancel": "Type it instead",
+    "unavailable": "Camera scanning is not available in this version of the app. Type the code or update the app."
   }
 }

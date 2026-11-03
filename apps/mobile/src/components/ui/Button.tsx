@@ -67,7 +67,7 @@ export function Button({
         ) : icon ? (
           <Icon name={icon} size={22} color={fgToken} />
         ) : null}
-        <AppText variant="heading" style={{ color: palette.fg }} numberOfLines={2}>
+        <AppText variant="heading" align="center" style={{ color: palette.fg, flexShrink: 1 }} numberOfLines={2}>
           {label}
         </AppText>
       </View>
@@ -84,5 +84,6 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     borderWidth: 2,
   },
-  row: { flexDirection: 'row', alignItems: 'center', gap: 10 },
+  // maxWidth + flexShrink no texto: rótulos longos quebram em 2 linhas em vez de serem cortados.
+  row: { flexDirection: 'row', alignItems: 'center', gap: 10, maxWidth: '100%' },
 });

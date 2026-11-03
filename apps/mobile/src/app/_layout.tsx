@@ -69,6 +69,7 @@ function Navigation() {
   const { t: tl } = useTranslation('legal');
   const { t: tr } = useTranslation('rga');
   const { t: tm } = useTranslation('meds');
+  const { t: tsa } = useTranslation('health');
 
   useEffect(() => {
     if (status !== 'loading') void SplashScreen.hideAsync();
@@ -135,6 +136,14 @@ function Navigation() {
           <Stack.Screen name="pet/[id]/medications/new" options={{ title: tm('form.newTitle') }} />
           <Stack.Screen name="pet/[id]/medications/[medId]/index" options={{ title: tm('detail.title') }} />
           <Stack.Screen name="pet/[id]/medications/[medId]/edit" options={{ title: tm('form.editTitle') }} />
+          <Stack.Screen name="pet/[id]/medications/scan" options={{ title: tm('scan.title') }} />
+          <Stack.Screen name="pet/[id]/health/index" options={{ title: tsa('title') }} />
+          <Stack.Screen name="pet/[id]/health/vaccine/new" options={{ title: tsa('vaccine.newTitle') }} />
+          <Stack.Screen name="pet/[id]/health/vaccine/[vid]/index" options={{ title: tsa('vaccine.detailTitle') }} />
+          <Stack.Screen name="pet/[id]/health/vaccine/[vid]/edit" options={{ title: tsa('vaccine.editTitle') }} />
+          <Stack.Screen name="pet/[id]/health/event/new" options={{ title: tsa('event.newTitle') }} />
+          <Stack.Screen name="pet/[id]/health/event/[eid]/index" options={{ title: tsa('event.detailTitle') }} />
+          <Stack.Screen name="pet/[id]/health/event/[eid]/edit" options={{ title: tsa('event.editTitle') }} />
           <Stack.Screen name="rescue/index" options={{ title: th('rescue.title') }} />
           <Stack.Screen name="report/index" options={{ title: th('report.title') }} />
           <Stack.Screen name="account/delete" options={{ title: tc('delete.title') }} />

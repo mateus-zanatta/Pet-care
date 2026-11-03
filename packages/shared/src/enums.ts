@@ -54,3 +54,9 @@ export type FrequencyKind = (typeof FREQUENCY_KIND)[number];
 
 export const DOSE_OUTCOME = ['given', 'skipped'] as const;
 export type DoseOutcome = (typeof DOSE_OUTCOME)[number];
+
+/* ------------------------- Saúde: vacinas e eventos (Fase 2B) ------------------------- */
+
+/** Tipos da linha do tempo de saúde (vacinas têm coleção própria). */
+export const HEALTH_EVENT_TYPE = ['consultation', 'deworming', 'flea_tick', 'exam', 'surgery', 'other'] as const;
+export type HealthEventType = (typeof HEALTH_EVENT_TYPE)[number];

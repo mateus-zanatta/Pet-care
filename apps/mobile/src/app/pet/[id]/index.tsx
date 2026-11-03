@@ -27,6 +27,7 @@ export default function PetDetailScreen() {
   const { t: te } = useTranslation('errors');
   const { t: tr } = useTranslation('rga');
   const { t: tm } = useTranslation('meds');
+  const { t: th } = useTranslation('health');
   const router = useRouter();
   const user = useUser();
   const { data: pet, loading } = usePet(id);
@@ -133,7 +134,15 @@ export default function PetDetailScreen() {
 
       <View style={{ gap: 8 }}>
         <Button
+          icon="heart"
+          label={th('title')}
+          accessibilityHint={th('disclaimer')}
+          onPress={() => router.push({ pathname: '/pet/[id]/health', params: { id: pet.id } })}
+          disabled={deleting}
+        />
+        <Button
           icon="medkit"
+          variant="secondary"
           label={tm('title')}
           accessibilityHint={tm('disclaimer')}
           onPress={() => router.push({ pathname: '/pet/[id]/medications', params: { id: pet.id } })}

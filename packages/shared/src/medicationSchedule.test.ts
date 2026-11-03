@@ -238,14 +238,61 @@ describe('buildReminderPlan', () => {
     ]);
   });
 
-  it('avisa a validade 7 dias antes e no dia — só o que cai na janela', () => {
+  it('avisa a validade 7 dias antes e no dia (olhando 30 dias à frente)', () => {
     const soon = buildReminderPlan([med('m1', { expiresOn: '2026-11-11' })], now, new Set()).filter((i) => i.kind !== 'dose');
-    expect(soon).toEqual([]); // o aviso de 04/11 09:00 já passou (agora são 12:00) e 11/11 está fora da janela de 72 h
+    // o aviso de 04/11 09:00 já passou (agora são 12:00); sobra o do próprio dia
+    expect(soon.map((i) => [i.kind, ...fmt([i.at])])).toEqual([['expires_today', `11/11 ${ALERT_TIME}`]]);
     const near = buildReminderPlan([med('m1', { expiresOn: '2026-11-12' })], now, new Set()).filter((i) => i.kind !== 'dose');
-    expect(near.map((i) => [i.kind, ...fmt([i.at])])).toEqual([['expires_soon', `05/11 ${ALERT_TIME}`]]);
+    expect(near.map((i) => [i.kind, ...fmt([i.at])])).toEqual([
+      ['expires_soon', `05/11 ${ALERT_TIME}`],
+      ['expires_today', `12/11 ${ALERT_TIME}`],
+    ]);
+  });
+
+  it('avisos além de 30 dias ainda não são agendados', () => {
+    expect(buildReminderPlan([med('m1', { expiresOn: '2027-03-01' })], now, new Set()).filter((i) => i.kind !== 'dose')).toEqual([]);
   });
 
   it('não gera aviso de validade já vencida (passado)', () => {
     expect(buildReminderPlan([med('m1', { expiresOn: '2026-10-01', frequency: { kind: 'interval', everyHours: 168 } })], now, new Set()).filter((i) => i.kind !== 'dose')).toEqual([]);
+  });
+
+  describe('próxima dose de vacinas e eventos de saúde', () => {
+    const due = (source: 'vaccine' | 'event', dueOn: string, id = 'v1') => ({ petId: 'p1', id, source, dueOn });
+
+    it('avisa na véspera e no dia, às 09:00', () => {
+      const plan = buildReminderPlan([], now, new Set(), { dues: [due('vaccine', '2026-11-20')] });
+      expect(plan.map((i) => [i.kind, i.refId, ...fmt([i.at])])).toEqual([
+        ['vaccine_tomorrow', 'v1', `19/11 ${ALERT_TIME}`],
+        ['vaccine_today', 'v1', `20/11 ${ALERT_TIME}`],
+      ]);
+    });
+
+    it('eventos (vermífugo, antipulgas...) usam os avisos próprios', () => {
+      const plan = buildReminderPlan([], now, new Set(), { dues: [due('event', '2026-11-06', 'e1')] });
+      expect(plan.map((i) => i.kind)).toEqual(['event_tomorrow', 'event_today']);
+    });
+
+    it('não agenda o que já passou nem o que está além de 30 dias', () => {
+      const plan = buildReminderPlan([], now, new Set(), { dues: [due('vaccine', '2026-11-03', 'old'), due('vaccine', '2027-02-01', 'far')] });
+      expect(plan).toEqual([]);
+    });
+
+    it('as chaves não colidem entre remédios, vacinas e eventos', () => {
+      const plan = buildReminderPlan(
+        [med('m1', { endDate: '2026-11-06', frequency: { kind: 'interval', everyHours: 168 } })],
+        now,
+        new Set(),
+        { dues: [due('vaccine', '2026-11-06', 'v1'), due('event', '2026-11-06', 'e1')] },
+      );
+      expect(new Set(plan.map((i) => i.key)).size).toBe(plan.length);
+    });
+
+    it('as mais próximas vêm primeiro quando passa do limite', () => {
+      const dues = Array.from({ length: 40 }, (_, i) => due('vaccine', `2026-11-${String(5 + (i % 20)).padStart(2, '0')}`, `v${i}`));
+      const plan = buildReminderPlan([], now, new Set(), { dues, max: 10 });
+      expect(plan).toHaveLength(10);
+      expect(plan.map((i) => i.at.getTime())).toEqual([...plan.map((i) => i.at.getTime())].sort((a, b) => a - b));
+    });
   });
 });

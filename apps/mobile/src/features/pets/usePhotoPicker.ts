@@ -12,7 +12,7 @@ function toPhoto(result: ImagePicker.ImagePickerResult): PickedPhoto | null {
   return asset ? { uri: asset.uri, width: asset.width, height: asset.height } : null;
 }
 
-const baseOptions: ImagePicker.ImagePickerOptions = {
+const profileOptions: ImagePicker.ImagePickerOptions = {
   mediaTypes: ['images'],
   allowsEditing: true,
   aspect: [1, 1],
@@ -20,14 +20,26 @@ const baseOptions: ImagePicker.ImagePickerOptions = {
   exif: false,
 };
 
+/** Documentos (receitas, exames): a foto inteira, sem recorte. */
+const documentOptions: ImagePicker.ImagePickerOptions = {
+  mediaTypes: ['images'],
+  allowsEditing: false,
+  quality: 0.9,
+  exif: false,
+};
+
+type PickOptions = { /** false = foto inteira, sem recorte quadrado (documentos). */ crop?: boolean };
+
+const optionsFor = ({ crop = true }: PickOptions) => (crop ? profileOptions : documentOptions);
+
 /** Galeria: o seletor do sistema não exige permissão de acesso às fotos. */
-export async function pickFromGallery(): Promise<PickedPhoto | null> {
-  return toPhoto(await ImagePicker.launchImageLibraryAsync(baseOptions));
+export async function pickFromGallery(options: PickOptions = {}): Promise<PickedPhoto | null> {
+  return toPhoto(await ImagePicker.launchImageLibraryAsync(optionsFor(options)));
 }
 
 /** Câmera: a permissão só é pedida aqui, na hora de usar. */
-export async function takePhoto(): Promise<PickedPhoto | null> {
+export async function takePhoto(options: PickOptions = {}): Promise<PickedPhoto | null> {
   const permission = await ImagePicker.requestCameraPermissionsAsync();
   if (!permission.granted) throw new PermissionDeniedError('camera');
-  return toPhoto(await ImagePicker.launchCameraAsync(baseOptions));
+  return toPhoto(await ImagePicker.launchCameraAsync(optionsFor(options)));
 }

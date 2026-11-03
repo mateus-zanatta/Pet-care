@@ -83,7 +83,35 @@ Pontos de projeto:
 - **Android**: sem a permissão especial de "alarme exato" (que o Google Play restringe a apps de alarme/calendário), o sistema pode entregar a notificação **alguns minutos depois** do horário (Android 12+). Para lembrete de remédio é aceitável; se virar problema, dá para pedir a permissão e declarar o uso na Play.
 - Se o aparelho **mudar de fuso**, os lembretes só se ajustam quando o app abrir de novo.
 - **Não validado em aparelho** (veja o roteiro de teste no `SETUP.md`): o cálculo e o texto das notificações têm testes automáticos, mas a entrega real das notificações só dá para conferir no celular.
-- Ficam para a **Fase 2B**: foto da receita, leitura do código de barras pela câmera, vacinas, linha do tempo de saúde e PDF.
+- Foto da receita, leitura do código de barras, vacinas, linha do tempo de saúde e PDF foram entregues na **Fase 2B** (veja a próxima seção).
+
+## Saúde: vacinas, linha do tempo, anexos e PDF (Fase 2B)
+
+| Caminho | Quem acessa | Observações |
+|---|---|---|
+| `pets/{petId}/vaccines/{id}` | membros leem; dono/cuidador escrevem | nome, data de aplicação, **próxima dose** (opcional), lote, veterinário (nome + CRMV), local, observações, anexos |
+| `pets/{petId}/health_events/{id}` | iguais | consulta, vermífugo, antipulgas/carrapatos, exame, cirurgia ou outro: tipo, data, título, descrição/resultado, **próxima data** (opcional), veterinário, local, anexos |
+| Storage `pets/{petId}/attachments/{registro}/{id}.jpg\|pdf` | membros leem; dono/cuidador gravam | foto ou PDF de até **10 MB**, no máximo **10 por registro** |
+
+**Linha do tempo** (`healthTimeline.ts`, testada): junta vacinas e registros, do mais recente ao mais antigo, e destaca as "próximas datas". Os medicamentos continuam na própria tela.
+
+**Lembretes de próxima data**: vacinas e registros com data futura avisam na **véspera e no dia, às 09:00**. Esses avisos (e os de fim de tratamento/validade) olham **30 dias** à frente; as doses continuam na janela de 72 h. O limite de 60 notificações vale para tudo junto, e as mais próximas têm prioridade.
+
+**Anexos** (`features/attachments/`): foto da câmera ou da galeria (**sem recorte**, ao contrário da foto do pet), ou PDF. Fotos são reduzidas e **recodificadas em JPEG, o que descarta a localização (EXIF)**; PDFs são enviados como estão. Se o registro no documento falhar, o arquivo enviado é apagado (sem órfãos); se a pessoa exclui o registro, os arquivos vão junto; excluir o pet apaga tudo (a Function `deletePet` remove o prefixo `pets/{id}/`, e há teste disso). A foto da receita é um anexo do medicamento.
+
+**Código de barras** (`expo-camera`): a leitura só **preenche o campo**; o app **não consulta nenhuma base de produtos**, então nunca sugere nem completa nome, dose ou bula. O resultado volta ao formulário por uma "caixa de correio" em memória (`scanInbox.ts`).
+
+**PDF do histórico** (`features/health/report.ts`): HTML → PDF no próprio aparelho (`expo-print`) e compartilhado pelo `expo-sharing`. **Todo texto digitado é escapado** (há teste com `<script>`). Leva: dados do animal, medicamentos "como prescritos", vacinas e linha do tempo. **Não leva**: dados do tutor (nome, telefone), endereço, foto, nem o conteúdo ou o nome dos anexos (só a quantidade). O arquivo fica na pasta temporária do app; o sistema limpa depois.
+
+**Compatibilidade com builds antigos:** `expo-camera`, `expo-print`, `expo-sharing` e `expo-notifications` são carregados com tolerância. Um build do app sem esses módulos continua abrindo; só o recurso afetado avisa "não disponível nesta versão".
+
+**Limitações conhecidas (honestidade):**
+
+- **Não validado em aparelho**: a lógica, os textos e as regras têm testes automáticos, mas câmera, seletor de PDF, compartilhamento e a aparência do PDF só dá para conferir no celular (veja o roteiro no `SETUP.md`).
+- A **aparência do PDF** depende do motor de impressão do Android/iOS; tabelas largas podem quebrar linha de forma diferente entre aparelhos.
+- A exportação em PDF ainda **não é exclusiva do plano Premium**: o controle de plano chega na Fase 6.
+- Anexos enviados **sem conexão** com o servidor ficam pendentes (o Firestore guarda e sincroniza depois), mas o arquivo vai direto ao Storage e precisa de rede.
+- Não há busca nem filtro por tipo na linha do tempo (ficaria para uma próxima versão, se fizer falta).
 
 ## Importação do RG Animal (Fase 1.5)
 

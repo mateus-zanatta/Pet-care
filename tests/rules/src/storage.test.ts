@@ -62,6 +62,37 @@ describe('Storage: pets/{petId}/...', () => {
   });
 });
 
+describe('Storage: pets/{petId}/attachments/... (receitas e exames)', () => {
+  const pdf = { contentType: 'application/pdf' };
+
+  it('aceita PDF e imagem de até 10 MB nos anexos; dono e cuidador enviam, visualizador não', async () => {
+    await assertSucceeds(uploadBytes(ref(storage('alice'), 'pets/p1/attachments/r1/a.pdf'), bytes(10), pdf));
+    await assertSucceeds(uploadBytes(ref(storage('carol'), 'pets/p1/attachments/r1/b.jpg'), bytes(10), jpeg));
+    await assertFails(uploadBytes(ref(storage('vera'), 'pets/p1/attachments/r1/c.pdf'), bytes(10), pdf));
+    await assertFails(uploadBytes(ref(storage('bob'), 'pets/p1/attachments/r1/d.pdf'), bytes(10), pdf));
+  });
+
+  it('recusa outros tipos e arquivos acima de 10 MB', async () => {
+    await assertFails(uploadBytes(ref(storage('alice'), 'pets/p1/attachments/r1/a.html'), bytes(10), { contentType: 'text/html' }));
+    await assertFails(uploadBytes(ref(storage('alice'), 'pets/p1/attachments/r1/a.zip'), bytes(10), { contentType: 'application/zip' }));
+    await assertFails(uploadBytes(ref(storage('alice'), 'pets/p1/attachments/r1/big.pdf'), bytes(11 * 1024 * 1024), pdf));
+  });
+
+  it('PDF só vale nos anexos: fora dessa pasta continua só imagem', async () => {
+    await assertFails(uploadBytes(ref(storage('alice'), 'pets/p1/profile.pdf'), bytes(10), pdf));
+  });
+
+  it('membros (inclusive visualizador) leem; estranhos não; cuidador apaga, visualizador não', async () => {
+    await env.withSecurityRulesDisabled(async (ctx) => {
+      await uploadBytes(ref(ctx.storage(), 'pets/p1/attachments/r1/a.pdf'), bytes(10), pdf);
+    });
+    await assertSucceeds(getBytes(ref(storage('vera'), 'pets/p1/attachments/r1/a.pdf')));
+    await assertFails(getBytes(ref(storage('bob'), 'pets/p1/attachments/r1/a.pdf')));
+    await assertFails(deleteObject(ref(storage('vera'), 'pets/p1/attachments/r1/a.pdf')));
+    await assertSucceeds(deleteObject(ref(storage('carol'), 'pets/p1/attachments/r1/a.pdf')));
+  });
+});
+
 describe('Storage: users/{uid}/... (dados privados)', () => {
   it('só a própria pessoa acessa', async () => {
     await assertSucceeds(uploadBytes(ref(storage('alice'), 'users/alice/x.bin'), bytes(5)));

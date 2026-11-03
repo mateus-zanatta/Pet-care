@@ -72,6 +72,11 @@ export function PetForm({
     defaultValues: initialValues,
     mode: 'onTouched',
   });
+
+  // O aviso depende dos ERROS reais (e não de `isValid`): o React Hook Form só calcula `isValid` se ele for lido já
+  // na 1ª renderização, e um formulário válido ficava mostrando "Confira os campos destacados".
+  const { errors, isSubmitted } = formState;
+  const showFixErrors = isSubmitted && Object.keys(errors).length > 0;
   const [photo, setPhoto] = useState<PhotoChange>({ kind: 'none' });
   const [photoError, setPhotoError] = useState<string>();
   const [useRgaPhoto, setUseRgaPhoto] = useState(true);
@@ -141,7 +146,7 @@ export function PetForm({
       }
     >
       {headerSlot}
-      {formState.isSubmitted && !formState.isValid ? <Banner tone="error">{t('form.fixErrors')}</Banner> : null}
+      {showFixErrors ? <Banner tone="error">{t('form.fixErrors')}</Banner> : null}
       {submitError ? <Banner tone="error">{submitError}</Banner> : null}
 
       <View style={{ alignItems: 'center', gap: 8 }}>
