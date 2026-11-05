@@ -201,13 +201,7 @@ Esta fase usa **notificações**, que são um módulo nativo: é preciso **gerar
 
 > Lembrete: com o **Firewall do Windows** bloqueando o Firestore (veja acima), os dados ficam só no celular e não chegam ao servidor — o teste dos itens 1 a 7 funciona, mas nada é gravado no emulador. Libere a porta 8085 para ver os dados em <http://localhost:4000/firestore>.
 
-**Ícone da notificação no Android (opcional, uma linha):** sem isto, o ícone pequeno da notificação aparece como um quadrado cinza. Em `apps/mobile/app.config.ts`, na lista `plugins`, acrescente:
-
-```ts
-['expo-notifications', { icon: './assets/images/android-icon-monochrome.png', color: '#0F6B5C' }],
-```
-
-Isso muda a configuração nativa, então vale fazer **antes** de gerar o build do passo 2. (Não alterei o seu `app.config.ts` para não sobrescrever os dados do seu projeto Expo.)
+**Ícone da notificação no Android:** já vem configurado a partir da Fase 3 (plugin `expo-notifications` no `app.config.ts`). Builds gerados antes disso mostram um quadrado cinza no lugar do ícone.
 
 ### 2.5 Testar vacinas, linha do tempo, anexos e PDF (Fase 2B)
 
@@ -229,6 +223,46 @@ Mas as **regras de segurança mudaram** (vacinas, registros de saúde e anexos e
 7. Exclua uma vacina com anexo e confira (em <http://localhost:4000/storage>) que o arquivo sumiu.
 
 > Sem o Firewall liberado (veja acima), os dados e os anexos ficam só no celular: o teste funciona, mas nada chega ao emulador e o envio de arquivos pode demorar. Se aparecer "o servidor não confirmou", é isso.
+
+### 2.6 Testar o Perto de mim (Fase 3)
+
+Esta fase traz dois módulos nativos novos (**localização** e **mapa**), então é preciso **um novo development build**:
+
+1. Instale as dependências novas (o `package-lock.json` mudou):
+
+   ```bash
+   npm install
+   ```
+
+2. Gere e instale o novo app (o mesmo comando de antes):
+
+   ```bash
+   cd apps/mobile
+   eas build --profile development-emulators --platform android
+   ```
+
+   Enquanto ele não fica pronto, o app antigo continua abrindo; a aba Perto de mim só avisa que a localização "não está disponível nesta versão" e aceita endereço digitado.
+
+3. **Reinicie os emuladores** (regras e Cloud Functions novas): `Ctrl+C` e `npm run emulators:lan` **na raiz**.
+
+> **De onde vêm os locais:** a Cloud Function roda no emulador **do seu PC** e consulta o OpenStreetMap pela internet do PC. O celular só fala com o seu PC (porta 5001, Node, que já funciona). Por isso a busca funciona **mesmo com o Firewall barrando o Firestore**; só os **favoritos** (gravados no Firestore) ficam presos no celular enquanto a porta 8085 estiver bloqueada.
+
+**Roteiro de teste (no celular):**
+
+1. Abra a aba **Perto de mim**. Leia a explicação e toque em **Usar minha localização**. O sistema pede a permissão "durante o uso": aceite.
+2. Confira a lista do mais perto ao mais longe, com tipo, distância, "Aberto agora / Fechado agora / Horário não informado" e endereço.
+3. Teste os filtros: **Clínica veterinária / Pet shop / Abrigo/ONG**, **Emergência/24 h** e **Aberto agora**. Se vierem poucos resultados, toque em **Ampliar a busca**.
+4. Num local com telefone, toque em **Ligar** (abre o discador). Toque em **Como chegar** e escolha Google Maps ou Waze.
+5. Toque em **Trocar local** e digite um endereço (ex.: o de uma clínica que você conhece). Confira se a lista muda.
+6. Com uma conta (não anônima): **Favoritar** um local, marcar **Só favoritos**, e depois, em **Medicamentos → Adicionar**, ver o favorito em **"Seus locais favoritos"** no campo local.
+7. **Sugerir um local** (no fim da tela) e **Corrigir dados** (no cartão): envie uma sugestão e confira em <http://localhost:4000/firestore> a coleção `place_suggestions` com `status: pending`.
+8. **Home:** o card **Veterinária mais próxima** deve mostrar a clínica mais perto (depois que você já liberou a localização no passo 1).
+9. **Resgate:** toque em **Ver atendimento de emergência perto de mim**: a lista abre com os atendimentos 24 h primeiro.
+10. Negue a permissão (Configurações do Android → Apps → o app → Permissões → Localização → Não permitir) e reabra a aba: deve aparecer **Abrir configurações** e a busca por endereço.
+
+> **Se a busca não trouxer nada** ("O serviço de mapas não respondeu agora"): olhe o terminal dos emuladores. A linha `places_provider_failed` diz o motivo: `HTTP 429` ou `504` é o servidor público do OpenStreetMap ocupado (espere um pouco e tente de novo); erro de conexão quer dizer que o seu PC não alcançou a internet (antivírus ou firewall bloqueando o **Node**). Depois que uma busca dá certo, ela fica guardada por 24 h e não depende mais do OpenStreetMap.
+
+**Mapa no Android (opcional, depende de cobrança):** o mapa usa o Google Maps, que exige uma chave com **conta de cobrança no Google Cloud** (o mesmo tipo de bloqueio do Blaze). Sem a chave, a tela funciona em **lista**, e "Como chegar" abre o app de mapas. Quando tiver a chave: no site do Expo, em *Project → Environment variables*, crie `GOOGLE_MAPS_ANDROID_API_KEY` (ambiente *development*), gere um novo build, e o botão **Lista / Mapa** aparece. No iPhone o mapa usa o Apple Maps e não precisa de chave.
 
 ---
 

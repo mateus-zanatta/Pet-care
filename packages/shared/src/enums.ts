@@ -60,3 +60,13 @@ export type DoseOutcome = (typeof DOSE_OUTCOME)[number];
 /** Tipos da linha do tempo de saúde (vacinas têm coleção própria). */
 export const HEALTH_EVENT_TYPE = ['consultation', 'deworming', 'flea_tick', 'exam', 'surgery', 'other'] as const;
 export type HealthEventType = (typeof HEALTH_EVENT_TYPE)[number];
+
+/* ------------------------------ Perto de mim (Fase 3) ------------------------------ */
+
+/** Tipos de local. Emergência/24 h é uma marca do local (não um tipo), porque uma clínica pode ser 24 h. */
+export const PLACE_CATEGORY = ['vet', 'petshop', 'shelter'] as const;
+export type PlaceCategory = (typeof PLACE_CATEGORY)[number];
+
+/** De onde veio o local: OpenStreetMap (grátis) agora; Google Places pode entrar depois. */
+export const PLACE_SOURCE = ['osm', 'google'] as const;
+export type PlaceSource = (typeof PLACE_SOURCE)[number];

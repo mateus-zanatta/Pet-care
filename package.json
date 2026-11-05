@@ -14,11 +14,12 @@
     "test": "npm run test --workspaces --if-present",
     "test:emulators": "npm run build:functions && firebase emulators:exec --only auth,firestore,storage,functions --project demo-petcare \"npm run test:rules --workspace=@petcare/rules-tests && npm run test:emu --workspace=@petcare/functions\"",
     "test:rules": "firebase emulators:exec --only firestore,storage --project demo-petcare \"npm run test:rules --workspace=@petcare/rules-tests\"",
-    "emulators": "npm run build:functions && firebase emulators:start --only auth,firestore,storage,functions --project demo-petcare",
+    "emulators": "npm run emulators:free && npm run build:functions && firebase emulators:start --only auth,firestore,storage,functions --project demo-petcare",
     "build:functions": "npm run build --workspace=@petcare/functions",
-    "emulators:lan": "npm run build:functions && firebase emulators:start --config firebase.lan.json --only auth,firestore,storage,functions --project demo-petcare",
+    "emulators:lan": "npm run emulators:free && npm run build:functions && firebase emulators:start --config firebase.lan.json --only auth,firestore,storage,functions --project demo-petcare",
     "rga:sample": "npm run rga --workspace=@petcare/functions -- sample",
-    "rga:inspect": "npm run rga --workspace=@petcare/functions -- inspect"
+    "rga:inspect": "npm run rga --workspace=@petcare/functions -- inspect",
+    "emulators:free": "npm run emulators:free --workspace=@petcare/functions"
   },
   "engines": {
     "node": ">=22.13"

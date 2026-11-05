@@ -36,6 +36,7 @@
     "timesTooMany": "Use at most 12 times.",
     "timesDuplicate": "There are repeated times.",
     "crmvInvalid": "The CRMV number must contain digits only.",
-    "nextBeforeDate": "The next date must be after the record date."
+    "nextBeforeDate": "The next date must be after the record date.",
+    "phoneInvalid": "Invalid phone. Example: (11) 3333-4444"
   }
 }

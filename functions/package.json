@@ -12,7 +12,8 @@
     "test": "vitest run",
     "serve": "npm run build && firebase emulators:start --only functions,auth,firestore,storage",
     "test:emu": "vitest run --config vitest.emu.config.ts",
-    "rga": "node scripts/rga-tools.mjs"
+    "rga": "node scripts/rga-tools.mjs",
+    "emulators:free": "node scripts/free-ports.mjs"
   },
   "dependencies": {
     "firebase-admin": "^14.5.0",

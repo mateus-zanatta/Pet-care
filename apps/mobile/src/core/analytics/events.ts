@@ -16,5 +16,10 @@ export type AnalyticsEvent =
   | { name: 'vaccine_created' }
   | { name: 'health_event_created' }
   | { name: 'health_report_exported' }
+  | { name: 'nearby_search'; source: 'gps' | 'address' }
+  | { name: 'place_call' }
+  | { name: 'place_directions'; app: 'google' | 'waze' | 'apple' }
+  | { name: 'place_favorite' }
+  | { name: 'place_suggestion'; kind: 'new' | 'fix' }
   | { name: 'rga_import_ok' }
   | { name: 'rga_import_falhou'; reason: string };

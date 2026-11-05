@@ -12,9 +12,9 @@ import { fakeGoogleServiceInfoPlist, fakeGoogleServicesJson } from './config/fak
  * Nada disso é segredo. O Expo confere se batem com o projeto; se um deles estiver errado,
  * o build para com uma mensagem dizendo qual.
  */
-const EAS_PROJECT_ID = process.env.EAS_PROJECT_ID ?? 'COLE-AQUI-O-PROJECT-ID';
+const EAS_PROJECT_ID = process.env.EAS_PROJECT_ID ?? '2d4092b3-0d00-4131-965e-1f6f2f042c83';
 /** "Slug" do projeto no Expo (aparece em Details). Precisa ser idêntico ao do site. */
-const EXPO_SLUG = process.env.EXPO_SLUG ?? 'petcare';
+const EXPO_SLUG = process.env.EXPO_SLUG ?? 'pet-care';
 /** Nome da conta/organização dona do projeto (aparece em Details). Deixe vazio se for a sua conta pessoal. */
 const EXPO_OWNER = process.env.EXPO_OWNER ?? '';
 
@@ -65,6 +65,13 @@ const googleServicesAndroid = EMULATOR_ONLY
 const googleServicesIos = EMULATOR_ONLY
   ? GENERATED_IOS
   : existingFile('GOOGLE_SERVICES_PLIST', './firebase/GoogleService-Info.plist');
+
+/**
+ * Chave do Google Maps para o MAPA no Android (o iPhone usa o Apple Maps, sem chave).
+ * Exige conta de cobrança no Google Cloud. Sem ela, a tela "Perto de mim" funciona em LISTA e "Como chegar"
+ * abre o app de mapas do celular. Para ativar: variável de ambiente GOOGLE_MAPS_ANDROID_API_KEY no EAS.
+ */
+const GOOGLE_MAPS_ANDROID_API_KEY = process.env.GOOGLE_MAPS_ANDROID_API_KEY ?? '';
 
 /** Builds de desenvolvimento precisam falar com os emuladores por HTTP (sem https) na rede local. */
 const ALLOW_CLEARTEXT = EMULATOR_ONLY || BUILD_PROFILE === 'development';
@@ -162,6 +169,22 @@ export default ({ config }: ConfigContext): ExpoConfig => ({
         microphonePermission: false,
       },
     ],
+    [
+      'expo-location',
+      {
+        // Só "durante o uso" (nunca em segundo plano). Textos traduzidos em src/locales/native/*.json.
+        locationWhenInUsePermission: 'Allow $(PRODUCT_NAME) to use your location to show vets, pet shops and shelters near you.',
+      },
+    ],
+    ['react-native-maps', GOOGLE_MAPS_ANDROID_API_KEY ? { androidGoogleMapsApiKey: GOOGLE_MAPS_ANDROID_API_KEY } : {}],
+    [
+      'expo-notifications',
+      {
+        // Ícone pequeno das notificações no Android (silhueta branca; sem ele aparece um quadrado cinza).
+        icon: './assets/images/android-icon-monochrome.png',
+        color: '#0F6B5C',
+      },
+    ],
     'expo-apple-authentication',
     '@react-native-firebase/app',
     '@react-native-firebase/auth',
@@ -175,5 +198,7 @@ export default ({ config }: ConfigContext): ExpoConfig => ({
   extra: {
     // Preenchido por `eas init` (veja EAS_PROJECT_ID no topo deste arquivo).
     eas: { projectId: EAS_PROJECT_ID },
+    // O app só mostra o mapa no Android se o build tiver a chave (a chave em si não vai para cá).
+    googleMapsAndroid: GOOGLE_MAPS_ANDROID_API_KEY !== '',
   },
 });

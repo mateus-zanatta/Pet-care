@@ -2,3 +2,5 @@
 export { deleteAccount } from './account/deleteAccount';
 export { deletePet } from './pets/deletePet';
 export { importRga } from './rga/importRga';
+export { searchPlaces } from './places/searchPlaces';
+export { suggestPlace } from './places/suggestPlace';

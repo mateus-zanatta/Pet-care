@@ -1,0 +1,107 @@
+{
+  "title": "Near me",
+  "privacy": "Your exact location never leaves your phone: the search only uses the approximate area (about 1 km).",
+  "intro": {
+    "title": "Find help near you",
+    "body": "Vet clinics, 24-hour emergency care, pet shops and shelters, closest first."
+  },
+  "useLocation": "Use my location",
+  "locating": "Finding your location…",
+  "searching": "Searching places…",
+  "address": {
+    "label": "Or type an address, neighborhood or city",
+    "placeholder": "E.g. Av. Paulista, São Paulo",
+    "search": "Search address",
+    "notFound": "We could not find that address. Try with neighborhood and city."
+  },
+  "permission": {
+    "denied": "Location is blocked for the app. Allow it in settings or type an address.",
+    "settings": "Open settings",
+    "servicesOff": "Your phone's location is turned off. Turn it on or type an address.",
+    "timeout": "We could not get your location in time. Try again or type an address.",
+    "unavailable": "Using your location is not available in this version of the app. Type an address or update the app."
+  },
+  "from": {
+    "gps": "Near you",
+    "address": "Near: {{label}}"
+  },
+  "changeLocation": "Change place",
+  "filters": {
+    "type": "Type",
+    "all": "All",
+    "emergency": "Emergency/24 h",
+    "openNow": "Open now",
+    "favorites": "Favorites only"
+  },
+  "category": {
+    "vet": "Vet clinic",
+    "petshop": "Pet shop",
+    "shelter": "Shelter/NGO"
+  },
+  "results": {
+    "count_one": "{{count}} place within {{radius}} km",
+    "count_other": "{{count}} places within {{radius}} km",
+    "empty": "Nothing found with these filters within {{radius}} km.",
+    "widen": "Widen the search to {{radius}} km",
+    "list": "List",
+    "map": "Map",
+    "view": "Show as"
+  },
+  "card": {
+    "emergency": "Emergency/24 h",
+    "open": "Open now",
+    "closed": "Closed now",
+    "hoursUnknown": "Opening hours not informed",
+    "hours": "Hours: {{hours}}",
+    "distance": "{{distance}} away",
+    "call": "Call",
+    "directions": "Directions",
+    "favorite": "Add {{name}} to favorites",
+    "unfavorite": "Remove {{name}} from favorites",
+    "fix": "Fix details"
+  },
+  "directions": {
+    "title": "Directions",
+    "google": "Google Maps",
+    "waze": "Waze",
+    "apple": "Apple Maps",
+    "failed": "Could not open the maps app."
+  },
+  "callFailed": "Could not open the dialer.",
+  "favoriteNeedAccount": "Create an account to save favorite places.",
+  "favoriteFailed": "Could not save the favorite.",
+  "favoritePending": "Favorite saved on this device; it will be sent when the connection is back.",
+  "errors": {
+    "network": "No connection to the server. Check the internet and try again.",
+    "unavailable": "The maps service did not respond right now. Try again in a few minutes.",
+    "unknown": "Could not search places. Please try again."
+  },
+  "retry": "Try again",
+  "emergencyMode": "Showing emergency and 24-hour care first.",
+  "attribution": "Data © OpenStreetMap contributors. Call before you go.",
+  "suggest": {
+    "cta": "Suggest a place",
+    "titleNew": "Suggest a place",
+    "titleFix": "Fix details",
+    "intro": "Know a clinic, pet shop or shelter that is missing, or has wrong details? Send it to us: suggestions are reviewed before appearing in the app.",
+    "name": "Place name",
+    "category": "Type",
+    "address": "Address",
+    "phone": "Phone (optional)",
+    "is24h": "Open 24 hours / emergency",
+    "note": "What is wrong or missing? (optional)",
+    "send": "Send suggestion",
+    "sending": "Sending…",
+    "sent": "Thank you! The suggestion will be reviewed before appearing in the app.",
+    "failed": "Could not send. Please try again.",
+    "limit": "You reached today's limit of suggestions. Try again tomorrow.",
+    "needAccount": "Create an account to suggest places."
+  },
+  "home": {
+    "cta": "See vets near me",
+    "hint": "Use the Near me tab to see the closest vet here.",
+    "none": "No vet found within 10 km.",
+    "loading": "Looking for the closest one…"
+  },
+  "medicationFavorites": "Your favorite places"
+}

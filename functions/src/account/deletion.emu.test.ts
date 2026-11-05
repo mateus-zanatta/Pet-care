@@ -54,6 +54,9 @@ describe('deleteAccountCascade', () => {
     await db().doc('users/bob').set({ locale: 'en' });
     await db().doc('entitlements/alice').set({ premium: true });
     await db().doc('favorite_places/f1').set({ ownerId: 'alice' });
+    await db().doc('place_suggestions/s1').set({ createdBy: 'alice', name: 'Clínica', status: 'pending' });
+    await db().doc('place_suggestions/s2').set({ createdBy: 'carol', name: 'Pet shop', status: 'pending' });
+    await db().doc('suggestion_quota/alice_2026-11-04').set({ uid: 'alice', count: 1 });
     await db().doc('reports/r1').set({ ownerId: 'alice' });
     await db().doc('reports/r1/media/m1').set({ sha256: 'abc' });
     await db().doc('reports/r2').set({ ownerId: 'carol' });
@@ -80,14 +83,14 @@ describe('deleteAccountCascade', () => {
     expect(await fileExists('pets/p2/profile.jpg')).toBe(false);
 
     // Dados pessoais
-    for (const path of ['users/alice', 'entitlements/alice', 'favorite_places/f1', 'reports/r1', 'reports/r1/media/m1']) {
+    for (const path of ['users/alice', 'entitlements/alice', 'favorite_places/f1', 'place_suggestions/s1', 'suggestion_quota/alice_2026-11-04', 'reports/r1', 'reports/r1/media/m1']) {
       expect(await exists(path), path).toBe(false);
     }
     expect(await fileExists('users/alice/report.jpg')).toBe(false);
     await expect(auth().getUser('alice')).rejects.toMatchObject({ code: 'auth/user-not-found' });
 
     // Dados dos outros continuam intactos
-    for (const path of ['pets/p3', 'pets/p3/medications/m1', 'pets/p3/vaccines/v1', 'pets/p3/health_events/e1', 'pet_members/p3_carol', 'users/bob', 'reports/r2']) {
+    for (const path of ['pets/p3', 'pets/p3/medications/m1', 'pets/p3/vaccines/v1', 'pets/p3/health_events/e1', 'pet_members/p3_carol', 'users/bob', 'reports/r2', 'place_suggestions/s2']) {
       expect(await exists(path), path).toBe(true);
     }
     expect(await fileExists('pets/p3/profile.jpg')).toBe(true);

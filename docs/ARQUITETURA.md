@@ -9,13 +9,13 @@ Pet-care/
 │  ├─ eas.json                  Perfis de build (development, preview, production)
 │  └─ src/
 │     ├─ app/                   Só ROTAS (telas finas). Nunca coloque testes aqui: viram rotas.
-│     ├─ features/              Um módulo por assunto: auth, pets, rga, medications, reminders, account, legal
+│     ├─ features/              Um módulo por assunto: auth, pets, rga, medications, reminders, health, attachments, nearby, account, legal
 │     ├─ components/ui + form/  Botões, campos, chips... acessíveis e com tema
 │     ├─ core/                  firebase, i18n, theme, analytics, errors, media, storage, dates
 │     ├─ locales/{pt-BR,en}/    TODOS os textos (um JSON por área) + textos nativos (permissões)
 │     └─ __tests__/             Testes de telas e de navegação com as rotas reais
 ├─ packages/shared/             Enums + schemas Zod (fonte única de "o que é um pet")
-├─ functions/                   Cloud Functions: deleteAccount, deletePet
+├─ functions/                   Cloud Functions: deleteAccount, deletePet, importRga, searchPlaces, suggestPlace
 ├─ tests/rules/                 Testes das regras de segurança (emulador)
 ├─ firestore.rules · storage.rules · firestore.indexes.json · firebase.json
 └─ docs/
@@ -84,6 +84,37 @@ Pontos de projeto:
 - Se o aparelho **mudar de fuso**, os lembretes só se ajustam quando o app abrir de novo.
 - **Não validado em aparelho** (veja o roteiro de teste no `SETUP.md`): o cálculo e o texto das notificações têm testes automáticos, mas a entrega real das notificações só dá para conferir no celular.
 - Foto da receita, leitura do código de barras, vacinas, linha do tempo de saúde e PDF foram entregues na **Fase 2B** (veja a próxima seção).
+
+## Perto de mim (Fase 3)
+
+| Caminho | Quem acessa | Observações |
+|---|---|---|
+| `favorite_places/{uid}_{local}` | só a própria pessoa (com conta) | cópia do local favoritado: aparece sem nova busca e no campo "local" dos medicamentos |
+| `place_suggestions/{id}` | **só o servidor** | "Sugerir um local" e "Corrigir dados", com `status: pending` (moderação no painel da Fase 7) |
+| `suggestion_quota/{uid}_{dia}` | **só o servidor** | limite de 10 sugestões por pessoa por dia |
+| `places_cache/{chave}` | **só o servidor** | resultado das buscas por 24 h (e até 7 dias se o provedor cair) |
+
+**Como a busca funciona** (`functions/src/places/`):
+
+1. O app pega a posição (GPS, com permissão "durante o uso") **ou** um endereço digitado (geocodificação do próprio sistema, grátis).
+2. **Privacidade:** antes de sair do celular, a posição é arredondada para uma **célula de ~1 km** (`snapToGrid`). O servidor arredonda de novo (defesa extra) e **nunca registra coordenadas** no log. A distância exata de cada local é calculada **só no aparelho**.
+3. A Cloud Function `searchPlaces` (funciona **sem cadastro**, com login anônimo) olha o cache. Se não tiver, consulta o **`PlacesProvider`**.
+4. **`PlacesProvider`** é uma interface. Hoje: **OpenStreetMap via Overpass** (grátis; `amenity=veterinary`, `shop=pet`, `amenity=animal_shelter`). Pronto para trocar por Google Places (`googleProvider.ts`, escolha com `PLACES_PROVIDER=google`), que é cobrado por uso e ainda não foi implementado.
+5. Se o OpenStreetMap estiver fora do ar, o servidor tenta outro servidor público do Overpass; se todos falharem, devolve um resultado antigo do cache (até 7 dias) em vez de deixar a pessoa sem nada.
+
+**No app** (`features/nearby/`): lista do mais perto ao mais longe; filtros por tipo, **Emergência/24 h** (marcação `emergency=yes`, horário `24/7` ou nome com "24h", "emergência", "plantão") e **Aberto agora** (o app interpreta o horário do OSM num subconjunto comum; quando não entende, diz "Horário não informado" em vez de chutar); **Ligar** (`tel:`) e **Como chegar** (Google Maps, Waze e, no iPhone, Apple Maps, por links https, sem chave); favoritar; sugerir/corrigir. O card **"Veterinária mais próxima"** da Home só usa a localização se a pessoa já liberou (não pede permissão sozinho). O **modo emergência** (`/nearby?mode=emergency`, aberto pelo Resgate) põe os atendimentos 24 h primeiro.
+
+**Mapa:** `react-native-maps`. No iPhone usa o Apple Maps (sem chave). No **Android exige uma chave do Google Maps** (e conta de cobrança no Google Cloud): sem ela o build marca o mapa como indisponível e a tela funciona em lista. A chave entra pela variável `GOOGLE_MAPS_ANDROID_API_KEY` no EAS.
+
+**Atribuição:** a licença dos dados do OpenStreetMap (ODbL) exige mostrar "© colaboradores do OpenStreetMap"; o app mostra no rodapé da tela.
+
+**Limitações conhecidas (honestidade):**
+
+- **Cobertura do OpenStreetMap no Brasil é desigual:** em muitas cidades faltam clínicas, telefones ou horários. Por isso existe "Sugerir um local". Se a cobertura não bastar, o caminho é ativar o Google Places (pago).
+- Os **servidores públicos do Overpass** são mantidos por voluntários e têm limite de uso. O cache por célula de ~1 km reduz muito as consultas; em volume de produção, considere um servidor próprio ou o Google Places.
+- A busca **ainda não tem limite por pessoa** (o cache já protege bastante). As sugestões têm.
+- O cache precisa de uma **política de TTL** no Firestore (campo `expiresAt`) para apagar o que envelheceu: é um ajuste no console, no projeto real.
+- **Não validado em aparelho:** GPS, permissão, mapa no iPhone e os links de navegação só dá para conferir no celular (roteiro no `SETUP.md`, seção 2.6).
 
 ## Saúde: vacinas, linha do tempo, anexos e PDF (Fase 2B)
 

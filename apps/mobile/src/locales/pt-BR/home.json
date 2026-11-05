@@ -9,26 +9,31 @@
   "greetingNamed": "Olá, {{name}}",
   "question": "O que você precisa agora?",
   "shortcuts": {
-    "pets": { "title": "Meus Pets", "subtitle": "Saúde, vacinas e remédios" },
-    "rescue": { "title": "Resgatar", "subtitle": "Encontrei um animal" },
-    "report": { "title": "Denunciar", "subtitle": "Maus-tratos a animais" }
+    "pets": {
+      "title": "Meus Pets",
+      "subtitle": "Saúde, vacinas e remédios"
+    },
+    "rescue": {
+      "title": "Resgatar",
+      "subtitle": "Encontrei um animal"
+    },
+    "report": {
+      "title": "Denunciar",
+      "subtitle": "Maus-tratos a animais"
+    }
   },
   "nearest": {
-    "title": "Veterinária mais próxima",
-    "soon": "Em breve você verá aqui a clínica ou o plantão 24 h mais perto de você."
+    "title": "Veterinária mais próxima"
   },
   "rescue": {
     "title": "Resgatar",
     "soon": "O passo a passo para ajudar um animal abandonado, órfão ou ferido chega na próxima etapa do app.",
-    "emergency": "Em caso de emergência ou flagrante, ligue 190."
+    "emergency": "Em caso de emergência ou flagrante, ligue 190.",
+    "findEmergency": "Ver atendimento de emergência perto de mim"
   },
   "report": {
     "title": "Denunciar",
     "soon": "O guia para organizar provas de maus-tratos e achar o canal oficial certo chega na próxima etapa do app.",
     "notOfficial": "Este app não é um canal oficial de denúncia. Em flagrante, ligue 190."
-  },
-  "nearby": {
-    "title": "Perto de mim",
-    "soon": "Clínicas, plantões 24 h, pet shops e abrigos perto de você chegam na próxima etapa do app."
   }
 }

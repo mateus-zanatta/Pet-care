@@ -14,3 +14,7 @@ export * from './schemas/vet';
 export * from './schemas/vaccine';
 export * from './schemas/healthEvent';
 export * from './healthTimeline';
+export * from './geo';
+export * from './openingHours';
+export * from './nearby';
+export * from './schemas/place';

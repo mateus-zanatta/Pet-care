@@ -1,6 +1,6 @@
 import { getApps, initializeApp } from 'firebase-admin/app';
 import { getAuth } from 'firebase-admin/auth';
-import { getFirestore } from 'firebase-admin/firestore';
+import { getFirestore, Timestamp } from 'firebase-admin/firestore';
 import { beforeAll, beforeEach, describe, expect, it } from 'vitest';
 import { buildSyntheticRgaPdf } from './rga/testing/syntheticPdf';
 
@@ -168,5 +168,63 @@ describe('importRga (callable)', () => {
       mimeType: 'application/pdf',
     });
     expect(response.result).toMatchObject({ recognized: false, reason: 'not_a_pdf' });
+  });
+});
+
+describe('searchPlaces (callable)', () => {
+  const cachedPlaces = [
+    { id: 'osm:node/1', source: 'osm', name: 'Clínica do Cache', category: 'vet', lat: -23.551, lng: -46.631, emergency: false },
+  ];
+
+  async function seedCache() {
+    await getFirestore().doc('places_cache/osm_v1_-23.55_-46.63_5').set({
+      places: cachedPlaces,
+      provider: 'osm',
+      fetchedAt: Timestamp.now(),
+      expiresAt: Timestamp.fromMillis(Date.now() + 7 * 86_400_000),
+    });
+  }
+
+  it('exige login, mas aceita quem está SEM cadastro (anônimo): Perto de mim é aberto', async () => {
+    await seedCache();
+    expect((await call('searchPlaces', null, { lat: -23.55, lng: -46.63, radiusKm: 5 })).error?.status).toBe('UNAUTHENTICATED');
+    const anonymous = await signUpAnonymous();
+    const res = await call('searchPlaces', anonymous.idToken, { lat: -23.5512, lng: -46.6301, radiusKm: 5 });
+    expect(res.result).toEqual({ places: cachedPlaces, provider: 'osm', cached: true });
+  });
+
+  it('valida a entrada', async () => {
+    const { idToken } = await signUp('ana@exemplo.com');
+    expect((await call('searchPlaces', idToken, { lat: -23.55, lng: -46.63, radiusKm: 7 })).error?.status).toBe('INVALID_ARGUMENT');
+    expect((await call('searchPlaces', idToken, { lat: 'x' })).error?.status).toBe('INVALID_ARGUMENT');
+  });
+});
+
+describe('suggestPlace (callable)', () => {
+  const suggestion = { kind: 'new', name: 'Clínica Nova', category: 'vet', address: 'Rua B, 20', is24h: false };
+
+  it('exige conta de verdade (anônimo não sugere) e valida a entrada', async () => {
+    expect((await call('suggestPlace', null, suggestion)).error?.status).toBe('UNAUTHENTICATED');
+    const anonymous = await signUpAnonymous();
+    expect((await call('suggestPlace', anonymous.idToken, suggestion)).error?.status).toBe('PERMISSION_DENIED');
+    const { idToken } = await signUp('ana@exemplo.com');
+    expect((await call('suggestPlace', idToken, { ...suggestion, name: '' })).error?.status).toBe('INVALID_ARGUMENT');
+    expect((await call('suggestPlace', idToken, { ...suggestion, kind: 'fix' })).error?.status).toBe('INVALID_ARGUMENT');
+  });
+
+  it('grava a sugestão como pendente de moderação, com o autor', async () => {
+    const { uid, idToken } = await signUp('ana@exemplo.com');
+    const res = (await call('suggestPlace', idToken, suggestion)) as { result?: { ok: boolean; id: string } };
+    expect(res.result?.ok).toBe(true);
+    const doc = await getFirestore().doc(`place_suggestions/${res.result!.id}`).get();
+    expect(doc.data()).toMatchObject({ ...suggestion, createdBy: uid, status: 'pending' });
+  });
+
+  it('limita a 10 sugestões por dia por pessoa', async () => {
+    const { idToken } = await signUp('ana@exemplo.com');
+    for (let i = 0; i < 10; i += 1) {
+      expect((await call('suggestPlace', idToken, { ...suggestion, name: `Local ${i}` })).error).toBeUndefined();
+    }
+    expect((await call('suggestPlace', idToken, suggestion)).error?.status).toBe('RESOURCE_EXHAUSTED');
   });
 });

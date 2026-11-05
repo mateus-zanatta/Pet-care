@@ -36,6 +36,7 @@
     "timesTooMany": "Use no máximo 12 horários.",
     "timesDuplicate": "Há horários repetidos.",
     "crmvInvalid": "O número do CRMV deve ter apenas dígitos.",
-    "nextBeforeDate": "A próxima data precisa ser depois da data do registro."
+    "nextBeforeDate": "A próxima data precisa ser depois da data do registro.",
+    "phoneInvalid": "Telefone inválido. Exemplo: (11) 3333-4444"
   }
 }

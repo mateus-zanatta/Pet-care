@@ -32,6 +32,8 @@ type Props = {
   onScan?: () => void;
   /** Código lido pela câmera: preenche o campo "Código de barras". */
   scannedCode?: string | null;
+  /** Locais favoritos do "Perto de mim": aparecem como opção no campo "local". */
+  favoritePlaces?: readonly { id: string; name: string; address?: string }[];
   onSubmit: (values: MedicationFormValues) => void;
 };
 
@@ -45,10 +47,11 @@ export function maskTimeInput(raw: string): string {
  * Formulário de medicamento. REGRA DO PRODUTO: o app só REGISTRA o que o veterinário prescreveu —
  * não há sugestões, valores padrão de dose nem listas de medicamentos.
  */
-export function MedicationForm({ initialValues, submitting, submitError, showStatus, onScan, scannedCode, onSubmit }: Props) {
+export function MedicationForm({ initialValues, submitting, submitError, showStatus, onScan, scannedCode, favoritePlaces = [], onSubmit }: Props) {
   const { t, i18n } = useTranslation('meds');
   const { t: tp } = useTranslation('pets');
   const { t: tc } = useTranslation();
+  const { t: tn } = useTranslation('nearby');
   const locale = i18n.language === 'en' ? 'en' : 'pt-BR';
   const order = dateOrderFor(locale);
 
@@ -216,6 +219,28 @@ export function MedicationForm({ initialValues, submitting, submitError, showSta
         </View>
       </View>
       <FormChoice control={control} name="placeKind" label={t('form.placeKind')} options={placeOptions} />
+      {favoritePlaces.length > 0 ? (
+        <View style={{ gap: 8 }} testID="medication-favorite-places">
+          <AppText variant="label">{tn('medicationFavorites')}</AppText>
+          <View style={{ flexDirection: 'row', flexWrap: 'wrap', gap: 8 }}>
+            {favoritePlaces.slice(0, 6).map((fav) => (
+              <Button
+                key={fav.id}
+                variant="secondary"
+                icon="star"
+                label={fav.name}
+                onPress={() => {
+                  setValue('placeKind', 'clinic', { shouldDirty: true });
+                  setValue('placeText', [fav.name, fav.address].filter(Boolean).join(' - ').slice(0, 200), {
+                    shouldDirty: true,
+                    shouldValidate: true,
+                  });
+                }}
+              />
+            ))}
+          </View>
+        </View>
+      ) : null}
       {placeKind !== 'home' ? (
         <FormTextField
           control={control}

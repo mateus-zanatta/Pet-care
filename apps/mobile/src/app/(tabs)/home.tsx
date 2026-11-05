@@ -7,6 +7,7 @@ import { Card } from '@/components/ui/Card';
 import { Icon, type IconName } from '@/components/ui/Icon';
 import { Screen } from '@/components/ui/Screen';
 import { useAuth } from '@/features/auth/AuthProvider';
+import { NearestVetCard } from '@/features/nearby/NearestVetCard';
 
 type Shortcut = { key: 'pets' | 'rescue' | 'report'; icon: IconName; href: Href };
 
@@ -54,15 +55,7 @@ export default function HomeScreen() {
         </Card>
       ))}
 
-      <Card tone="alt">
-        <View style={{ gap: 6 }} accessible accessibilityLabel={`${t('nearest.title')}. ${t('nearest.soon')}`}>
-          <View style={{ flexDirection: 'row', alignItems: 'center', gap: 8 }}>
-            <Icon name="medkit" color="primary" />
-            <AppText variant="heading">{t('nearest.title')}</AppText>
-          </View>
-          <AppText color="textMuted">{t('nearest.soon')}</AppText>
-        </View>
-      </Card>
+      <NearestVetCard />
     </Screen>
   );
 }

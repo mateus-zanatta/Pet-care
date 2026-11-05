@@ -8,7 +8,8 @@ import type { Firestore } from 'firebase-admin/firestore';
  */
 export const OWNED_COLLECTIONS: ReadonlyArray<{ name: string; field: string }> = [
   { name: 'favorite_places', field: 'ownerId' },
-  { name: 'place_suggestions', field: 'authorId' },
+  { name: 'place_suggestions', field: 'createdBy' },
+  { name: 'suggestion_quota', field: 'uid' },
   { name: 'rescues', field: 'ownerId' },
   { name: 'reports', field: 'ownerId' },
 ];

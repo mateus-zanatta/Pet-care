@@ -291,6 +291,47 @@ service cloud.firestore {
         && (!('byName' in d) || isString(d.byName, 80));
     }
 
+    // ---------- favorite_places/{uid}_{local}: favoritos do "Perto de mim" ----------
+    // Só quem tem conta favorita (anônimo não). Cada pessoa vê e mexe só nos próprios.
+    match /favorite_places/{favId} {
+      allow read, delete: if signedIn() && resource.data.ownerId == request.auth.uid;
+
+      allow create, update: if isRegisteredUser()
+        && favId.split('_')[0] == request.auth.uid
+        && request.resource.data.ownerId == request.auth.uid
+        && validFavorite(request.resource.data);
+    }
+
+    function validFavorite(d) {
+      return d.keys().hasOnly([
+               'ownerId', 'placeId', 'source', 'name', 'category', 'lat', 'lng',
+               'address', 'phone', 'openingHours', 'emergency', 'createdAt'])
+        && d.keys().hasAll(['ownerId', 'placeId', 'source', 'name', 'category', 'lat', 'lng', 'emergency', 'createdAt'])
+        && isString(d.placeId, 120) && d.placeId.size() >= 1
+        && d.source in ['osm', 'google']
+        && isString(d.name, 120) && d.name.size() >= 1
+        && d.category in ['vet', 'petshop', 'shelter']
+        && d.lat is number && d.lat >= -90 && d.lat <= 90
+        && d.lng is number && d.lng >= -180 && d.lng <= 180
+        && d.emergency is bool
+        && d.createdAt is timestamp
+        && (!('address' in d) || isString(d.address, 200))
+        && (!('phone' in d) || isString(d.phone, 40))
+        && (!('openingHours' in d) || isString(d.openingHours, 300));
+    }
+
+    // ---------- Só o servidor (Cloud Functions) mexe ----------
+    // places_cache: resultados de busca; place_suggestions: sugestões para moderação; suggestion_quota: limite diário.
+    match /places_cache/{doc} {
+      allow read, write: if false;
+    }
+    match /place_suggestions/{doc} {
+      allow read, write: if false;
+    }
+    match /suggestion_quota/{doc} {
+      allow read, write: if false;
+    }
+
     // ---------- pet_members/{petId}_{uid} ----------
     match /pet_members/{memberId} {
       // Cada pessoa vê as próprias participações; o dono vê quem participa do seu pet.

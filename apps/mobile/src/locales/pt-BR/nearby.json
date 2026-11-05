@@ -1,0 +1,107 @@
+{
+  "title": "Perto de mim",
+  "privacy": "Sua localização exata não sai do celular: a busca usa só a região aproximada (cerca de 1 km).",
+  "intro": {
+    "title": "Encontre ajuda perto de você",
+    "body": "Clínicas veterinárias, plantões 24 h, pet shops e abrigos, do mais perto ao mais longe."
+  },
+  "useLocation": "Usar minha localização",
+  "locating": "Procurando sua localização…",
+  "searching": "Buscando locais…",
+  "address": {
+    "label": "Ou digite um endereço, bairro ou cidade",
+    "placeholder": "Ex.: Av. Paulista, São Paulo",
+    "search": "Buscar endereço",
+    "notFound": "Não encontramos esse endereço. Tente com bairro e cidade."
+  },
+  "permission": {
+    "denied": "A localização está bloqueada para o app. Libere nas configurações ou digite um endereço.",
+    "settings": "Abrir configurações",
+    "servicesOff": "A localização do celular está desligada. Ligue-a ou digite um endereço.",
+    "timeout": "Não conseguimos sua localização a tempo. Tente de novo ou digite um endereço.",
+    "unavailable": "Usar a localização não está disponível nesta versão do app. Digite um endereço ou atualize o app."
+  },
+  "from": {
+    "gps": "Perto de você",
+    "address": "Perto de: {{label}}"
+  },
+  "changeLocation": "Trocar local",
+  "filters": {
+    "type": "Tipo",
+    "all": "Todos",
+    "emergency": "Emergência/24 h",
+    "openNow": "Aberto agora",
+    "favorites": "Só favoritos"
+  },
+  "category": {
+    "vet": "Clínica veterinária",
+    "petshop": "Pet shop",
+    "shelter": "Abrigo/ONG"
+  },
+  "results": {
+    "count_one": "{{count}} local em até {{radius}} km",
+    "count_other": "{{count}} locais em até {{radius}} km",
+    "empty": "Nada encontrado com esses filtros em até {{radius}} km.",
+    "widen": "Ampliar a busca para {{radius}} km",
+    "list": "Lista",
+    "map": "Mapa",
+    "view": "Ver como"
+  },
+  "card": {
+    "emergency": "Emergência/24 h",
+    "open": "Aberto agora",
+    "closed": "Fechado agora",
+    "hoursUnknown": "Horário não informado",
+    "hours": "Horário: {{hours}}",
+    "distance": "{{distance}} de você",
+    "call": "Ligar",
+    "directions": "Como chegar",
+    "favorite": "Favoritar {{name}}",
+    "unfavorite": "Remover {{name}} dos favoritos",
+    "fix": "Corrigir dados"
+  },
+  "directions": {
+    "title": "Como chegar",
+    "google": "Google Maps",
+    "waze": "Waze",
+    "apple": "Apple Maps",
+    "failed": "Não foi possível abrir o app de mapas."
+  },
+  "callFailed": "Não foi possível abrir o discador.",
+  "favoriteNeedAccount": "Crie uma conta para favoritar locais.",
+  "favoriteFailed": "Não foi possível salvar o favorito.",
+  "favoritePending": "Favorito salvo neste aparelho; será enviado quando a conexão voltar.",
+  "errors": {
+    "network": "Sem conexão com o servidor. Confira a internet e tente de novo.",
+    "unavailable": "O serviço de mapas não respondeu agora. Tente de novo em alguns minutos.",
+    "unknown": "Não foi possível buscar os locais. Tente de novo."
+  },
+  "retry": "Tentar de novo",
+  "emergencyMode": "Mostrando primeiro os atendimentos de emergência e 24 h.",
+  "attribution": "Dados © colaboradores do OpenStreetMap. Confirme por telefone antes de ir.",
+  "suggest": {
+    "cta": "Sugerir um local",
+    "titleNew": "Sugerir um local",
+    "titleFix": "Corrigir dados",
+    "intro": "Conhece uma clínica, um pet shop ou um abrigo que não aparece, ou com dados errados? Mande para nós: a sugestão é revisada antes de aparecer no app.",
+    "name": "Nome do local",
+    "category": "Tipo",
+    "address": "Endereço",
+    "phone": "Telefone (opcional)",
+    "is24h": "Atende 24 horas / emergência",
+    "note": "O que está errado ou faltando? (opcional)",
+    "send": "Enviar sugestão",
+    "sending": "Enviando…",
+    "sent": "Obrigado! A sugestão será revisada antes de aparecer no app.",
+    "failed": "Não foi possível enviar. Tente de novo.",
+    "limit": "Você atingiu o limite de sugestões de hoje. Tente amanhã.",
+    "needAccount": "Crie uma conta para sugerir locais."
+  },
+  "home": {
+    "cta": "Ver veterinárias perto de mim",
+    "hint": "Use a aba Perto de mim para ver aqui a veterinária mais próxima.",
+    "none": "Nenhuma veterinária encontrada em até 10 km.",
+    "loading": "Procurando a mais próxima…"
+  },
+  "medicationFavorites": "Seus locais favoritos"
+}

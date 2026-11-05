@@ -6,6 +6,7 @@ import enHealth from '@/locales/en/health.json';
 import enHome from '@/locales/en/home.json';
 import enLegal from '@/locales/en/legal.json';
 import enMeds from '@/locales/en/meds.json';
+import enNearby from '@/locales/en/nearby.json';
 import enPets from '@/locales/en/pets.json';
 import enRga from '@/locales/en/rga.json';
 import ptAccount from '@/locales/pt-BR/account.json';
@@ -16,6 +17,7 @@ import ptHealth from '@/locales/pt-BR/health.json';
 import ptHome from '@/locales/pt-BR/home.json';
 import ptLegal from '@/locales/pt-BR/legal.json';
 import ptMeds from '@/locales/pt-BR/meds.json';
+import ptNearby from '@/locales/pt-BR/nearby.json';
 import ptPets from '@/locales/pt-BR/pets.json';
 import ptRga from '@/locales/pt-BR/rga.json';
 
@@ -34,6 +36,7 @@ export const resources = {
     rga: ptRga,
     meds: ptMeds,
     health: ptHealth,
+    nearby: ptNearby,
   },
   en: {
     common: enCommon,
@@ -46,6 +49,7 @@ export const resources = {
     rga: enRga,
     meds: enMeds,
     health: enHealth,
+    nearby: enNearby,
   },
 } as const;
 

@@ -1,13 +1,9 @@
+import { useLocalSearchParams } from 'expo-router';
 import React from 'react';
-import { useTranslation } from 'react-i18next';
-import { EmptyState } from '@/components/ui/states';
-import { Screen } from '@/components/ui/Screen';
+import { NearbyScreen } from '@/features/nearby/NearbyScreen';
 
-export default function NearbyScreen() {
-  const { t } = useTranslation('home');
-  return (
-    <Screen edges={['top', 'left', 'right']}>
-      <EmptyState icon="location" title={t('nearby.title')} body={t('nearby.soon')} />
-    </Screen>
-  );
+/** Aba "Perto de mim". `?mode=emergency` (vindo do Resgate) mostra emergência/24 h primeiro. */
+export default function NearbyTab() {
+  const { mode } = useLocalSearchParams<{ mode?: string }>();
+  return <NearbyScreen mode={mode === 'emergency' ? 'emergency' : undefined} />;
 }

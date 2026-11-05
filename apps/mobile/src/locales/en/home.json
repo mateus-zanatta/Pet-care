@@ -9,26 +9,31 @@
   "greetingNamed": "Hello, {{name}}",
   "question": "What do you need right now?",
   "shortcuts": {
-    "pets": { "title": "My Pets", "subtitle": "Health, vaccines and medicines" },
-    "rescue": { "title": "Rescue", "subtitle": "I found an animal" },
-    "report": { "title": "Report", "subtitle": "Animal cruelty" }
+    "pets": {
+      "title": "My Pets",
+      "subtitle": "Health, vaccines and medicines"
+    },
+    "rescue": {
+      "title": "Rescue",
+      "subtitle": "I found an animal"
+    },
+    "report": {
+      "title": "Report",
+      "subtitle": "Animal cruelty"
+    }
   },
   "nearest": {
-    "title": "Nearest vet",
-    "soon": "Soon you will see here the clinic or 24-hour emergency vet closest to you."
+    "title": "Nearest vet"
   },
   "rescue": {
     "title": "Rescue",
     "soon": "The step-by-step guide to help an abandoned, orphaned or injured animal arrives in the next stage of the app.",
-    "emergency": "In an emergency or crime in progress, call 190."
+    "emergency": "In an emergency or crime in progress, call 190.",
+    "findEmergency": "See emergency care near me"
   },
   "report": {
     "title": "Report",
     "soon": "The guide to organize evidence of animal cruelty and find the right official channel arrives in the next stage of the app.",
     "notOfficial": "This app is not an official reporting channel. For a crime in progress, call 190."
-  },
-  "nearby": {
-    "title": "Nearby",
-    "soon": "Clinics, 24-hour vets, pet shops and shelters near you arrive in the next stage of the app."
   }
 }

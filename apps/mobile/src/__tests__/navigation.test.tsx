@@ -1,4 +1,4 @@
-import { renderRouter, screen } from 'expo-router/testing-library';
+import { fireEvent, renderRouter, screen } from 'expo-router/testing-library';
 import React from 'react';
 import { setupTestI18n } from '@/test/render';
 
@@ -71,6 +71,21 @@ jest.mock('@/features/attachments/attachments.service', () => ({
   openAttachment: jest.fn(),
   pickPdf: jest.fn(),
   deleteAllAttachmentFiles: jest.fn(),
+}));
+// Perto de mim: sem GPS nem Firebase no Jest.
+jest.mock('@/features/nearby/location', () => ({
+  LocationError: class extends Error {},
+  isLocationAvailable: () => true,
+  getLocationPermission: jest.fn(async () => 'undetermined'),
+  requestLocationPermission: jest.fn(async () => 'undetermined'),
+  getCurrentPosition: jest.fn(),
+  geocodeAddress: jest.fn(),
+}));
+jest.mock('@/features/nearby/places.service', () => ({ PlacesError: class extends Error {}, searchNearby: jest.fn() }));
+jest.mock('@/features/nearby/favorites.repo', () => ({
+  subscribeFavorites: jest.fn(() => () => undefined),
+  addFavorite: jest.fn(),
+  removeFavorite: jest.fn(),
 }));
 // Lembretes (notificações nativas) não existem no Jest.
 jest.mock('@/features/reminders/ReminderSync', () => ({ ReminderSync: () => null }));
@@ -153,5 +168,20 @@ describe('navegação', () => {
     mockAuth = user();
     await renderRouter('./src/app', { initialUrl: '/rescue' });
     expect(await screen.findByText(/ligue 190/)).toBeTruthy();
+  });
+
+  it('do Resgate, um toque abre o Perto de mim no modo emergência (24 h primeiro)', async () => {
+    mockAuth = user({ isAnonymous: true, email: null, displayName: null, provider: 'anonymous' });
+    await renderRouter('./src/app', { initialUrl: '/rescue' });
+    await fireEvent.press(await screen.findByRole('button', { name: 'Ver atendimento de emergência perto de mim' }));
+    expect(await screen.findByText('Mostrando primeiro os atendimentos de emergência e 24 h.')).toBeTruthy();
+  });
+
+  it('a aba Perto de mim abre explicando e oferecendo localização ou endereço (sem cadastro também)', async () => {
+    mockAuth = user({ isAnonymous: true, email: null, displayName: null, provider: 'anonymous' });
+    await renderRouter('./src/app', { initialUrl: '/nearby' });
+    expect(await screen.findByRole('button', { name: 'Usar minha localização' })).toBeTruthy();
+    expect(screen.getByLabelText('Ou digite um endereço, bairro ou cidade')).toBeTruthy();
+    expect(screen.getByText(/colaboradores do OpenStreetMap/)).toBeTruthy();
   });
 });

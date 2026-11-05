@@ -9,6 +9,7 @@ import { useUser } from '@/features/auth/AuthProvider';
 import { createMedication } from '@/features/medications/medications.repo';
 import { MedicationForm } from '@/features/medications/MedicationForm';
 import { useScannedCode } from '@/features/medications/scanInbox';
+import { useFavorites } from '@/features/nearby/hooks';
 import { useReminderPermission } from '@/features/reminders/usePermission';
 
 export default function NewMedicationScreen() {
@@ -18,6 +19,12 @@ export default function NewMedicationScreen() {
   const user = useUser();
   const permission = useReminderPermission();
   const scannedCode = useScannedCode();
+  const favorites = useFavorites(user.uid, !user.isAnonymous);
+  const favoritePlaces = useMemo(
+    // Clínicas primeiro (são o "local" mais comum de um medicamento).
+    () => [...favorites].sort((a, b) => Number(b.category === 'vet') - Number(a.category === 'vet') || a.name.localeCompare(b.name)),
+    [favorites],
+  );
   const initialValues = useMemo(() => medicationFormDefaults(), []);
   const [submitting, setSubmitting] = useState(false);
   const [error, setError] = useState<string>();
@@ -46,6 +53,7 @@ export default function NewMedicationScreen() {
       submitting={submitting}
       submitError={error}
       scannedCode={scannedCode}
+      favoritePlaces={favoritePlaces}
       onScan={() => router.push({ pathname: '/pet/[id]/medications/scan', params: { id } })}
       onSubmit={onSubmit}
     />

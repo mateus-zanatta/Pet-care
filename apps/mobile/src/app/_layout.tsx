@@ -72,6 +72,7 @@ function Navigation() {
   const { t: tr } = useTranslation('rga');
   const { t: tm } = useTranslation('meds');
   const { t: tsa } = useTranslation('health');
+  const { t: tn } = useTranslation('nearby');
 
   useEffect(() => {
     if (status !== 'loading') void SplashScreen.hideAsync();
@@ -146,6 +147,7 @@ function Navigation() {
           <Stack.Screen name="pet/[id]/health/event/new" options={{ title: tsa('event.newTitle') }} />
           <Stack.Screen name="pet/[id]/health/event/[eid]/index" options={{ title: tsa('event.detailTitle') }} />
           <Stack.Screen name="pet/[id]/health/event/[eid]/edit" options={{ title: tsa('event.editTitle') }} />
+          <Stack.Screen name="nearby/suggest" options={{ title: tn('suggest.cta') }} />
           <Stack.Screen name="rescue/index" options={{ title: th('rescue.title') }} />
           <Stack.Screen name="report/index" options={{ title: th('report.title') }} />
           <Stack.Screen name="account/delete" options={{ title: tc('delete.title') }} />
