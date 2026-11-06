@@ -6,3 +6,4 @@ jest.mock('react-native-safe-area-context', () => require('react-native-safe-are
 jest.mock('@sentry/react-native', () => ({ captureMessage: jest.fn(), init: jest.fn(), wrap: (c: unknown) => c }));
 // Ícones carregam fontes nativas; nos testes não renderizam nada.
 jest.mock('@expo/vector-icons/Ionicons', () => () => null);
+// Animações (Reanimated 4): o "resolver" oficial (package.json > jest) troca as partes nativas pela versão JS.

@@ -70,3 +70,59 @@ export type PlaceCategory = (typeof PLACE_CATEGORY)[number];
 /** De onde veio o local: OpenStreetMap (grátis) agora; Google Places pode entrar depois. */
 export const PLACE_SOURCE = ['osm', 'google'] as const;
 export type PlaceSource = (typeof PLACE_SOURCE)[number];
+
+/* ------------------------- Centrais: adoção, resgate e denúncia ------------------------- */
+
+/** Espécies aceitas na adoção (inclui cavalo: há muita adoção de equinos resgatados). */
+export const ADOPTION_SPECIES = ['dog', 'cat', 'bird', 'rabbit', 'rodent', 'reptile', 'horse', 'other'] as const;
+export type AdoptionSpecies = (typeof ADOPTION_SPECIES)[number];
+
+/** Faixa de idade: quem doa raramente sabe a data exata. */
+export const AGE_GROUP = ['baby', 'young', 'adult', 'senior'] as const;
+export type AgeGroup = (typeof AGE_GROUP)[number];
+
+export const ANIMAL_SIZE = ['small', 'medium', 'large'] as const;
+export type AnimalSize = (typeof ANIMAL_SIZE)[number];
+
+export const ADOPTION_STATUS = ['available', 'reserved', 'adopted'] as const;
+export type AdoptionStatus = (typeof ADOPTION_STATUS)[number];
+
+/** Qualquer animal pode precisar de resgate, não só pets: silvestres, cavalos, gado, marinhos... */
+export const RESCUE_ANIMAL_KIND = [
+  'dog',
+  'cat',
+  'horse',
+  'livestock',
+  'wild_bird',
+  'wild_mammal',
+  'reptile',
+  'marine',
+  'other',
+] as const;
+export type RescueAnimalKind = (typeof RESCUE_ANIMAL_KIND)[number];
+
+/** Silvestres e marinhos: quem resgata é o órgão ambiental (manusear por conta própria é perigoso e pode ser crime). */
+export const WILD_RESCUE_KINDS: readonly RescueAnimalKind[] = ['wild_bird', 'wild_mammal', 'reptile', 'marine'];
+
+export const RESCUE_CONDITION = ['injured', 'trapped', 'sick', 'abandoned', 'at_risk'] as const;
+export type RescueCondition = (typeof RESCUE_CONDITION)[number];
+
+export const RESCUE_ALERT_STATUS = ['open', 'in_progress', 'rescued', 'closed'] as const;
+export type RescueAlertStatus = (typeof RESCUE_ALERT_STATUS)[number];
+
+/** Tipos de denúncia (Lei 9.605/98, art. 32: maus-tratos a qualquer animal é crime). */
+export const REPORT_TYPE = [
+  'abandonment',
+  'physical_abuse',
+  'neglect',
+  'confinement',
+  'poisoning',
+  'animal_fighting',
+  'wildlife_trafficking',
+  'sexual_abuse',
+  'other',
+] as const;
+export type ReportType = (typeof REPORT_TYPE)[number];
+
+export const REPORT_STATUS = ['received', 'forwarded', 'closed'] as const;
+export type ReportStatus = (typeof REPORT_STATUS)[number];

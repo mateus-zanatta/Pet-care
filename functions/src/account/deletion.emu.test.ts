@@ -57,9 +57,14 @@ describe('deleteAccountCascade', () => {
     await db().doc('place_suggestions/s1').set({ createdBy: 'alice', name: 'Clínica', status: 'pending' });
     await db().doc('place_suggestions/s2').set({ createdBy: 'carol', name: 'Pet shop', status: 'pending' });
     await db().doc('suggestion_quota/alice_2026-11-04').set({ uid: 'alice', count: 1 });
-    await db().doc('reports/r1').set({ ownerId: 'alice' });
+    await db().doc('reports/r1').set({ reporterId: 'alice' });
+    await db().doc('adoption_listings/a1').set({ ownerId: 'alice' });
+    await db().doc('adoption_listings/a1/private/contact').set({ ownerId: 'alice', contactPhone: '11999990000' });
+    await db().doc('adoption_listings/a2').set({ ownerId: 'carol' });
+    await db().doc('rescue_alerts/ra1').set({ reporterId: 'alice' });
+    await db().doc('rate_limits/alice_report_2026-11-06').set({ uid: 'alice', count: 2 });
     await db().doc('reports/r1/media/m1').set({ sha256: 'abc' });
-    await db().doc('reports/r2').set({ ownerId: 'carol' });
+    await db().doc('reports/r2').set({ reporterId: 'carol' });
     await save('users/alice/report.jpg');
     await save('users/carol/report.jpg');
   }
@@ -83,14 +88,14 @@ describe('deleteAccountCascade', () => {
     expect(await fileExists('pets/p2/profile.jpg')).toBe(false);
 
     // Dados pessoais
-    for (const path of ['users/alice', 'entitlements/alice', 'favorite_places/f1', 'place_suggestions/s1', 'suggestion_quota/alice_2026-11-04', 'reports/r1', 'reports/r1/media/m1']) {
+    for (const path of ['users/alice', 'entitlements/alice', 'favorite_places/f1', 'place_suggestions/s1', 'suggestion_quota/alice_2026-11-04', 'reports/r1', 'reports/r1/media/m1', 'adoption_listings/a1', 'adoption_listings/a1/private/contact', 'rescue_alerts/ra1', 'rate_limits/alice_report_2026-11-06']) {
       expect(await exists(path), path).toBe(false);
     }
     expect(await fileExists('users/alice/report.jpg')).toBe(false);
     await expect(auth().getUser('alice')).rejects.toMatchObject({ code: 'auth/user-not-found' });
 
     // Dados dos outros continuam intactos
-    for (const path of ['pets/p3', 'pets/p3/medications/m1', 'pets/p3/vaccines/v1', 'pets/p3/health_events/e1', 'pet_members/p3_carol', 'users/bob', 'reports/r2', 'place_suggestions/s2']) {
+    for (const path of ['pets/p3', 'pets/p3/medications/m1', 'pets/p3/vaccines/v1', 'pets/p3/health_events/e1', 'pet_members/p3_carol', 'users/bob', 'reports/r2', 'place_suggestions/s2', 'adoption_listings/a2']) {
       expect(await exists(path), path).toBe(true);
     }
     expect(await fileExists('pets/p3/profile.jpg')).toBe(true);

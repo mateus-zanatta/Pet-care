@@ -1,11 +1,12 @@
 import React from 'react';
-import { ActivityIndicator, Pressable, StyleSheet, View } from 'react-native';
+import { ActivityIndicator, StyleSheet, View } from 'react-native';
+import { PressableScale } from '@/components/motion/PressableScale';
 import { useTheme } from '@/core/theme/ThemeProvider';
 import { MIN_TOUCH } from '@/core/theme/tokens';
 import { AppText } from './AppText';
 import { Icon, type IconName } from './Icon';
 
-type Variant = 'primary' | 'secondary' | 'danger' | 'ghost';
+type Variant = 'primary' | 'secondary' | 'danger' | 'ghost' | 'accent';
 
 type Props = {
   label: string;
@@ -18,7 +19,7 @@ type Props = {
   testID?: string;
 };
 
-/** Botão grande (altura mínima 52), com estado de carregamento e rótulo para leitor de tela. */
+/** Botão grande (altura mínima 52), com estado de carregamento, rótulo para leitor de tela e resposta ao toque. */
 export function Button({
   label,
   onPress,
@@ -37,13 +38,14 @@ export function Button({
     secondary: { bg: colors.surface, fg: colors.primary, border: colors.primary },
     danger: { bg: colors.danger, fg: colors.onDanger, border: colors.danger },
     ghost: { bg: 'transparent', fg: colors.primary, border: 'transparent' },
+    accent: { bg: colors.accent, fg: colors.onAccent, border: colors.accent },
   }[variant];
 
   const fgToken =
-    variant === 'primary' ? 'onPrimary' : variant === 'danger' ? 'onDanger' : 'primary';
+    variant === 'primary' ? 'onPrimary' : variant === 'danger' ? 'onDanger' : variant === 'accent' ? 'onAccent' : 'primary';
 
   return (
-    <Pressable
+    <PressableScale
       testID={testID}
       onPress={onPress}
       disabled={inactive}
@@ -51,13 +53,13 @@ export function Button({
       accessibilityLabel={label}
       accessibilityHint={accessibilityHint}
       accessibilityState={{ disabled: inactive, busy: loading }}
-      style={({ pressed }) => [
+      style={[
         styles.base,
         {
           backgroundColor: palette.bg,
           borderColor: palette.border,
           borderRadius: radius.md,
-          opacity: inactive ? 0.55 : pressed ? 0.85 : 1,
+          opacity: inactive ? 0.55 : 1,
         },
       ]}
     >
@@ -71,7 +73,7 @@ export function Button({
           {label}
         </AppText>
       </View>
-    </Pressable>
+    </PressableScale>
   );
 }
 

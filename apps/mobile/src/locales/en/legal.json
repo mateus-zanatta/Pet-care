@@ -5,12 +5,12 @@
     "title": "Terms of Use",
     "sections": [
       {
-        "title": "1. About Pet Care",
-        "body": "Pet Care helps owners and animal protectors record their animals' health, guides people who find an animal in danger and helps organize information to report animal cruelty. By using the app you agree to these Terms."
+        "title": "1. About {{appName}}",
+        "body": "{{appName}} helps owners and animal protectors record their animals' health, guides people who find an animal in danger and helps organize information to report animal cruelty. By using the app you agree to these Terms."
       },
       {
         "title": "2. What the app is NOT",
-        "body": "Pet Care is not an official reporting channel and does not replace the police, the Public Prosecutor's Office or environmental agencies. For a crime in progress, call 190. The app also does not replace a veterinarian: it never suggests medicine, dose or diagnosis, it only records what the veterinarian prescribed and reminds you to give it."
+        "body": "{{appName}} is not an official reporting channel and does not replace the police, the Public Prosecutor's Office or environmental agencies. For a crime in progress, call 190. The app also does not replace a veterinarian: it never suggests medicine, dose or diagnosis, it only records what the veterinarian prescribed and reminds you to give it."
       },
       {
         "title": "3. Your account",

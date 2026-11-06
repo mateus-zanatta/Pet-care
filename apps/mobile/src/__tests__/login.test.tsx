@@ -1,3 +1,4 @@
+import AsyncStorage from '@react-native-async-storage/async-storage';
 import { fireEvent, screen, waitFor } from '@testing-library/react-native';
 import React from 'react';
 import { Platform } from 'react-native';
@@ -21,7 +22,8 @@ beforeAll(async () => {
   await setupTestI18n('pt-BR');
 });
 afterEach(() => jest.restoreAllMocks());
-beforeEach(() => {
+beforeEach(async () => {
+  await AsyncStorage.clear();
   mockSignIn.mockReset();
   mockGoogleAvailable.mockReturnValue(true);
 });
@@ -50,6 +52,33 @@ describe('LoginScreen', () => {
     await fireEvent.changeText(screen.getByLabelText('Senha'), 'qualquer1');
     await fireEvent.press(screen.getByRole('button', { name: 'Entrar' }));
     expect(await screen.findByText('E-mail ou senha incorretos.')).toBeTruthy();
+  });
+
+  it('depois de erros seguidos, impõe uma espera crescente antes de tentar de novo', async () => {
+    mockSignIn.mockRejectedValue({ code: 'auth/invalid-credential' });
+    await renderWithProviders(<LoginScreen />);
+    await fireEvent.changeText(screen.getByLabelText('E-mail'), 'ana@exemplo.com');
+    await fireEvent.changeText(screen.getByLabelText('Senha'), 'errada1');
+    for (let i = 0; i < 3; i += 1) {
+      await fireEvent.press(screen.getByRole('button', { name: 'Entrar' }));
+      await waitFor(() => expect(mockSignIn).toHaveBeenCalledTimes(i + 1));
+    }
+    // 2 erros livres; o 3º gera espera de 2 s: a 4ª tentativa nem chega ao servidor.
+    expect(await screen.findByText(/Aguarde \d s para tentar de novo/)).toBeTruthy();
+    expect(screen.getByRole('button', { name: 'Entrar' })).toBeDisabled();
+    expect(mockSignIn).toHaveBeenCalledTimes(3);
+  });
+
+  it('o e-mail nunca é guardado em texto: só um resumo (hash) com a contagem', async () => {
+    mockSignIn.mockRejectedValue({ code: 'auth/invalid-credential' });
+    await renderWithProviders(<LoginScreen />);
+    await fireEvent.changeText(screen.getByLabelText('E-mail'), 'ana@exemplo.com');
+    await fireEvent.changeText(screen.getByLabelText('Senha'), 'errada1');
+    await fireEvent.press(screen.getByRole('button', { name: 'Entrar' }));
+    await waitFor(async () => expect((await AsyncStorage.getAllKeys()).length).toBe(2));
+    const keys = await AsyncStorage.getAllKeys();
+    expect(keys.join(' ')).not.toContain('ana@exemplo.com');
+    expect(JSON.stringify(await AsyncStorage.multiGet(keys))).not.toContain('ana@');
   });
 
   it('oferece o login com Google', async () => {

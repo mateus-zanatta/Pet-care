@@ -85,7 +85,8 @@ export function NearbyScreen({ mode }: { mode?: 'emergency' }) {
         track({ name: 'nearby_search', source: next.source });
       } catch (e) {
         const code = e instanceof PlacesError ? e.code : 'unknown';
-        if (code === 'unknown') reportError('nearby.search', e);
+        // Relata o erro ORIGINAL (ex.: "functions/not-found"), não o embrulho "unknown" que não diz nada.
+        if (code === 'unknown') reportError('nearby.search', e instanceof PlacesError ? (e.original ?? e) : e);
         setError(t(`errors.${code}`));
       } finally {
         setPhase('ready');

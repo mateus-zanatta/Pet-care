@@ -3,7 +3,7 @@ import { HttpsError } from 'firebase-functions/v2/https';
 import { describe, expect, it, vi } from 'vitest';
 import { CACHE_TTL_MS, cacheKey, type CacheEntry, type PlacesCache } from './cache';
 import { GooglePlacesProvider } from './googleProvider';
-import { buildOverpassQuery, normalizeOverpass, OverpassProvider } from './overpass';
+import { buildOverpassQuery, describeFetchError, normalizeOverpass, OverpassProvider } from './overpass';
 import { type PlacesProvider, ProviderError } from './provider';
 import { handleSearchPlaces, providerFromEnv } from './searchPlaces';
 
@@ -91,7 +91,9 @@ describe('OverpassProvider', () => {
     const [url, init] = fetchImpl.mock.calls[0] as unknown as [string, { method: string; headers: Record<string, string>; body: string }];
     expect(url).toBe('https://a.example/api');
     expect(init.method).toBe('POST');
-    expect(init.headers['user-agent']).toMatch(/PetCare/);
+    expect(init.headers['user-agent']).toMatch(/Tailwag/);
+    // O servidor principal recusa (406) User-Agent genérico; a política de uso pede um contato (endereço ou e-mail).
+    expect(init.headers['user-agent']).toMatch(/https?:\/\/|@/);
     expect(decodeURIComponent(init.body)).toContain('around:5000,-23.55,-46.63');
   });
 
@@ -109,6 +111,35 @@ describe('OverpassProvider', () => {
   it('todos falham: erro "unavailable"', async () => {
     const fetchImpl = vi.fn(async () => ({ ok: false, status: 504, json: async () => ({}) }));
     await expect(new OverpassProvider(fetchImpl, ['a', 'b']).search({ center, radiusKm: 3 })).rejects.toMatchObject({ code: 'unavailable' });
+  });
+
+  it('o erro diz o motivo de CADA servidor (com a causa real do "fetch failed" do Node)', async () => {
+    const certError = Object.assign(new TypeError('fetch failed'), { cause: { code: 'UNABLE_TO_GET_ISSUER_CERT_LOCALLY' } });
+    const abort = Object.assign(new Error('This operation was aborted'), { name: 'AbortError' });
+    const fetchImpl = vi
+      .fn()
+      .mockRejectedValueOnce(certError)
+      .mockResolvedValueOnce({ ok: false, status: 429, json: async () => ({}) })
+      .mockRejectedValueOnce(abort);
+    const error = await new OverpassProvider(fetchImpl, ['https://one.example/api', 'https://two.example/api', 'https://three.example/api'])
+      .search({ center, radiusKm: 3 })
+      .then(
+        () => new Error('deveria ter falhado'),
+        (e: unknown) => e as Error,
+      );
+    expect(error).toBeInstanceOf(ProviderError);
+    expect(error.message).toBe(
+      'unavailable: one.example: fetch failed (UNABLE_TO_GET_ISSUER_CERT_LOCALLY); two.example: HTTP 429; three.example: sem resposta em 18 s',
+    );
+    // PRIVACIDADE: o motivo nunca leva a posição consultada.
+    expect(error.message).not.toMatch(/-23|-46/);
+  });
+
+  it('describeFetchError: causa por código ou por mensagem; sem causa, só a mensagem', () => {
+    expect(describeFetchError(Object.assign(new TypeError('fetch failed'), { cause: { code: 'ENOTFOUND' } }))).toBe('fetch failed (ENOTFOUND)');
+    expect(describeFetchError(Object.assign(new TypeError('fetch failed'), { cause: { message: 'socket hang up' } }))).toBe('fetch failed (socket hang up)');
+    expect(describeFetchError(new Error('ECONNRESET'))).toBe('ECONNRESET');
+    expect(describeFetchError('texto')).toBe('texto');
   });
 });
 

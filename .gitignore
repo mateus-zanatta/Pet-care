@@ -33,3 +33,5 @@ coverage/
 
 # Pacotes de entrega
 *.zip
+.claude/
+.mcp.json

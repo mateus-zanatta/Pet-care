@@ -18,3 +18,5 @@ export * from './geo';
 export * from './openingHours';
 export * from './nearby';
 export * from './schemas/place';
+export * from './schemas/centrals';
+export * from './security';

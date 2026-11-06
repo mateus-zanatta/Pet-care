@@ -1,4 +1,4 @@
-# Pet Care
+# Tailwag
 
 App de bem-estar animal (Android e iOS) com três pilares:
 

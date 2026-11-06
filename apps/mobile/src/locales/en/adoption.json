@@ -1,0 +1,125 @@
+{
+  "title": "Adoption",
+  "intro": "Animals waiting for a home. Each listing shows health, age, colors and where the animal is.",
+  "cta": "List an animal for adoption",
+  "accountBody": "To list animals and see the giver's contact, create an account. You can browse listings without one.",
+  "responsible": "Responsible adoption: meet the animal first, arrange a visit, never pay for a \"free\" animal and be wary of requests for money.",
+  "show": "Show",
+  "tabs": {
+    "browse": "To adopt",
+    "mine": "My listings"
+  },
+  "filter": "Species",
+  "all": "All",
+  "loadError": "Couldn't load the listings. Check your connection.",
+  "empty": {
+    "title": "No listings here",
+    "body": "There are no animals for adoption with this filter yet."
+  },
+  "emptyMine": {
+    "title": "You haven't listed any animal",
+    "body": "Tap \"List an animal for adoption\" to start."
+  },
+  "species": {
+    "dog": "Dog",
+    "cat": "Cat",
+    "bird": "Bird",
+    "rabbit": "Rabbit",
+    "rodent": "Rodent",
+    "reptile": "Reptile",
+    "horse": "Horse",
+    "other": "Other"
+  },
+  "age": {
+    "baby": "Baby",
+    "young": "Young",
+    "adult": "Adult",
+    "senior": "Senior"
+  },
+  "size": {
+    "small": "Small",
+    "medium": "Medium",
+    "large": "Large"
+  },
+  "colors": {
+    "black": "Black",
+    "white": "White",
+    "brown": "Brown",
+    "caramel": "Caramel",
+    "gray": "Gray",
+    "golden": "Golden",
+    "brindle": "Brindle",
+    "spotted": "Spotted",
+    "tricolor": "Tricolor",
+    "other": "Other"
+  },
+  "status": {
+    "available": "Available",
+    "reserved": "Reserved",
+    "adopted": "Adopted"
+  },
+  "form": {
+    "newTitle": "List for adoption",
+    "editTitle": "Edit listing",
+    "publish": "Publish listing",
+    "saveChanges": "Save changes",
+    "fixErrors": "Check the highlighted fields.",
+    "sectionAnimal": "The animal",
+    "species": "Species",
+    "name": "Name (optional)",
+    "nameHint": "If the animal has no name yet, leave it blank.",
+    "sex": "Sex",
+    "age": "Age",
+    "breed": "Breed (optional)",
+    "breedHint": "Mixed breed? Leave it blank.",
+    "colors": "Colors",
+    "size": "Size (optional)",
+    "neutered": "Neutered?",
+    "sectionHealth": "Health",
+    "healthHelp": "Only list what has already been done, ideally with the date. The app never suggests vaccines, medicines or tests.",
+    "vaccines": "Vaccines given",
+    "vaccinesAdd": "Add vaccine",
+    "vaccinesPlaceholder": "E.g. DHPP, rabies",
+    "medications": "Medicines (current or recent)",
+    "medicationsAdd": "Add medicine",
+    "medicationsPlaceholder": "Medicine name, as prescribed",
+    "exams": "Tests already done",
+    "examsAdd": "Add test",
+    "examsPlaceholder": "E.g. FIV/FeLV, blood count",
+    "healthItemError": "Fill in the name and check the date of each item.",
+    "healthNotes": "Other health information (optional)",
+    "sectionAbout": "About the animal",
+    "description": "Description",
+    "descriptionHint": "Personality, how it gets along with kids and other animals, special care...",
+    "sectionWhere": "Where and contact",
+    "city": "City",
+    "uf": "State",
+    "locationHelp": "Optional. We only keep the approximate area (about 1 km), never the exact address.",
+    "contactPhone": "Phone or WhatsApp for contact",
+    "contactHint": "Only people with an account can see your number."
+  },
+  "noHealth": "The giver didn't add health information.",
+  "contactTips": "When you talk, ask about the animal's routine and arrange a visit in a safe place.",
+  "showContact": "See the giver's contact",
+  "call": "Call",
+  "whatsapp": "Chat on WhatsApp",
+  "noContact": "No contact provided.",
+  "contactAccount": "Create an account to see the giver's phone.",
+  "owner": {
+    "title": "Your listing",
+    "status": "Status",
+    "edit": "Edit listing",
+    "delete": "Delete listing"
+  },
+  "delete": {
+    "title": "Delete this listing?",
+    "body": "The listing and its photos will be deleted. This can't be undone.",
+    "cancel": "Cancel",
+    "confirm": "Delete"
+  },
+  "gone": {
+    "title": "Listing not found",
+    "body": "It may have been deleted by its author.",
+    "back": "Back"
+  }
+}

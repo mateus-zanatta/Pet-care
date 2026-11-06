@@ -1,0 +1,45 @@
+{
+  "account": {
+    "title": "Create your account to take part",
+    "cta": "Create a free account"
+  },
+  "photos": {
+    "label": "Photos ({{count}} of {{max}})",
+    "camera": "Camera",
+    "gallery": "Gallery",
+    "remove": "Remove photo",
+    "privacy": "Photos are resized and any GPS location stored in them is removed before upload.",
+    "cameraDenied": "No permission to use the camera. You can allow it in the phone settings or pick from the gallery.",
+    "failed": "The record was saved, but the photos were not uploaded. Open it again to try adding them."
+  },
+  "location": {
+    "label": "Location",
+    "set": "Location set ({{lat}}, {{lng}})",
+    "useGps": "Use my location",
+    "address": "Or type the address",
+    "addressPlaceholder": "Street, number, neighborhood, city",
+    "findAddress": "Find this address",
+    "errors": {
+      "denied": "No location permission. Type the address.",
+      "services-off": "Location is turned off on the phone. Turn it on or type the address.",
+      "timeout": "We couldn't get your location in time. Try again or type the address.",
+      "not-found": "Address not found. Check it and try again.",
+      "unavailable": "Location is not available in this app version. Type the address."
+    }
+  },
+  "health": {
+    "name": "Name",
+    "date": "Date (optional)",
+    "datePlaceholder": "mm/dd/yyyy",
+    "note": "Note (optional)",
+    "remove": "Remove"
+  },
+  "errors": {
+    "dailyLimit": "You reached today's limit. Try again tomorrow.",
+    "accountRequired": "You need an account for this.",
+    "ownerOnly": "Only whoever created this record can change it.",
+    "invalid": "Some data is invalid. Check the form.",
+    "network": "No connection to the server. Check your internet and try again.",
+    "generic": "Something went wrong. Try again."
+  }
+}

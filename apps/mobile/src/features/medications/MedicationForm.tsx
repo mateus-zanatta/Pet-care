@@ -47,6 +47,12 @@ export function maskTimeInput(raw: string): string {
  * Formulário de medicamento. REGRA DO PRODUTO: o app só REGISTRA o que o veterinário prescreveu —
  * não há sugestões, valores padrão de dose nem listas de medicamentos.
  */
+/**
+ * Seções do formulário. A abertura é a transição NATIVA do modal (sobe de baixo, veja app/_layout.tsx);
+ * o conteúdo não anima por cima dela (duas coisas se movendo ao mesmo tempo competem pela atenção).
+ */
+const SECTION = { gap: 16 } as const;
+
 export function MedicationForm({ initialValues, submitting, submitError, showStatus, onScan, scannedCode, favoritePlaces = [], onSubmit }: Props) {
   const { t, i18n } = useTranslation('meds');
   const { t: tp } = useTranslation('pets');
@@ -99,7 +105,8 @@ export function MedicationForm({ initialValues, submitting, submitError, showSta
       {showFixErrors ? <Banner tone="error">{t('form.fixErrors')}</Banner> : null}
       {submitError ? <Banner tone="error">{submitError}</Banner> : null}
 
-      <AppText variant="title">{t('form.sectionMedicine')}</AppText>
+      <View style={SECTION}>
+        <AppText variant="title">{t('form.sectionMedicine')}</AppText>
       <FormTextField control={control} name="name" label={t('form.name')} autoCapitalize="words" maxLength={80} />
       <FormTextField
         control={control}
@@ -125,7 +132,10 @@ export function MedicationForm({ initialValues, submitting, submitError, showSta
         </View>
       </View>
 
-      <AppText variant="title">{t('form.sectionDose')}</AppText>
+      </View>
+
+      <View style={SECTION}>
+        <AppText variant="title">{t('form.sectionDose')}</AppText>
       <View style={{ flexDirection: 'row', gap: 12 }}>
         <View style={{ flex: 1 }}>
           <FormTextField control={control} name="doseAmount" label={t('form.doseAmount')} hint={t('form.doseAmountHint')} maxLength={20} autoCorrect={false} />
@@ -136,7 +146,10 @@ export function MedicationForm({ initialValues, submitting, submitError, showSta
       </View>
       <FormChoice control={control} name="route" label={t('form.route')} options={routeOptions} />
 
-      <AppText variant="title">{t('form.sectionSchedule')}</AppText>
+      </View>
+
+      <View style={SECTION}>
+        <AppText variant="title">{t('form.sectionSchedule')}</AppText>
       <FormChoice control={control} name="frequencyKind" label={t('form.frequencyKind')} options={frequencyOptions} />
       {frequencyKind === 'interval' ? (
         <View style={{ flexDirection: 'row', gap: 12 }}>
@@ -201,7 +214,10 @@ export function MedicationForm({ initialValues, submitting, submitError, showSta
         {t('form.reminderHint')}
       </AppText>
 
-      <AppText variant="title">{t('form.sectionVet')}</AppText>
+      </View>
+
+      <View style={SECTION}>
+        <AppText variant="title">{t('form.sectionVet')}</AppText>
       <FormDate
         control={control}
         name="prescribedOn"
@@ -250,9 +266,13 @@ export function MedicationForm({ initialValues, submitting, submitError, showSta
         />
       ) : null}
 
-      <AppText variant="title">{t('form.sectionOther')}</AppText>
+      </View>
+
+      <View style={SECTION}>
+        <AppText variant="title">{t('form.sectionOther')}</AppText>
       {showStatus ? <FormChoice control={control} name="status" label={t('form.status')} options={statusOptions} /> : null}
       <FormTextField control={control} name="notes" label={t('form.notes')} optional={tc('optional')} multiline maxLength={1000} />
+      </View>
     </Screen>
   );
 }

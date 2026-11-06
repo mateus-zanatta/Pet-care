@@ -1,0 +1,82 @@
+{
+  "title": "Report",
+  "intro": "Animal cruelty is a crime in Brazil (Law 9,605/98). Report it here and also use the official channels.",
+  "flagrant": "Is it happening right now? Call 190 immediately.",
+  "accountBody": "To report through the app and follow up, create an account. The official channels below work without one.",
+  "hub": {
+    "title": "Make a report",
+    "body": "Describe what happened, where, and send photos if you can. Only you can see your report."
+  },
+  "channels": {
+    "title": "Official channels",
+    "intro": "For the police to investigate, also report through an official channel:",
+    "police": "Call 190 (in progress)",
+    "disque": "Crime Stoppers (181, anonymous)",
+    "ibama": "IBAMA Green Line (wild animals)",
+    "online": "You can also file a police report through your state's online police station, or go to the nearest station.",
+    "law": "Law 9,605/98, art. 32: animal cruelty is a crime. For dogs and cats, Law 14,064/2020 sets 2 to 5 years in prison."
+  },
+  "mine": {
+    "title": "My reports",
+    "error": "Couldn't load your reports.",
+    "empty": "You haven't made any report through the app yet."
+  },
+  "types": {
+    "abandonment": "Abandonment",
+    "physical_abuse": "Physical abuse",
+    "neglect": "Neglect (no water, food or shelter)",
+    "confinement": "Chained or confined in an unsuitable place",
+    "poisoning": "Poisoning",
+    "animal_fighting": "Animal fighting or exploitation",
+    "wildlife_trafficking": "Wildlife trafficking or captivity",
+    "sexual_abuse": "Sexual abuse",
+    "other": "Other"
+  },
+  "status": {
+    "received": "Received",
+    "forwarded": "Forwarded",
+    "closed": "Closed"
+  },
+  "statusHelp": {
+    "received": "Your report is recorded and will be reviewed by the moderation team.",
+    "forwarded": "The report was forwarded to a responsible agency.",
+    "closed": "This report was closed."
+  },
+  "form": {
+    "title": "New report",
+    "flagrant": "If it's happening now, call 190 before filling this in.",
+    "type": "What is happening?",
+    "description": "Describe what you saw",
+    "descriptionHint": "When, how often, how the animal is. The more details, the better.",
+    "occurredOn": "When did it happen? (optional)",
+    "ongoing": "Still happening",
+    "animalKind": "Which animal? (optional)",
+    "locationHelp": "Required: where it happened. It stays in your report only, it's not public.",
+    "locationRequired": "Set where it happened.",
+    "address": "Address (optional)",
+    "reference": "Landmark (optional)",
+    "suspectInfo": "About the person responsible (optional)",
+    "suspectHint": "Only what you saw (e.g. resident of the blue house). You don't need the name.",
+    "anonymous": "Don't share my identity",
+    "anonymousHint": "Your name and contact won't be sent to whoever receives the referral.",
+    "goodFaith": "Report in good faith. Falsely accusing someone of a crime is also a crime.",
+    "submit": "Send report"
+  },
+  "sent": {
+    "title": "Report sent",
+    "body": "Thank you for protecting animals. You can follow up here."
+  },
+  "detail": {
+    "sentOn": "Sent on",
+    "ongoing": "Still happening",
+    "yes": "Yes",
+    "identity": "Identity",
+    "anonymous": "Not shared",
+    "identified": "May be shared"
+  },
+  "gone": {
+    "title": "Report not found",
+    "body": "It may have been removed.",
+    "back": "Back"
+  }
+}

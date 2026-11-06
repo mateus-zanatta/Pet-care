@@ -34,7 +34,7 @@
     "terms": "Termos de Uso",
     "privacy": "Política de Privacidade",
     "version": "Versão {{version}}",
-    "disclaimer": "O Pet Care não é um canal oficial de denúncia e nunca sugere medicamento, dose ou diagnóstico: ele só registra o que o veterinário prescreveu e lembra você."
+    "disclaimer": "O {{appName}} não é um canal oficial de denúncia e nunca sugere medicamento, dose ou diagnóstico: ele só registra o que o veterinário prescreveu e lembra você."
   },
   "signOut": "Sair da conta",
   "signOutConfirmTitle": "Sair da conta?",

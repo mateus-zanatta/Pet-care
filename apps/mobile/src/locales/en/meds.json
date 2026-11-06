@@ -30,7 +30,7 @@
       "title": "No medications recorded",
       "body": "Record what the veterinarian prescribed to get dose reminders."
     },
-    "add": "Add medication",
+    "add": "Log medication",
     "sections": {
       "active": "In use",
       "suspended": "Suspended",

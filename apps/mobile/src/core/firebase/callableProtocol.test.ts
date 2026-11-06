@@ -1,4 +1,4 @@
-import { buildEmulatorCallableUrl, callableErrorCode, isNetworkError, unwrapCallableBody } from './callableProtocol';
+import { buildEmulatorCallableUrl, callableErrorCode, isNetworkError, parseCallableResponse, unwrapCallableBody } from './callableProtocol';
 
 describe('protocolo callable por HTTP', () => {
   it('monta a URL do emulador de Functions', () => {
@@ -25,6 +25,28 @@ describe('protocolo callable por HTTP', () => {
       expect((error as Error).message).toBe('owner-only');
       expect((error as { code: string }).code).toBe('functions/permission-denied');
     }
+  });
+});
+
+describe('parseCallableResponse', () => {
+  it('JSON normal (sucesso ou recusa) passa direto', () => {
+    expect(parseCallableResponse(200, '{"result":{"ok":true}}')).toEqual({ result: { ok: true } });
+    expect(parseCallableResponse(503, '{"error":{"message":"places-unavailable","status":"UNAVAILABLE"}}')).toEqual({
+      error: { message: 'places-unavailable', status: 'UNAVAILABLE' },
+    });
+  });
+
+  it('função que não existe no emulador (404 em texto puro) vira "functions/not-found", e não um erro sem pista', () => {
+    const body = parseCallableResponse(404, 'Function southamerica-east1-searchPlaces does not exist, valid functions are: ...');
+    expect(body).toEqual({ error: { message: 'function-not-found', status: 'NOT_FOUND' } });
+    expect(() => unwrapCallableBody(body)).toThrow(expect.objectContaining({ code: 'functions/not-found' }));
+  });
+
+  it('outras respostas fora do formato ganham um código pelo status HTTP', () => {
+    expect(parseCallableResponse(504, '<html>Gateway Timeout</html>').error).toEqual({ message: 'http-504', status: 'DEADLINE_EXCEEDED' });
+    expect(parseCallableResponse(500, 'oops').error).toEqual({ message: 'http-500', status: 'INTERNAL' });
+    expect(parseCallableResponse(200, 'não é JSON').error).toEqual({ message: 'bad-response', status: 'INTERNAL' });
+    expect(parseCallableResponse(200, '"texto"').error?.status).toBe('INTERNAL');
   });
 });
 

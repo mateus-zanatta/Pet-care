@@ -59,7 +59,7 @@ export const searchPlaces = onCall({ ...callableOptions, memory: '256MiB', timeo
     provider: providerFromEnv(),
     cache: firestoreCache(db()),
     now: new Date(),
-    onProviderError: (error) => logger.warn('places_provider_failed', { detail: String((error as Error)?.message ?? error).slice(0, 200) }),
+    onProviderError: (error) => logger.warn('places_provider_failed', { detail: String((error as Error)?.message ?? error).slice(0, 400) }),
   });
   logger.info('places_search', { provider: result.provider, cached: result.cached, count: result.places.length });
   return result;

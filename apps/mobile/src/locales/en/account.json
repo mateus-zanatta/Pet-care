@@ -34,7 +34,7 @@
     "terms": "Terms of Use",
     "privacy": "Privacy Policy",
     "version": "Version {{version}}",
-    "disclaimer": "Pet Care is not an official reporting channel and never suggests medicine, dose or diagnosis: it only records what the veterinarian prescribed and reminds you."
+    "disclaimer": "{{appName}} is not an official reporting channel and never suggests medicine, dose or diagnosis: it only records what the veterinarian prescribed and reminds you."
   },
   "signOut": "Sign out",
   "signOutConfirmTitle": "Sign out?",

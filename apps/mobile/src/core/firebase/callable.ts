@@ -3,7 +3,7 @@ import { httpsCallable } from '@react-native-firebase/functions';
 import { FUNCTIONS_REGION } from '@petcare/shared';
 import { auth, diagnoseEmulatorConnection, functions, getEmulatorHost } from './index';
 import { EMULATOR_PORT } from './diagnostics';
-import { type CallableBody, buildEmulatorCallableUrl, isNetworkError, unwrapCallableBody } from './callableProtocol';
+import { buildEmulatorCallableUrl, isNetworkError, parseCallableResponse, unwrapCallableBody } from './callableProtocol';
 
 /**
  * Chama uma Cloud Function "callable". Em produção usa o SDK do Firebase.
@@ -32,7 +32,14 @@ export async function callFunction<Request = undefined, Response = unknown>(
         body: JSON.stringify({ data: data ?? {} }),
       },
     );
-    return unwrapCallableBody<Response>((await response.json()) as CallableBody);
+    const body = parseCallableResponse(response.status, await response.text());
+    if (__DEV__ && body.error?.message === 'function-not-found') {
+      console.warn(
+        `[firebase] A função "${name}" não existe no emulador. Os emuladores foram abertos antes de o código ser atualizado: ` +
+          'feche-os (Ctrl+C) e rode de novo "npm run emulators:lan" na raiz do projeto.',
+      );
+    }
+    return unwrapCallableBody<Response>(body);
   } catch (error) {
     if (isNetworkError(error)) diagnoseEmulatorConnection();
     throw error;

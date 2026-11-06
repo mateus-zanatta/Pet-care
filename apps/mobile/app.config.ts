@@ -99,10 +99,10 @@ function googleIosUrlScheme(): string {
 
 export default ({ config }: ConfigContext): ExpoConfig => ({
   ...config,
-  name: 'Pet Care',
+  name: 'Tailwag',
   slug: EXPO_SLUG,
   ...(EXPO_OWNER ? { owner: EXPO_OWNER } : {}),
-  scheme: 'petcare',
+  scheme: 'tailwag',
   version: '1.0.0',
   orientation: 'portrait',
   icon: './assets/images/icon.png',
@@ -177,6 +177,15 @@ export default ({ config }: ConfigContext): ExpoConfig => ({
       },
     ],
     ['react-native-maps', GOOGLE_MAPS_ANDROID_API_KEY ? { androidGoogleMapsApiKey: GOOGLE_MAPS_ANDROID_API_KEY } : {}],
+     [
+      'expo-font',
+      {
+        // Fonte dos ícones das abas no Android (Material Symbols, ~1 MB) EMBUTIDA no app. Sem isso, em
+        // desenvolvimento o app a baixa do Metro a cada abertura; numa rede lenta o download estoura o tempo
+        // ("Unable to download asset") e os ícones somem. Embutida, o app nem tenta baixar. O iPhone usa SF Symbols.
+        android: { fonts: ['@expo-google-fonts/material-symbols/400Regular/MaterialSymbols_400Regular.ttf'] },
+      },
+    ],
     [
       'expo-notifications',
       {

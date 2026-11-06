@@ -5,12 +5,12 @@
     "title": "Termos de Uso",
     "sections": [
       {
-        "title": "1. Sobre o Pet Care",
-        "body": "O Pet Care ajuda tutores e protetores a registrar a saúde dos seus animais, a orientar quem encontra um animal em perigo e a organizar informações para denunciar maus-tratos. Ao usar o app você concorda com estes Termos."
+        "title": "1. Sobre o {{appName}}",
+        "body": "O {{appName}} ajuda tutores e protetores a registrar a saúde dos seus animais, a orientar quem encontra um animal em perigo e a organizar informações para denunciar maus-tratos. Ao usar o app você concorda com estes Termos."
       },
       {
         "title": "2. O que o app NÃO é",
-        "body": "O Pet Care não é um canal oficial de denúncia nem substitui a polícia, o Ministério Público ou os órgãos ambientais. Para flagrantes, ligue 190. O app também não substitui o médico-veterinário: ele nunca sugere medicamento, dose ou diagnóstico, apenas registra o que o veterinário prescreveu e lembra você de dar."
+        "body": "O {{appName}} não é um canal oficial de denúncia nem substitui a polícia, o Ministério Público ou os órgãos ambientais. Para flagrantes, ligue 190. O app também não substitui o médico-veterinário: ele nunca sugere medicamento, dose ou diagnóstico, apenas registra o que o veterinário prescreveu e lembra você de dar."
       },
       {
         "title": "3. Sua conta",

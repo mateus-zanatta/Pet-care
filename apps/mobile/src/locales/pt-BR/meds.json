@@ -30,7 +30,7 @@
       "title": "Nenhum medicamento registrado",
       "body": "Registre o que o veterinário prescreveu para receber lembretes das doses."
     },
-    "add": "Adicionar medicamento",
+    "add": "Registrar medicação",
     "sections": {
       "active": "Em uso",
       "suspended": "Suspensos",

@@ -1,0 +1,228 @@
+{
+  "title": "Resgate",
+  "emergency": "Animal ferido ou em perigo agora? Ligue para os contatos oficiais abaixo ou procure a emergência veterinária mais próxima.",
+  "findEmergency": "Ver atendimento de emergência perto de mim",
+  "accountBody": "Para anunciar um animal precisando de resgate e ver os alertas da sua região, crie uma conta. O guia e os contatos funcionam sem cadastro.",
+  "hub": {
+    "guide": {
+      "title": "Guia do resgate passo a passo",
+      "body": "Avaliação, veterinário, quarentena e acolhimento, com checklist."
+    },
+    "report": {
+      "title": "Anunciar animal para resgate",
+      "body": "Informe o local para ONGs, órgãos e voluntários irem até lá. Vale para qualquer animal."
+    }
+  },
+  "contacts": {
+    "title": "Contatos oficiais",
+    "intro": "Ligue conforme o caso. Os números funcionam no Brasil inteiro.",
+    "ibama": "IBAMA Linha Verde (0800 061 8080)",
+    "police": "Polícia / Polícia Ambiental (190)",
+    "firefighters": "Bombeiros (193)",
+    "ccz": "Para cães e gatos, procure também ONGs de proteção animal e o Centro de Controle de Zoonoses (CCZ) da prefeitura.",
+    "advice": {
+      "environmental": "Animal silvestre ou marinho: quem resgata é o órgão ambiental. Não tente pegar nem levar para casa (pode ser perigoso e é crime manter silvestre sem autorização).",
+      "livestock": "Cavalo, boi ou outro animal grande: em pista ou com risco de acidente, ligue 190 ou 193. A prefeitura costuma ter serviço de recolhimento.",
+      "domestic": "Cão ou gato: se estiver ferido, leve a um veterinário. ONGs e o CCZ da sua cidade podem ajudar com o acolhimento."
+    }
+  },
+  "open": {
+    "title": "Alertas de resgate",
+    "body": "Animais precisando de ajuda, do mais perto ao mais longe (quando a localização está liberada).",
+    "error": "Não foi possível carregar os alertas.",
+    "emptyTitle": "Nenhum alerta aberto",
+    "emptyBody": "Ainda bem! Quando alguém anunciar um animal precisando de resgate, ele aparece aqui."
+  },
+  "kinds": {
+    "dog": "Cachorro",
+    "cat": "Gato",
+    "horse": "Cavalo ou burro",
+    "livestock": "Boi, porco ou outro animal de criação",
+    "wild_bird": "Ave silvestre",
+    "wild_mammal": "Mamífero silvestre",
+    "reptile": "Réptil (cobra, lagarto, jabuti...)",
+    "marine": "Animal marinho",
+    "other": "Outro"
+  },
+  "conditions": {
+    "injured": "Ferido",
+    "trapped": "Preso ou encurralado",
+    "sick": "Doente",
+    "abandoned": "Abandonado",
+    "at_risk": "Em risco (pista, enchente...)"
+  },
+  "status": {
+    "open": "Precisa de resgate",
+    "in_progress": "Resgate a caminho",
+    "rescued": "Resgatado",
+    "closed": "Encerrado"
+  },
+  "form": {
+    "title": "Anunciar animal para resgate",
+    "intro": "Diga onde o animal está e como ele está. O local exato só aparece para pessoas com conta.",
+    "kind": "Que animal é?",
+    "wildWarning": "Animal silvestre: mantenha distância, não tente pegar e ligue para o órgão ambiental. Seu alerta ajuda a equipe a encontrar o local.",
+    "conditions": "Como ele está?",
+    "count": "Quantos animais?",
+    "countError": "Digite um número de 1 a 50.",
+    "description": "Descreva a situação",
+    "descriptionHint": "Ex.: cão ferido na pata, assustado, perto do ponto de ônibus.",
+    "locationHelp": "Obrigatório: é o ponto onde o animal está. Só pessoas com conta veem.",
+    "locationRequired": "Defina o local do animal.",
+    "address": "Endereço (opcional)",
+    "reference": "Ponto de referência (opcional)",
+    "referenceHint": "Ex.: atrás do mercado, embaixo da ponte.",
+    "contactPhone": "Seu telefone (opcional)",
+    "contactHint": "Para quem for resgatar falar com você. Só pessoas com conta veem.",
+    "submit": "Publicar alerta de resgate"
+  },
+  "detail": {
+    "goThere": "Como chegar",
+    "callReporter": "Ligar para quem avisou"
+  },
+  "owner": {
+    "title": "Seu alerta",
+    "status": "Situação do resgate",
+    "delete": "Excluir alerta"
+  },
+  "delete": {
+    "title": "Excluir este alerta?",
+    "body": "O alerta e as fotos serão apagados.",
+    "cancel": "Cancelar",
+    "confirm": "Excluir"
+  },
+  "gone": {
+    "title": "Alerta não encontrado",
+    "body": "Ele pode ter sido excluído por quem avisou.",
+    "back": "Voltar"
+  },
+  "guideTitle": "Guia do resgate",
+  "guide": {
+    "stepOf": "Etapa {{current}} de {{total}}",
+    "progress": "Guia {{percent}}% concluído",
+    "previous": "Etapa anterior",
+    "next": "Próxima etapa",
+    "restart": "Recomeçar o guia",
+    "wildWarning": "Animal silvestre (ave, cobra, gambá, macaco...)? NÃO tente pegar. Afaste curiosos e ligue para o IBAMA ou para a Polícia Ambiental (190).",
+    "vetOnly": "Remédios, vacinas e vermífugos: só com orientação do veterinário. O app não indica medicamento nem dose.",
+    "findVet": "Achar atendimento veterinário perto de mim",
+    "finishTitle": "Resgate concluído. Obrigado!",
+    "finishBody": "Agora o animal precisa de um lar. Você pode anunciá-lo para adoção responsável ou cadastrá-lo como seu pet para registrar a saúde.",
+    "toAdoption": "Anunciar para adoção",
+    "toPet": "Cadastrar como meu pet",
+    "steps": {
+      "approach": {
+        "title": "Avaliação e aproximação",
+        "summary": "Verifique o estado do animal, ganhe a confiança dele com alimento e faça uma contenção segura.",
+        "items": {
+          "safety": {
+            "title": "Garanta a sua segurança primeiro",
+            "body": "Observe de longe. Animal com dor ou medo pode morder ou arranhar. Em pista, sinalize e peça ajuda."
+          },
+          "assess": {
+            "title": "Veja o estado do animal",
+            "body": "Respira? Sangra? Consegue andar? Está preso? Anote o que vê: isso ajuda o veterinário."
+          },
+          "calm": {
+            "title": "Aproxime-se com calma",
+            "body": "Agache de lado, fale baixo, sem movimentos bruscos e sem encarar. Deixe o animal vir até você."
+          },
+          "food": {
+            "title": "Ofereça alimento e água",
+            "body": "Um pouco de comida ajuda a ganhar confiança. Se houver ferimento grave, não force: o veterinário pode precisar que ele esteja em jejum."
+          },
+          "contain": {
+            "title": "Faça a contenção com segurança",
+            "body": "Use toalha, cobertor, coleira ou caixa de transporte. Use luvas grossas se possível. Nunca segure pelo pescoço."
+          },
+          "transport": {
+            "title": "Transporte com cuidado",
+            "body": "Caixa de transporte ou caixa de papelão com furos, forrada. Mantenha o animal aquecido e em local escuro e calmo."
+          }
+        }
+      },
+      "vet": {
+        "title": "Atendimento veterinário",
+        "summary": "Leve o animal a um veterinário para exames de emergência, tratamento de ferimentos e o planejamento da saúde.",
+        "items": {
+          "emergency": {
+            "title": "Exames de emergência",
+            "body": "O veterinário avalia o estado geral e decide os exames necessários."
+          },
+          "wounds": {
+            "title": "Tratamento de ferimentos",
+            "body": "Não use remédios de gente nem receitas caseiras. Só o que o veterinário indicar."
+          },
+          "deworm": {
+            "title": "Vermifugação",
+            "body": "Feita conforme a orientação do veterinário, de acordo com idade e peso."
+          },
+          "vaccines": {
+            "title": "Vacinas",
+            "body": "O veterinário define quais vacinas e quando, depois de avaliar o animal."
+          },
+          "neuter": {
+            "title": "Planejar a castração",
+            "body": "Combine com o veterinário a melhor época. Procure programas de castração gratuitos ou populares na sua cidade."
+          },
+          "records": {
+            "title": "Guarde os registros",
+            "body": "Fotos de receitas, exames e carteira de vacinação. Você pode guardar tudo no app, no cadastro do pet."
+          }
+        }
+      },
+      "quarantine": {
+        "title": "Isolamento e quarentena",
+        "summary": "Mantenha o animal separado de outros animais por 7 a 14 dias para observar sintomas e doenças que ainda estão incubando.",
+        "items": {
+          "separate": {
+            "title": "Separe o animal",
+            "body": "Um cômodo ou espaço só para ele, longe dos seus outros animais."
+          },
+          "days": {
+            "title": "Conte de 7 a 14 dias",
+            "body": "É o tempo para aparecerem doenças que ainda estavam incubadas. Siga o prazo que o veterinário indicar."
+          },
+          "observe": {
+            "title": "Observe os sinais",
+            "body": "Tosse, espirro, diarreia, vômito, secreção nos olhos ou falta de apetite: avise o veterinário."
+          },
+          "hygiene": {
+            "title": "Capriche na higiene",
+            "body": "Lave as mãos depois de mexer no animal e limpe o espaço todos os dias."
+          },
+          "ownItems": {
+            "title": "Objetos só dele",
+            "body": "Potes, cama e brinquedos separados, sem dividir com os outros animais."
+          }
+        }
+      },
+      "aftercare": {
+        "title": "Acolhimento e pós-resgate",
+        "summary": "Ofereça abrigo (lar temporário ou definitivo), alimentação correta, carinho e inicie o processo de adoção responsável.",
+        "items": {
+          "shelter": {
+            "title": "Abrigo",
+            "body": "Lar temporário ou definitivo, protegido do sol, da chuva e do frio."
+          },
+          "food": {
+            "title": "Alimentação correta",
+            "body": "Ração adequada à espécie e à idade e água fresca sempre. Pergunte ao veterinário em caso de dúvida."
+          },
+          "affection": {
+            "title": "Carinho e paciência",
+            "body": "Respeite o tempo do animal: muitos chegam assustados. A confiança vem aos poucos."
+          },
+          "adoption": {
+            "title": "Adoção responsável",
+            "body": "Divulgue com fotos e informações de saúde, entreviste os interessados e faça um termo de adoção."
+          },
+          "followUp": {
+            "title": "Acompanhe depois",
+            "body": "Combine com quem adotou de receber notícias, principalmente nas primeiras semanas."
+          }
+        }
+      }
+    }
+  }
+}

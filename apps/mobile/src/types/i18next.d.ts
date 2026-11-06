@@ -6,5 +6,7 @@ declare module 'i18next' {
   interface CustomTypeOptions {
     defaultNS: 'common';
     resources: (typeof resources)['pt-BR'];
+    /** {{appName}} é preenchido sozinho (core/i18n/index.ts), não precisa passar em t(). */
+    defaultVariables: { appName: string };
   }
 }

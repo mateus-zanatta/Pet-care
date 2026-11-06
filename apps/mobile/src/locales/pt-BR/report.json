@@ -1,0 +1,82 @@
+{
+  "title": "Denúncia",
+  "intro": "Maus-tratos a qualquer animal é crime no Brasil (Lei 9.605/98). Registre aqui e use também os canais oficiais.",
+  "flagrant": "Está acontecendo agora? Ligue 190 imediatamente.",
+  "accountBody": "Para denunciar pelo app e acompanhar o andamento, crie uma conta. Os canais oficiais abaixo funcionam sem cadastro.",
+  "hub": {
+    "title": "Fazer uma denúncia",
+    "body": "Descreva o que aconteceu, o local e, se puder, envie fotos. Só você vê a sua denúncia."
+  },
+  "channels": {
+    "title": "Canais oficiais",
+    "intro": "Para a polícia investigar, registre também em um canal oficial:",
+    "police": "Ligar 190 (flagrante)",
+    "disque": "Disque Denúncia (181, anônimo)",
+    "ibama": "IBAMA Linha Verde (animais silvestres)",
+    "online": "Você também pode registrar um boletim de ocorrência pela Delegacia Eletrônica do seu estado ou procurar a delegacia mais próxima.",
+    "law": "Lei 9.605/98, art. 32: maus-tratos é crime. Para cães e gatos, a Lei 14.064/2020 prevê pena de 2 a 5 anos de reclusão."
+  },
+  "mine": {
+    "title": "Minhas denúncias",
+    "error": "Não foi possível carregar suas denúncias.",
+    "empty": "Você ainda não fez nenhuma denúncia pelo app."
+  },
+  "types": {
+    "abandonment": "Abandono",
+    "physical_abuse": "Agressão física",
+    "neglect": "Falta de cuidados (sem água, comida ou abrigo)",
+    "confinement": "Acorrentado ou confinado em local inadequado",
+    "poisoning": "Envenenamento",
+    "animal_fighting": "Rinha ou exploração",
+    "wildlife_trafficking": "Tráfico ou cativeiro de animal silvestre",
+    "sexual_abuse": "Abuso sexual",
+    "other": "Outro"
+  },
+  "status": {
+    "received": "Recebida",
+    "forwarded": "Encaminhada",
+    "closed": "Encerrada"
+  },
+  "statusHelp": {
+    "received": "Sua denúncia está registrada e será analisada pela equipe de moderação.",
+    "forwarded": "A denúncia foi encaminhada a um órgão responsável.",
+    "closed": "Esta denúncia foi encerrada."
+  },
+  "form": {
+    "title": "Nova denúncia",
+    "flagrant": "Em caso de flagrante, ligue 190 antes de preencher.",
+    "type": "O que está acontecendo?",
+    "description": "Descreva o que você viu",
+    "descriptionHint": "Quando, com que frequência, como o animal está. Quanto mais detalhes, melhor.",
+    "occurredOn": "Quando aconteceu? (opcional)",
+    "ongoing": "Ainda está acontecendo",
+    "animalKind": "Qual animal? (opcional)",
+    "locationHelp": "Obrigatório: onde aconteceu. Fica só na sua denúncia, não é público.",
+    "locationRequired": "Defina onde aconteceu.",
+    "address": "Endereço (opcional)",
+    "reference": "Ponto de referência (opcional)",
+    "suspectInfo": "Sobre o responsável (opcional)",
+    "suspectHint": "Só o que você viu (ex.: morador da casa azul). Não precisa saber o nome.",
+    "anonymous": "Não repassar minha identidade",
+    "anonymousHint": "Seu nome e contato não serão enviados a quem receber o encaminhamento.",
+    "goodFaith": "Faça a denúncia de boa-fé. Acusar falsamente alguém de um crime também é crime (denunciação caluniosa).",
+    "submit": "Enviar denúncia"
+  },
+  "sent": {
+    "title": "Denúncia enviada",
+    "body": "Obrigado por proteger os animais. Acompanhe o andamento por aqui."
+  },
+  "detail": {
+    "sentOn": "Enviada em",
+    "ongoing": "Ainda acontecendo",
+    "yes": "Sim",
+    "identity": "Identidade",
+    "anonymous": "Não repassada",
+    "identified": "Pode ser repassada"
+  },
+  "gone": {
+    "title": "Denúncia não encontrada",
+    "body": "Ela pode ter sido removida.",
+    "back": "Voltar"
+  }
+}

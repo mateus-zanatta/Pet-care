@@ -1,0 +1,45 @@
+{
+  "account": {
+    "title": "Crie sua conta para participar",
+    "cta": "Criar conta grátis"
+  },
+  "photos": {
+    "label": "Fotos ({{count}} de {{max}})",
+    "camera": "Câmera",
+    "gallery": "Galeria",
+    "remove": "Remover foto",
+    "privacy": "As fotos são reduzidas e a localização (GPS) gravada nelas é apagada antes do envio.",
+    "cameraDenied": "Sem permissão para usar a câmera. Você pode liberar nas configurações do celular ou escolher da galeria.",
+    "failed": "O registro foi salvo, mas as fotos não foram enviadas. Abra-o de novo para tentar adicionar as fotos."
+  },
+  "location": {
+    "label": "Local",
+    "set": "Local definido ({{lat}}, {{lng}})",
+    "useGps": "Usar minha localização",
+    "address": "Ou digite o endereço",
+    "addressPlaceholder": "Rua, número, bairro, cidade",
+    "findAddress": "Buscar este endereço",
+    "errors": {
+      "denied": "Sem permissão de localização. Digite o endereço.",
+      "services-off": "A localização do celular está desligada. Ligue-a ou digite o endereço.",
+      "timeout": "Não conseguimos sua localização a tempo. Tente de novo ou digite o endereço.",
+      "not-found": "Endereço não encontrado. Confira e tente de novo.",
+      "unavailable": "Localização indisponível nesta versão do app. Digite o endereço."
+    }
+  },
+  "health": {
+    "name": "Nome",
+    "date": "Data (opcional)",
+    "datePlaceholder": "dd/mm/aaaa",
+    "note": "Observação (opcional)",
+    "remove": "Remover"
+  },
+  "errors": {
+    "dailyLimit": "Você atingiu o limite de registros de hoje. Tente amanhã.",
+    "accountRequired": "É preciso ter uma conta para isso.",
+    "ownerOnly": "Só quem criou o registro pode alterá-lo.",
+    "invalid": "Alguns dados estão inválidos. Confira o formulário.",
+    "network": "Sem conexão com o servidor. Confira a internet e tente de novo.",
+    "generic": "Algo deu errado. Tente de novo."
+  }
+}

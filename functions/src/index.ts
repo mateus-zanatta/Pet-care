@@ -4,3 +4,13 @@ export { deletePet } from './pets/deletePet';
 export { importRga } from './rga/importRga';
 export { searchPlaces } from './places/searchPlaces';
 export { suggestPlace } from './places/suggestPlace';
+export {
+  attachReportPhotos,
+  createAdoption,
+  createReport,
+  createRescueAlert,
+  deleteAdoption,
+  deleteRescueAlert,
+  updateAdoption,
+  updateRescueAlert,
+} from './centrals/callables';

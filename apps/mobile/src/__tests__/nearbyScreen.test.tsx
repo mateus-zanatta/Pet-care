@@ -237,6 +237,17 @@ describe('Perto de mim', () => {
       expect(await screen.findByText(/Sem conexão com o servidor/)).toBeTruthy();
     });
 
+    it('erro desconhecido: relata o erro ORIGINAL (com código), não o embrulho "unknown"', async () => {
+      const { PlacesError } = jest.requireMock('@/features/nearby/places.service');
+      const { reportError } = jest.requireMock('@/core/errors/report');
+      const original = Object.assign(new Error('function-not-found'), { code: 'functions/not-found' });
+      const wrapped = new PlacesError('unknown');
+      Object.assign(wrapped, { code: 'unknown', original });
+      mockSearch.mockRejectedValueOnce(wrapped);
+      await renderWithProviders(<NearbyScreen />);
+      await waitFor(() => expect(reportError).toHaveBeenCalledWith('nearby.search', original));
+    });
+
     it('modo Resgate: avisa, começa com 10 km e põe emergência/24 h primeiro', async () => {
       await renderWithProviders(<NearbyScreen mode="emergency" />);
       expect(await screen.findByText('Mostrando primeiro os atendimentos de emergência e 24 h.')).toBeTruthy();

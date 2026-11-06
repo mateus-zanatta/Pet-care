@@ -4,6 +4,7 @@ import * as SplashScreen from 'expo-splash-screen';
 import { StatusBar } from 'expo-status-bar';
 import React, { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
+import { useReducedMotion } from 'react-native-reanimated';
 import { initAnalytics, track } from '@/core/analytics';
 import { initErrorReporting } from '@/core/errors/report';
 import { connectEmulatorsIfEnabled } from '@/core/firebase';
@@ -73,6 +74,10 @@ function Navigation() {
   const { t: tm } = useTranslation('meds');
   const { t: tsa } = useTranslation('health');
   const { t: tn } = useTranslation('nearby');
+  const reducedMotion = useReducedMotion();
+  const { t: trs } = useTranslation('rescue');
+  const { t: trp } = useTranslation('report');
+  const { t: tad } = useTranslation('adoption');
 
   useEffect(() => {
     if (status !== 'loading') void SplashScreen.hideAsync();
@@ -114,6 +119,8 @@ function Navigation() {
           headerTitleStyle: { color: colors.text },
           contentStyle: { backgroundColor: colors.background },
           headerBackButtonDisplayMode: 'minimal',
+          // Transições NATIVAS da plataforma (nunca refeitas em JS). Com "reduzir movimento": só esmaecer.
+          ...(reducedMotion ? { animation: 'fade' as const } : {}),
         }}
       >
         <Stack.Screen name="index" options={{ headerShown: false }} />
@@ -136,7 +143,11 @@ function Navigation() {
           <Stack.Screen name="pet/import-rga" options={{ title: tr('title') }} />
           <Stack.Screen name="pet/[id]/import-rga" options={{ title: tr('titleUpdate') }} />
           <Stack.Screen name="pet/[id]/medications/index" options={{ title: tm('title') }} />
-          <Stack.Screen name="pet/[id]/medications/new" options={{ title: tm('form.newTitle') }} />
+          {/* "Registrar medicação": tarefa curta e independente -> abre como modal, subindo de baixo (nativo). */}
+          <Stack.Screen
+            name="pet/[id]/medications/new"
+            options={{ title: tm('form.newTitle'), presentation: 'modal', animation: reducedMotion ? 'fade' : 'slide_from_bottom' }}
+          />
           <Stack.Screen name="pet/[id]/medications/[medId]/index" options={{ title: tm('detail.title') }} />
           <Stack.Screen name="pet/[id]/medications/[medId]/edit" options={{ title: tm('form.editTitle') }} />
           <Stack.Screen name="pet/[id]/medications/scan" options={{ title: tm('scan.title') }} />
@@ -149,7 +160,16 @@ function Navigation() {
           <Stack.Screen name="pet/[id]/health/event/[eid]/edit" options={{ title: tsa('event.editTitle') }} />
           <Stack.Screen name="nearby/suggest" options={{ title: tn('suggest.cta') }} />
           <Stack.Screen name="rescue/index" options={{ title: th('rescue.title') }} />
+          <Stack.Screen name="rescue/guide" options={{ title: trs('guideTitle') }} />
+          <Stack.Screen name="rescue/new" options={{ title: trs('form.title') }} />
+          <Stack.Screen name="rescue/[id]" options={{ title: trs('title') }} />
           <Stack.Screen name="report/index" options={{ title: th('report.title') }} />
+          <Stack.Screen name="report/new" options={{ title: trp('form.title'), presentation: 'modal' }} />
+          <Stack.Screen name="report/[id]" options={{ title: trp('title') }} />
+          <Stack.Screen name="adoption/index" options={{ title: tad('title') }} />
+          <Stack.Screen name="adoption/new" options={{ title: tad('form.newTitle'), presentation: 'modal' }} />
+          <Stack.Screen name="adoption/[id]/index" options={{ title: tad('title') }} />
+          <Stack.Screen name="adoption/[id]/edit" options={{ title: tad('form.editTitle') }} />
           <Stack.Screen name="account/delete" options={{ title: tc('delete.title') }} />
         </Stack.Protected>
 

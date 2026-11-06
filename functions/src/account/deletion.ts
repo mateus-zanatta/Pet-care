@@ -10,9 +10,18 @@ export const OWNED_COLLECTIONS: ReadonlyArray<{ name: string; field: string }> =
   { name: 'favorite_places', field: 'ownerId' },
   { name: 'place_suggestions', field: 'createdBy' },
   { name: 'suggestion_quota', field: 'uid' },
-  { name: 'rescues', field: 'ownerId' },
-  { name: 'reports', field: 'ownerId' },
+  { name: 'adoption_listings', field: 'ownerId' },
+  { name: 'rescue_alerts', field: 'reporterId' },
+  { name: 'reports', field: 'reporterId' },
+  { name: 'rate_limits', field: 'uid' },
 ];
+
+/** Pasta do Storage com as fotos de cada documento dessas coleções (apagada junto). */
+const STORAGE_ROOT_BY_COLLECTION: Readonly<Record<string, string>> = {
+  adoption_listings: 'adoptions',
+  rescue_alerts: 'rescues',
+  reports: 'reports',
+};
 
 export interface DeletionDeps {
   db: Firestore;
@@ -58,10 +67,12 @@ export async function deleteAccountCascade(
     }
   }
 
-  // 2) Dados pessoais em outras coleções (favoritos, resgates, denúncias...).
+  // 2) Dados pessoais em outras coleções (favoritos, adoção, resgates, denúncias...) e suas fotos.
   for (const { name, field } of OWNED_COLLECTIONS) {
     const owned = await db.collection(name).where(field, '==', uid).get();
     await Promise.all(owned.docs.map((d) => db.recursiveDelete(d.ref)));
+    const root = STORAGE_ROOT_BY_COLLECTION[name];
+    if (root) await Promise.all(owned.docs.map((d) => bucket.deleteFiles({ prefix: `${root}/${d.id}/`, force: true })));
   }
 
   // 3) Perfil, plano e arquivos privados.

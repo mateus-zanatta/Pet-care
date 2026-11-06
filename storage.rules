@@ -45,7 +45,49 @@ service firebase.storage {
       allow delete: if canEditPet(petId);
     }
 
-    // Dados privados de uma pessoa (denúncias, resgates): só ela acessa.
+    // ---------- Fotos das centrais (até 5 por registro, só .jpg de até 8 MB) ----------
+    function isRegisteredUser() {
+      return signedIn() && request.auth.token.firebase.sign_in_provider != 'anonymous';
+    }
+
+    function centralDoc(collection, id) {
+      return /databases/(default)/documents/$(collection)/$(id);
+    }
+
+    function ownsCentral(collection, id, field) {
+      return isRegisteredUser()
+        && firestore.exists(centralDoc(collection, id))
+        && firestore.get(centralDoc(collection, id)).data[field] == request.auth.uid;
+    }
+
+    function isCentralPhoto(fileName) {
+      return fileName.matches('[A-Za-z0-9_-]+[.]jpg')
+        && request.resource.contentType == 'image/jpeg'
+        && request.resource.size < 8 * 1024 * 1024;
+    }
+
+    // Adoção: todos que veem o anúncio veem as fotos; só quem anunciou envia/apaga.
+    match /adoptions/{listingId}/{fileName} {
+      allow read: if signedIn();
+      allow create, update: if ownsCentral('adoption_listings', listingId, 'ownerId') && isCentralPhoto(fileName);
+      allow delete: if ownsCentral('adoption_listings', listingId, 'ownerId');
+    }
+
+    // Resgate: só quem tem conta vê (mesma regra do alerta).
+    match /rescues/{alertId}/{fileName} {
+      allow read: if isRegisteredUser();
+      allow create, update: if ownsCentral('rescue_alerts', alertId, 'reporterId') && isCentralPhoto(fileName);
+      allow delete: if ownsCentral('rescue_alerts', alertId, 'reporterId');
+    }
+
+    // Denúncia: provas são privadas (só quem denunciou).
+    match /reports/{reportId}/{fileName} {
+      allow read: if ownsCentral('reports', reportId, 'reporterId');
+      allow create, update: if ownsCentral('reports', reportId, 'reporterId') && isCentralPhoto(fileName);
+      allow delete: if ownsCentral('reports', reportId, 'reporterId');
+    }
+
+    // Dados privados de uma pessoa: só ela acessa.
     match /users/{uid}/{allPaths=**} {
       allow read, write: if signedIn() && request.auth.uid == uid;
     }

@@ -52,7 +52,7 @@ describe('lista de medicamentos', () => {
   it('vazia: explica e oferece adicionar', async () => {
     await renderWithProviders(<MedicationsScreen />);
     expect(screen.getByText('Nenhum medicamento registrado')).toBeTruthy();
-    await fireEvent.press(screen.getByRole('button', { name: 'Adicionar medicamento' }));
+    await fireEvent.press(screen.getByRole('button', { name: 'Registrar medicação' }));
     expect(mockPush).toHaveBeenCalledWith({ pathname: '/pet/[id]/medications/new', params: { id: 'p1' } });
   });
 
@@ -96,7 +96,7 @@ describe('lista de medicamentos', () => {
     mockPermission = 'denied';
     await renderWithProviders(<MedicationsScreen />);
     expect(screen.getByText('Você só pode visualizar os medicamentos deste pet.')).toBeTruthy();
-    expect(screen.queryByRole('button', { name: 'Adicionar medicamento' })).toBeNull();
+    expect(screen.queryByRole('button', { name: 'Registrar medicação' })).toBeNull();
     expect(screen.queryByText(/Ative as notificações/)).toBeNull();
   });
 });

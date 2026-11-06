@@ -260,9 +260,41 @@ Esta fase traz dois módulos nativos novos (**localização** e **mapa**), entã
 9. **Resgate:** toque em **Ver atendimento de emergência perto de mim**: a lista abre com os atendimentos 24 h primeiro.
 10. Negue a permissão (Configurações do Android → Apps → o app → Permissões → Localização → Não permitir) e reabra a aba: deve aparecer **Abrir configurações** e a busca por endereço.
 
-> **Se a busca não trouxer nada** ("O serviço de mapas não respondeu agora"): olhe o terminal dos emuladores. A linha `places_provider_failed` diz o motivo: `HTTP 429` ou `504` é o servidor público do OpenStreetMap ocupado (espere um pouco e tente de novo); erro de conexão quer dizer que o seu PC não alcançou a internet (antivírus ou firewall bloqueando o **Node**). Depois que uma busca dá certo, ela fica guardada por 24 h e não depende mais do OpenStreetMap.
+> **Se a busca não trouxer nada** ("O serviço de mapas não respondeu agora"): olhe o terminal dos emuladores. Até ~1 minuto depois de `Beginning execution of "southamerica-east1-searchPlaces"` aparece a linha `places_provider_failed`, com o motivo de **cada** servidor do OpenStreetMap tentado (ex.: `overpass-api.de: HTTP 429; ...`):
+>
+> - `HTTP 429`, `502`, `503` ou `504`, ou `sem resposta em 18 s`: servidor público ocupado. Espere alguns minutos e tente de novo.
+> - `HTTP 406`: o servidor recusou a **identificação do app** (User-Agent). Desde abril de 2026 o servidor principal recusa pedidos sem identificação ou com a identificação padrão de bibliotecas (o `node`, por exemplo) e pede um contato de quem consulta. O app manda `TailwagApp/1.0 (+endereço do projeto)`; para trocar (ex.: incluir um e-mail), crie a variável `OVERPASS_USER_AGENT` no terminal antes de abrir os emuladores. Um 406 também pode ser bloqueio temporário do seu IP por excesso de consultas: espere e tente de novo.
+> - `fetch failed (ENOTFOUND)` ou `(ECONNREFUSED)`: o **Node** do seu PC não alcança a internet (firewall ou antivírus bloqueando o Node).
+> - `fetch failed (UNABLE_TO_GET_ISSUER_CERT_LOCALLY)`, `(SELF_SIGNED_CERT_IN_CHAIN)` ou outro com `CERT`: um **antivírus inspecionando HTTPS** (ex.: "proteção web") troca o certificado dos sites; o navegador aceita, mas o Node não. Desligue a inspeção de HTTPS do antivírus ou adicione uma exceção para `node.exe`.
+>
+> Depois que uma busca dá certo, ela fica guardada por 24 h e não depende mais do OpenStreetMap.
+
+> **Se aparecer "Algo deu errado" e, no Metro, `[erro] nearby.search (functions/not-found)`:** a função `searchPlaces` não existe no emulador. Isso acontece quando os emuladores foram abertos **antes** de você extrair o código novo: o código das funções só é compilado quando eles iniciam. Feche os emuladores (Ctrl+C) e rode de novo `npm run emulators:lan` na raiz. Na abertura, o terminal deve listar `functions[southamerica-east1-searchPlaces]: http function initialized`. Vale para qualquer função nova das próximas fases.
 
 **Mapa no Android (opcional, depende de cobrança):** o mapa usa o Google Maps, que exige uma chave com **conta de cobrança no Google Cloud** (o mesmo tipo de bloqueio do Blaze). Sem a chave, a tela funciona em **lista**, e "Como chegar" abre o app de mapas. Quando tiver a chave: no site do Expo, em *Project → Environment variables*, crie `GOOGLE_MAPS_ANDROID_API_KEY` (ambiente *development*), gere um novo build, e o botão **Lista / Mapa** aparece. No iPhone o mapa usa o Apple Maps e não precisa de chave.
+
+### 2.7 Testar as centrais de Adoção, Resgate e Denúncia, a segurança e as animações (Fase 4)
+
+**Não precisa de build novo** (nenhum módulo nativo novo). Basta:
+
+1. Extrair o zip na raiz e rodar `npm install` (só por garantia).
+2. **Reiniciar os emuladores** (há 8 Cloud Functions novas): `Ctrl+C` e `npm run emulators:lan` na raiz. Na abertura devem aparecer `createAdoption`, `updateAdoption`, `deleteAdoption`, `createRescueAlert`, `updateRescueAlert`, `deleteRescueAlert`, `createReport` e `attachReportPhotos`.
+3. Abrir o Metro (`npx expo start --dev-client --clear` em `apps\mobile`) e o app pelo QR code.
+
+> As centrais **gravam pelo servidor** (porta 5001, que já funciona), mas **leem do Firestore** (porta 8085). Enquanto o Firewall barrar o Java (item 1 do `PENDENCIAS.md`), o registro é criado, mas as listas podem ficar vazias no celular. Confira o que foi gravado em <http://localhost:4000/firestore>.
+
+**Roteiro (com uma conta de e-mail, não anônima):**
+
+1. **Cadastro com senha forte:** crie uma conta nova. Digite uma senha fraca (`senha123`) e veja o medidor e a lista do que falta. Só com todos os itens marcados o cadastro passa.
+2. **Espera no login:** saia, entre com a senha errada 3 vezes seguidas: aparece "Aguarde 2 s". Errando de novo, a espera dobra (4 s, 8 s...).
+3. **Home:** os cartões entram em cascata (de baixo, rápido). Toque e segure um cartão: ele "afunda" levemente.
+4. **Adoção:** Home → **Adoção** → **Anunciar um animal para adoção**. Preencha espécie, cores, uma vacina, uma descrição, cidade/UF e telefone, adicione uma foto e publique. Confira em `adoption_listings` (o telefone fica em `adoption_listings/{id}/private/contact`). No anúncio, mude a situação para **Reservado**.
+5. **Resgate:** Home → **Resgatar**. Abra o **Guia do resgate passo a passo**, marque itens, avance as 4 etapas (a etapa nova desliza do lado para onde você andou) e feche o app: ao voltar, o guia continua de onde parou. Depois **Anunciar animal para resgate**: escolha **Ave silvestre** (aparece o aviso para não pegar e o IBAMA), marque **Ferido**, defina o local e publique.
+6. **Denúncia:** Home → **Denunciar** → **Fazer uma denúncia**. Envie sem preencher (os campos obrigatórios são apontados), depois preencha e envie: aparece a confirmação "Denúncia enviada" e ela fica em **Minhas denúncias** (só você vê).
+7. **Limite diário:** envie 6 denúncias no mesmo dia: a 6ª mostra "Você atingiu o limite de registros de hoje".
+8. **Registrar medicação:** Pets → um pet → Medicamentos → **Registrar medicação**: o formulário abre subindo de baixo.
+9. **Sem cadastro:** saia e use **Continuar sem cadastro**. Nas centrais aparece o convite "Crie sua conta para participar"; os contatos oficiais e o guia continuam disponíveis.
+10. **Reduzir movimento:** Android: Configurações → Acessibilidade → **Remover animações**. As telas passam a só esmaecer, sem deslizar.
 
 ---
 
@@ -298,6 +330,8 @@ npx firebase deploy --only firestore:rules,firestore:indexes,storage,functions
 ---
 
 ## 4. Login com Google
+
+> O botão já está pronto no app e aparece sozinho quando o ID abaixo existe. Para testar **antes** do projeto real (com os emuladores), veja o passo a passo em [`SEGURANCA.md`](SEGURANCA.md), seção 1.
 
 1. Em *Authentication → Método de login → Google*, copie o **ID do cliente da Web** e cole em `apps/mobile/.env.local`:
    ```

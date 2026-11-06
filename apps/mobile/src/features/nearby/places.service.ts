@@ -21,7 +21,11 @@ export function clearPlacesMemory(): void {
 }
 
 export class PlacesError extends Error {
-  constructor(public readonly code: 'network' | 'unavailable' | 'unknown') {
+  /** `original`: o erro de verdade (ex.: código "functions/not-found"), para o relato de erros não perder a pista. */
+  constructor(
+    public readonly code: 'network' | 'unavailable' | 'unknown',
+    public readonly original?: unknown,
+  ) {
     super(code);
     this.name = 'PlacesError';
   }
@@ -41,14 +45,14 @@ export async function searchNearby(origin: LatLng, radiusKm: SearchRadiusKm, now
     try {
       const raw = await callFunction<SearchPlacesRequest, unknown>('searchPlaces', { lat: center.lat, lng: center.lng, radiusKm });
       const parsed = searchPlacesResponseSchema.safeParse(raw);
-      if (!parsed.success) throw new PlacesError('unknown');
+      if (!parsed.success) throw new PlacesError('unknown', Object.assign(new Error('bad-response'), { code: 'places/bad-response' }));
       response = parsed.data;
     } catch (error) {
       if (error instanceof PlacesError) throw error;
       // "places-unavailable": o OpenStreetMap não respondeu (o servidor está bem). Qualquer outra falha de rede: conexão.
       if ((error as Error)?.message === 'places-unavailable') throw new PlacesError('unavailable');
-      if (isNetworkError(error)) throw new PlacesError('network');
-      throw new PlacesError('unknown');
+      if (isNetworkError(error)) throw new PlacesError('network', error);
+      throw new PlacesError('unknown', error);
     }
     memory.set(key, { at: now, response });
   }

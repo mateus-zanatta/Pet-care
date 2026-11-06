@@ -1,11 +1,11 @@
 {
   "ios": {
-    "CFBundleDisplayName": "Pet Care",
+    "CFBundleDisplayName": "Tailwag",
     "NSCameraUsageDescription": "We use the camera so you can take a photo of your pet.",
     "NSPhotoLibraryUsageDescription": "We use your photos so you can choose your pet's picture.",
     "NSLocationWhenInUseUsageDescription": "We use your location to show vets, pet shops and shelters near you. It is not stored or shared."
   },
   "android": {
-    "app_name": "Pet Care"
+    "app_name": "Tailwag"
   }
 }

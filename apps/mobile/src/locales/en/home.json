@@ -13,6 +13,10 @@
       "title": "My Pets",
       "subtitle": "Health, vaccines and medicines"
     },
+    "adoption": {
+      "title": "Adoption",
+      "subtitle": "Animals waiting for a home, with health, age and location"
+    },
     "rescue": {
       "title": "Rescue",
       "subtitle": "I found an animal"

@@ -1,3 +1,5 @@
+import { APP_NAME } from '@petcare/shared';
+import { setupTestI18n } from '@/test/render';
 import { resources } from './resources';
 
 /** Lista todas as chaves de um objeto JSON aninhado como "a.b.c" (arrays contam como folhas). */
@@ -38,6 +40,27 @@ describe('traduções', () => {
   it('a lista de seções legais tem o mesmo tamanho nos dois idiomas', () => {
     for (const doc of ['terms', 'privacy'] as const) {
       expect(resources.en.legal[doc].sections.length).toBe(resources['pt-BR'].legal[doc].sections.length);
+    }
+  });
+});
+
+describe('nome do app (Tailwag)', () => {
+
+  it('nenhum texto ainda usa o nome antigo', () => {
+    expect(JSON.stringify(resources)).not.toMatch(/Pet Care/);
+  });
+
+  it('{{appName}} vira o nome do app em qualquer idioma', async () => {
+    const i18n = await setupTestI18n('pt-BR');
+    expect(i18n.t('appName')).toBe(APP_NAME);
+    expect(i18n.t('legal:terms.sections.0.title' as never)).toContain(APP_NAME);
+  });
+
+  it('os textos lidos no build (nome embaixo do ícone) usam o mesmo nome', () => {
+    for (const lang of ['pt-BR', 'en']) {
+      const native = require(`@/locales/native/${lang}.json`) as { ios: { CFBundleDisplayName: string }; android: { app_name: string } };
+      expect(native.ios.CFBundleDisplayName).toBe(APP_NAME);
+      expect(native.android.app_name).toBe(APP_NAME);
     }
   });
 });

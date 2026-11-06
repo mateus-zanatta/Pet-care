@@ -116,6 +116,51 @@ Pontos de projeto:
 - O cache precisa de uma **política de TTL** no Firestore (campo `expiresAt`) para apagar o que envelheceu: é um ajuste no console, no projeto real.
 - **Não validado em aparelho:** GPS, permissão, mapa no iPhone e os links de navegação só dá para conferir no celular (roteiro no `SETUP.md`, seção 2.6).
 
+## Centrais de Adoção, Resgate e Denúncia (Fase 4)
+
+**Fluxo de gravação:** o app nunca grava direto. Cada ação chama uma Cloud Function (`functions/src/centrals/`), que
+valida com o mesmo schema Zod do app (`packages/shared/src/schemas/centrals.ts`), confere a conta (anônimo não cria)
+e aplica um **limite diário por pessoa** numa transação (`rate_limits/{uid}_{central}_{dia}`). O app só lê, e as
+regras decidem quem vê o quê.
+
+| Coleção | Quem lê | Observações |
+|---|---|---|
+| `adoption_listings/{id}` | qualquer pessoa logada | Só cidade/UF; coordenada arredondada (~1 km). Saúde: vacinas, remédios e exames já feitos (texto livre). |
+| `adoption_listings/{id}/private/contact` | só quem tem conta | Telefone de quem doa. |
+| `rescue_alerts/{id}` | só quem tem conta | Ponto **exato** (sem ele ninguém acha o animal). Qualquer animal: silvestre, cavalo, gado, marinho... |
+| `reports/{id}` | só quem denunciou | Denúncia privada; `anonymous` = identidade não repassada no encaminhamento. Status `received` → `forwarded`/`closed` (painel, Fase 7). |
+| `rate_limits/{id}` | ninguém (só servidor) | Contadores do limite diário. |
+
+**Fotos:** `adoptions|rescues|reports/{id}/photo-*.jpg` no Storage. O app reduz e recodifica (apaga o GPS do EXIF), envia
+para a pasta do registro (as regras do Storage conferem o dono pelo Firestore) e depois avisa a Function, que só aceita
+caminhos da pasta do próprio registro.
+
+**Guia do resgate:** 4 etapas (avaliação e aproximação, veterinário, quarentena de 7 a 14 dias, acolhimento) com
+checklist salvo no aparelho (`features/rescue/guide.ts`). Nunca indica remédio ou dose: tudo de saúde é "com o veterinário".
+Os contatos oficiais (IBAMA 0800 061 8080, 190, 193, 181) funcionam sem conta e sem internet.
+
+**Exclusão de conta:** apaga anúncios, alertas, denúncias, contadores e as fotos de cada um.
+
+## Movimento e animações
+
+Biblioteca: **Reanimated 4** (já vem com o Expo). A biblioteca **Motion** (motion.dev, antiga Framer Motion) é para
+React na **web** e não roda em React Native; ela fica para o painel web da Fase 7. A linguagem de movimento está em
+`apps/mobile/src/components/motion/motion.ts`:
+
+- **Toque** (`PressableScale`, usado por todo `Button` e `Card`): encolhe para 97% em 120 ms assim que o dedo encosta.
+  É uma transição de estilo (roda na thread de interface, sem renderizar a cada quadro).
+- **Entradas** (`EnterView`): conteúdo entra de baixo (12 px) em 250 ms, em cascata de 40 ms (no máximo 8 itens).
+- **Telas e formulários:** transições **nativas** da plataforma (formulários curtos abrem como modal subindo de baixo). Nada
+  de transição de tela refeita em JS, e nada animando por cima de um modal que já está subindo.
+- **Curvas:** ease-out forte `cubic-bezier(0.23, 1, 0.32, 1)` para entrar/sair; ease-in-out para mover na tela; nunca ease-in.
+- **Reduzir movimento** (configuração do sistema): sem deslocamento nem escala, só esmaecer; telas passam a usar `fade`.
+- **Não anima:** troca de abas, digitação, rolagem.
+
+## Segurança de conta
+
+Senha forte com medidor, espera crescente entre tentativas de login, limite diário nas funções e teste que impede
+segredos no app. Detalhes e checklist de produção: [`SEGURANCA.md`](SEGURANCA.md).
+
 ## Saúde: vacinas, linha do tempo, anexos e PDF (Fase 2B)
 
 | Caminho | Quem acessa | Observações |

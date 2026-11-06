@@ -78,4 +78,12 @@ describe('searchNearby', () => {
     mockCall.mockResolvedValueOnce({ places: 'x' });
     await expect(searchNearby(exact, 5)).rejects.toBeInstanceOf(PlacesError);
   });
+
+  it('erro desconhecido guarda o erro ORIGINAL (o relato mostra "functions/not-found", não só "unknown")', async () => {
+    const original = Object.assign(new Error('function-not-found'), { code: 'functions/not-found' });
+    mockCall.mockRejectedValueOnce(original);
+    await expect(searchNearby(exact, 5)).rejects.toMatchObject({ code: 'unknown', original });
+    mockCall.mockResolvedValueOnce({ places: 'x' });
+    await expect(searchNearby(exact, 5)).rejects.toMatchObject({ code: 'unknown', original: { code: 'places/bad-response' } });
+  });
 });

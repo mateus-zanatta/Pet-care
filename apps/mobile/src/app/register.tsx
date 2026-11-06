@@ -1,7 +1,7 @@
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useRouter } from 'expo-router';
 import React from 'react';
-import { Controller, useForm } from 'react-hook-form';
+import { Controller, useForm, useWatch } from 'react-hook-form';
 import { useTranslation } from 'react-i18next';
 import { View } from 'react-native';
 import { FormTextField, useErrorText } from '@/components/form/FormFields';
@@ -14,6 +14,7 @@ import { track } from '@/core/analytics';
 import { useAuth } from '@/features/auth/AuthProvider';
 import { registerWithEmail } from '@/features/auth/auth.service';
 import { LegalLinks } from '@/features/auth/LegalLinks';
+import { PasswordStrength } from '@/features/auth/PasswordStrength';
 import { type RegisterValues, registerSchema } from '@/features/auth/schemas';
 import { SocialButtons } from '@/features/auth/SocialButtons';
 import { useAuthAction } from '@/features/auth/useAuthAction';
@@ -29,6 +30,8 @@ export default function RegisterScreen() {
     resolver: zodResolver(registerSchema),
     defaultValues: { name: '', email: '', password: '', acceptTerms: false },
   });
+
+  const [password, email, name] = useWatch({ control, name: ['password', 'email', 'name'] });
 
   const submit = handleSubmit((values) =>
     action.run('auth.register', async () => {
@@ -63,6 +66,7 @@ export default function RegisterScreen() {
         autoComplete="new-password"
         textContentType="newPassword"
       />
+      <PasswordStrength password={password ?? ''} email={email} name={name} />
       <Controller
         control={control}
         name="acceptTerms"

@@ -16,15 +16,16 @@ describe('loginSchema', () => {
 });
 
 describe('registerSchema', () => {
-  const ok = { name: 'Ana', email: 'ana@exemplo.com', password: 'senha1234', acceptTerms: true };
+  const ok = { name: 'Ana Souza', email: 'ana@exemplo.com', password: 'Girassol#Azul42', acceptTerms: true };
 
-  it('aceita cadastro válido', () => {
+  it('aceita cadastro com senha forte', () => {
     expect(registerSchema.safeParse(ok).success).toBe(true);
   });
-  it('exige senha com 8+ caracteres, letras e números', () => {
-    expect(issues(registerSchema.safeParse({ ...ok, password: 'abc1' }))).toContain('password:validation.passwordTooShort');
-    expect(issues(registerSchema.safeParse({ ...ok, password: '12345678' }))).toContain('password:validation.passwordWeak');
-    expect(issues(registerSchema.safeParse({ ...ok, password: 'abcdefgh' }))).toContain('password:validation.passwordWeak');
+  it('recusa senha fraca, batida ou com dados pessoais', () => {
+    for (const password of ['abc1', 'senha1234', 'Abcdefghij1', 'Senha@2024!', 'Ana#Souza2026']) {
+      expect(issues(registerSchema.safeParse({ ...ok, password }))).toContain('password:validation.passwordWeak');
+    }
+    expect(issues(registerSchema.safeParse({ ...ok, password: '' }))).toContain('password:validation.required');
   });
   it('exige aceitar os termos', () => {
     expect(issues(registerSchema.safeParse({ ...ok, acceptTerms: false }))).toEqual(['acceptTerms:validation.termsRequired']);

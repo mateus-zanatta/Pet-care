@@ -228,3 +228,76 @@ describe('suggestPlace (callable)', () => {
     expect((await call('suggestPlace', idToken, suggestion)).error?.status).toBe('RESOURCE_EXHAUSTED');
   });
 });
+
+describe('centrais: adoção, resgate e denúncia (callables)', () => {
+  const adoption = {
+    species: 'dog',
+    sex: 'female',
+    ageGroup: 'adult',
+    colors: ['caramelo'],
+    neutered: 'yes',
+    vaccines: [{ name: 'V10', date: '2026-05-10' }],
+    medications: [],
+    exams: [{ name: 'Leishmaniose', note: 'negativo' }],
+    description: 'Muito dócil, se dá bem com crianças.',
+    city: 'Campinas',
+    uf: 'SP',
+    lat: -22.907123,
+    lng: -47.062987,
+    contactPhone: '(19) 99999-0000',
+  };
+  const alert = { animalKind: 'wild_bird', conditions: ['injured'], count: 1, description: 'Coruja caída com a asa machucada', lat: -23.551234, lng: -46.634567 };
+  const report = { type: 'neglect', description: 'Cachorro sem água e comida há dias no quintal.', ongoing: true, lat: -23.5, lng: -46.6, anonymous: true };
+
+  it('exigem conta de verdade e dados válidos', async () => {
+    expect((await call('createAdoption', null, adoption)).error?.status).toBe('UNAUTHENTICATED');
+    const anon = await signUpAnonymous();
+    expect((await call('createReport', anon.idToken, report)).error?.status).toBe('PERMISSION_DENIED');
+    const { idToken } = await signUp('ana@example.com');
+    expect((await call('createRescueAlert', idToken, { ...alert, conditions: [] })).error?.status).toBe('INVALID_ARGUMENT');
+  });
+
+  it('adoção: telefone vai para documento privado e a coordenada é arredondada (~1 km)', async () => {
+    const { uid, idToken } = await signUp('ana@example.com');
+    const res = (await call('createAdoption', idToken, adoption)) as { result?: { id: string } };
+    const id = res.result!.id;
+    const listing = (await getFirestore().doc(`adoption_listings/${id}`).get()).data()!;
+    expect(listing).toMatchObject({ ownerId: uid, status: 'available', lat: -22.91, lng: -47.06, city: 'Campinas' });
+    expect(listing.contactPhone).toBeUndefined();
+    expect((await getFirestore().doc(`adoption_listings/${id}/private/contact`).get()).data()).toEqual({ ownerId: uid, contactPhone: '(19) 99999-0000' });
+
+    // A dona muda o status e os dados; outra pessoa não consegue.
+    expect((await call('updateAdoption', idToken, { id, status: 'adopted', data: { description: 'Já foi adotada, obrigado a todos!' } })).error).toBeUndefined();
+    expect((await getFirestore().doc(`adoption_listings/${id}`).get()).data()).toMatchObject({ status: 'adopted', description: 'Já foi adotada, obrigado a todos!' });
+    const bia = await signUp('bia@example.com');
+    expect((await call('updateAdoption', bia.idToken, { id, status: 'available' })).error?.status).toBe('PERMISSION_DENIED');
+    expect((await call('deleteAdoption', bia.idToken, { id })).error?.status).toBe('PERMISSION_DENIED');
+
+    // Fotos só da pasta do próprio anúncio.
+    expect((await call('updateAdoption', idToken, { id, photoPaths: ['pets/x/profile.jpg'] })).error?.status).toBe('INVALID_ARGUMENT');
+    expect((await call('updateAdoption', idToken, { id, photoPaths: [`adoptions/${id}/photo-1.jpg`] })).error).toBeUndefined();
+
+    expect((await call('deleteAdoption', idToken, { id })).error).toBeUndefined();
+    expect((await getFirestore().doc(`adoption_listings/${id}`).get()).exists).toBe(false);
+    expect((await getFirestore().doc(`adoption_listings/${id}/private/contact`).get()).exists).toBe(false);
+  });
+
+  it('resgate: guarda o ponto exato e quem anunciou atualiza o status', async () => {
+    const { uid, idToken } = await signUp('ana@example.com');
+    const res = (await call('createRescueAlert', idToken, alert)) as { result?: { id: string } };
+    const id = res.result!.id;
+    expect((await getFirestore().doc(`rescue_alerts/${id}`).get()).data()).toMatchObject({ reporterId: uid, status: 'open', lat: -23.551234 });
+    expect((await call('updateRescueAlert', idToken, { id, status: 'rescued' })).error).toBeUndefined();
+    expect((await getFirestore().doc(`rescue_alerts/${id}`).get()).data()?.status).toBe('rescued');
+  });
+
+  it('denúncia: fica privada, com status "recebida", e respeita o limite diário (5)', async () => {
+    const { uid, idToken } = await signUp('ana@example.com');
+    const first = (await call('createReport', idToken, report)) as { result?: { id: string } };
+    expect((await getFirestore().doc(`reports/${first.result!.id}`).get()).data()).toMatchObject({ reporterId: uid, status: 'received', anonymous: true });
+    for (let i = 0; i < 4; i += 1) expect((await call('createReport', idToken, report)).error).toBeUndefined();
+    const blocked = await call('createReport', idToken, report);
+    expect(blocked.error?.status).toBe('RESOURCE_EXHAUSTED');
+    expect(blocked.error?.message).toBe('daily-limit');
+  });
+});

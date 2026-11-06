@@ -332,6 +332,38 @@ service cloud.firestore {
       allow read, write: if false;
     }
 
+    // ---------- Centrais de adoção, resgate e denúncia ----------
+    // Tudo é criado/alterado por Cloud Functions (validação + limite diário por pessoa). O app só LÊ.
+
+    // Adoção: qualquer pessoa logada (até "sem cadastro") vê os anúncios...
+    match /adoption_listings/{listingId} {
+      allow read: if signedIn();
+      allow write: if false;
+
+      // ...mas o telefone de contato só aparece para quem tem conta.
+      match /private/{doc} {
+        allow read: if isRegisteredUser();
+        allow write: if false;
+      }
+    }
+
+    // Resgate: o ponto é exato (para encontrar o animal), então só quem tem conta vê.
+    match /rescue_alerts/{alertId} {
+      allow read: if isRegisteredUser();
+      allow write: if false;
+    }
+
+    // Denúncia: privada. Só quem denunciou lê (a moderação usará o painel administrativo, com o Admin SDK).
+    match /reports/{reportId} {
+      allow read: if signedIn() && resource.data.reporterId == request.auth.uid;
+      allow write: if false;
+    }
+
+    // Limites diários: só o servidor.
+    match /rate_limits/{doc} {
+      allow read, write: if false;
+    }
+
     // ---------- pet_members/{petId}_{uid} ----------
     match /pet_members/{memberId} {
       // Cada pessoa vê as próprias participações; o dono vê quem participa do seu pet.

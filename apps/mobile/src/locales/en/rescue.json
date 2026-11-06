@@ -1,0 +1,228 @@
+{
+  "title": "Rescue",
+  "emergency": "Animal injured or in danger right now? Call the official contacts below or find the nearest emergency vet.",
+  "findEmergency": "See emergency care near me",
+  "accountBody": "To report an animal that needs rescue and see alerts in your area, create an account. The guide and contacts work without one.",
+  "hub": {
+    "guide": {
+      "title": "Step-by-step rescue guide",
+      "body": "Assessment, vet, quarantine and aftercare, with a checklist."
+    },
+    "report": {
+      "title": "Report an animal for rescue",
+      "body": "Share the location so NGOs, agencies and volunteers can go there. Any animal counts."
+    }
+  },
+  "contacts": {
+    "title": "Official contacts",
+    "intro": "Call according to the case. These numbers work anywhere in Brazil.",
+    "ibama": "IBAMA Green Line (0800 061 8080)",
+    "police": "Police / Environmental Police (190)",
+    "firefighters": "Firefighters (193)",
+    "ccz": "For dogs and cats, also look for animal protection NGOs and your city's Zoonosis Control Center (CCZ).",
+    "advice": {
+      "environmental": "Wild or marine animal: the environmental agency does the rescue. Don't try to catch it or take it home (it can be dangerous and keeping wildlife without authorization is a crime).",
+      "livestock": "Horse, cattle or another large animal: on a road or at risk of an accident, call 190 or 193. City halls often have a pickup service.",
+      "domestic": "Dog or cat: if injured, take it to a vet. NGOs and your city's CCZ can help with sheltering."
+    }
+  },
+  "open": {
+    "title": "Rescue alerts",
+    "body": "Animals needing help, nearest first (when location is allowed).",
+    "error": "Couldn't load the alerts.",
+    "emptyTitle": "No open alerts",
+    "emptyBody": "Good news! When someone reports an animal that needs rescue, it shows up here."
+  },
+  "kinds": {
+    "dog": "Dog",
+    "cat": "Cat",
+    "horse": "Horse or donkey",
+    "livestock": "Cattle, pig or other farm animal",
+    "wild_bird": "Wild bird",
+    "wild_mammal": "Wild mammal",
+    "reptile": "Reptile (snake, lizard, tortoise...)",
+    "marine": "Marine animal",
+    "other": "Other"
+  },
+  "conditions": {
+    "injured": "Injured",
+    "trapped": "Trapped",
+    "sick": "Sick",
+    "abandoned": "Abandoned",
+    "at_risk": "At risk (road, flood...)"
+  },
+  "status": {
+    "open": "Needs rescue",
+    "in_progress": "Rescue on the way",
+    "rescued": "Rescued",
+    "closed": "Closed"
+  },
+  "form": {
+    "title": "Report an animal for rescue",
+    "intro": "Tell where the animal is and how it is. The exact location is only shown to people with an account.",
+    "kind": "What animal is it?",
+    "wildWarning": "Wild animal: keep your distance, don't try to catch it and call the environmental agency. Your alert helps the team find the place.",
+    "conditions": "How is it?",
+    "count": "How many animals?",
+    "countError": "Type a number from 1 to 50.",
+    "description": "Describe the situation",
+    "descriptionHint": "E.g. dog with an injured paw, scared, near the bus stop.",
+    "locationHelp": "Required: where the animal is. Only people with an account see it.",
+    "locationRequired": "Set the animal's location.",
+    "address": "Address (optional)",
+    "reference": "Landmark (optional)",
+    "referenceHint": "E.g. behind the market, under the bridge.",
+    "contactPhone": "Your phone (optional)",
+    "contactHint": "So rescuers can talk to you. Only people with an account see it.",
+    "submit": "Publish rescue alert"
+  },
+  "detail": {
+    "goThere": "Directions",
+    "callReporter": "Call whoever reported"
+  },
+  "owner": {
+    "title": "Your alert",
+    "status": "Rescue status",
+    "delete": "Delete alert"
+  },
+  "delete": {
+    "title": "Delete this alert?",
+    "body": "The alert and its photos will be deleted.",
+    "cancel": "Cancel",
+    "confirm": "Delete"
+  },
+  "gone": {
+    "title": "Alert not found",
+    "body": "It may have been deleted by whoever reported it.",
+    "back": "Back"
+  },
+  "guideTitle": "Rescue guide",
+  "guide": {
+    "stepOf": "Step {{current}} of {{total}}",
+    "progress": "Guide {{percent}}% done",
+    "previous": "Previous step",
+    "next": "Next step",
+    "restart": "Restart the guide",
+    "wildWarning": "A wild animal (bird, snake, opossum, monkey...)? DO NOT try to catch it. Keep people away and call the environmental agency (in Brazil, IBAMA or the Environmental Police at 190).",
+    "vetOnly": "Medicines, vaccines and dewormers: only as a vet advises. The app never recommends medicines or doses.",
+    "findVet": "Find vet care near me",
+    "finishTitle": "Rescue completed. Thank you!",
+    "finishBody": "Now the animal needs a home. You can list it for responsible adoption or add it as your pet to track its health.",
+    "toAdoption": "List for adoption",
+    "toPet": "Add as my pet",
+    "steps": {
+      "approach": {
+        "title": "Assessment and approach",
+        "summary": "Check the animal's condition, earn its trust with food and restrain it safely.",
+        "items": {
+          "safety": {
+            "title": "Keep yourself safe first",
+            "body": "Watch from a distance. An animal in pain or afraid may bite or scratch. On a road, signal and ask for help."
+          },
+          "assess": {
+            "title": "Check the animal's condition",
+            "body": "Is it breathing? Bleeding? Can it walk? Is it trapped? Note what you see: it helps the vet."
+          },
+          "calm": {
+            "title": "Approach calmly",
+            "body": "Crouch sideways, speak softly, no sudden moves and no staring. Let the animal come to you."
+          },
+          "food": {
+            "title": "Offer food and water",
+            "body": "A little food helps build trust. If there's a serious injury, don't insist: the vet may need it to be fasting."
+          },
+          "contain": {
+            "title": "Restrain it safely",
+            "body": "Use a towel, blanket, leash or carrier. Wear thick gloves if possible. Never hold it by the neck."
+          },
+          "transport": {
+            "title": "Transport carefully",
+            "body": "A carrier or a lined cardboard box with holes. Keep the animal warm, in a dark and quiet place."
+          }
+        }
+      },
+      "vet": {
+        "title": "Veterinary care",
+        "summary": "Take the animal to a vet for emergency exams, wound care and health planning.",
+        "items": {
+          "emergency": {
+            "title": "Emergency exams",
+            "body": "The vet assesses the overall condition and decides which exams are needed."
+          },
+          "wounds": {
+            "title": "Wound care",
+            "body": "Don't use human medicines or home remedies. Only what the vet prescribes."
+          },
+          "deworm": {
+            "title": "Deworming",
+            "body": "Done as the vet advises, according to age and weight."
+          },
+          "vaccines": {
+            "title": "Vaccines",
+            "body": "The vet decides which vaccines and when, after examining the animal."
+          },
+          "neuter": {
+            "title": "Plan neutering",
+            "body": "Agree on the best time with the vet. Look for free or low-cost neutering programs in your city."
+          },
+          "records": {
+            "title": "Keep the records",
+            "body": "Photos of prescriptions, exams and the vaccination card. You can keep everything in the app, in the pet's profile."
+          }
+        }
+      },
+      "quarantine": {
+        "title": "Isolation and quarantine",
+        "summary": "Keep the animal apart from other animals for 7 to 14 days to watch for symptoms and incubating diseases.",
+        "items": {
+          "separate": {
+            "title": "Keep it apart",
+            "body": "A room or space just for it, away from your other animals."
+          },
+          "days": {
+            "title": "Count 7 to 14 days",
+            "body": "That's the time for incubating diseases to show up. Follow the period your vet recommends."
+          },
+          "observe": {
+            "title": "Watch for signs",
+            "body": "Coughing, sneezing, diarrhea, vomiting, eye discharge or no appetite: tell the vet."
+          },
+          "hygiene": {
+            "title": "Keep things clean",
+            "body": "Wash your hands after handling the animal and clean its space every day."
+          },
+          "ownItems": {
+            "title": "Its own items",
+            "body": "Separate bowls, bed and toys, not shared with other animals."
+          }
+        }
+      },
+      "aftercare": {
+        "title": "Care after the rescue",
+        "summary": "Provide shelter (foster or permanent home), proper food, affection and start a responsible adoption.",
+        "items": {
+          "shelter": {
+            "title": "Shelter",
+            "body": "A foster or permanent home, protected from sun, rain and cold."
+          },
+          "food": {
+            "title": "Proper food",
+            "body": "Food suited to the species and age, and fresh water always. Ask the vet if in doubt."
+          },
+          "affection": {
+            "title": "Affection and patience",
+            "body": "Respect the animal's pace: many arrive scared. Trust comes little by little."
+          },
+          "adoption": {
+            "title": "Responsible adoption",
+            "body": "Share photos and health information, interview candidates and sign an adoption agreement."
+          },
+          "followUp": {
+            "title": "Follow up",
+            "body": "Ask the adopter for news, especially in the first weeks."
+          }
+        }
+      }
+    }
+  }
+}

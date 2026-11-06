@@ -1,3 +1,4 @@
+import { APP_NAME } from '@petcare/shared';
 import { type RenderOptions, render } from '@testing-library/react-native';
 import i18n from 'i18next';
 import React from 'react';
@@ -14,7 +15,7 @@ export async function setupTestI18n(lng: 'pt-BR' | 'en' = 'pt-BR') {
       fallbackLng: 'pt-BR',
       defaultNS: 'common',
       ns: NAMESPACES as string[],
-      interpolation: { escapeValue: false },
+      interpolation: { escapeValue: false, defaultVariables: { appName: APP_NAME } },
     });
   } else {
     await i18n.changeLanguage(lng);

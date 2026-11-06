@@ -82,6 +82,20 @@ jest.mock('@/features/nearby/location', () => ({
   geocodeAddress: jest.fn(),
 }));
 jest.mock('@/features/nearby/places.service', () => ({ PlacesError: class extends Error {}, searchNearby: jest.fn() }));
+// Centrais (adoção, resgate, denúncia): leitura do Firestore vazia nos testes de navegação.
+jest.mock('@/features/centrals/centrals.repo', () => {
+  const none = () => () => undefined;
+  return {
+    subscribeAdoptions: jest.fn((ok: (x: unknown[]) => void) => { ok([]); return () => undefined; }),
+    subscribeMyAdoptions: jest.fn(none),
+    subscribeAdoption: jest.fn(none),
+    subscribeOpenRescueAlerts: jest.fn((ok: (x: unknown[]) => void) => { ok([]); return () => undefined; }),
+    subscribeRescueAlert: jest.fn(none),
+    subscribeMyReports: jest.fn((_uid: string, ok: (x: unknown[]) => void) => { ok([]); return () => undefined; }),
+    subscribeReport: jest.fn(none),
+    getPhotoUrl: jest.fn(async () => 'file://x.jpg'),
+  };
+});
 jest.mock('@/features/nearby/favorites.repo', () => ({
   subscribeFavorites: jest.fn(() => () => undefined),
   addFavorite: jest.fn(),
@@ -128,12 +142,13 @@ describe('navegação', () => {
     expect(screen.queryByText('Meus Pets')).toBeNull();
   });
 
-  it('com login, abre a Home com os três atalhos e o card da veterinária', async () => {
+  it('com login, abre a Home com os atalhos das centrais e o card da veterinária', async () => {
     mockAuth = user();
     const result = await renderRouter('./src/app', { initialUrl: '/' });
     expect(await screen.findByText('Olá, Ana')).toBeTruthy();
     expect(result.getPathname()).toBe('/home');
     expect(screen.getByText('Meus Pets')).toBeTruthy();
+    expect(screen.getByText('Adoção')).toBeTruthy();
     expect(screen.getByText('Resgatar')).toBeTruthy();
     expect(screen.getByText('Denunciar')).toBeTruthy();
     expect(screen.getByText('Veterinária mais próxima')).toBeTruthy();
@@ -164,10 +179,36 @@ describe('navegação', () => {
     expect(await screen.findByText('Política de Privacidade')).toBeTruthy();
   });
 
-  it('a tela de Resgate lembra do 190', async () => {
+  it('a Central de Resgate mostra os contatos oficiais (190, 193 e IBAMA) e o guia passo a passo', async () => {
     mockAuth = user();
     await renderRouter('./src/app', { initialUrl: '/rescue' });
-    expect(await screen.findByText(/ligue 190/)).toBeTruthy();
+    expect(await screen.findByRole('button', { name: 'Polícia / Polícia Ambiental (190)' })).toBeTruthy();
+    expect(screen.getByRole('button', { name: 'Bombeiros (193)' })).toBeTruthy();
+    expect(screen.getByRole('button', { name: 'IBAMA Linha Verde (0800 061 8080)' })).toBeTruthy();
+    expect(screen.getByTestId('rescue-guide')).toBeTruthy();
+    expect(screen.getByText('Nenhum alerta aberto')).toBeTruthy();
+  });
+
+  it('da Home, os atalhos abrem as centrais de Adoção e de Denúncia', async () => {
+    mockAuth = user();
+    await renderRouter('./src/app', { initialUrl: '/' });
+    await fireEvent.press(await screen.findByTestId('shortcut-adoption'));
+    expect(await screen.findByText('Anunciar um animal para adoção')).toBeTruthy();
+  });
+
+  it('a Central de Denúncias lembra do 190 e mostra os canais oficiais', async () => {
+    mockAuth = user();
+    await renderRouter('./src/app', { initialUrl: '/report' });
+    expect(await screen.findByText('Está acontecendo agora? Ligue 190 imediatamente.')).toBeTruthy();
+    expect(screen.getByRole('button', { name: 'Disque Denúncia (181, anônimo)' })).toBeTruthy();
+    expect(screen.getByText('Você ainda não fez nenhuma denúncia pelo app.')).toBeTruthy();
+  });
+
+  it('sem cadastro (anônimo), as centrais convidam a criar conta em vez de deixar anunciar ou denunciar', async () => {
+    mockAuth = user({ isAnonymous: true, email: null, displayName: null, provider: 'anonymous' });
+    await renderRouter('./src/app', { initialUrl: '/report' });
+    expect(await screen.findByText('Crie sua conta para participar')).toBeTruthy();
+    expect(screen.queryByTestId('report-new')).toBeNull();
   });
 
   it('do Resgate, um toque abre o Perto de mim no modo emergência (24 h primeiro)', async () => {

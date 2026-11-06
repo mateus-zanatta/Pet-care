@@ -6,16 +6,27 @@ import { type PlacesProvider, ProviderError } from './provider';
  * Marcações buscadas: amenity=veterinary, shop=pet, amenity=animal_shelter.
  */
 
-export const OVERPASS_ENDPOINTS = ['https://overpass-api.de/api/interpreter', 'https://overpass.kumi.systems/api/interpreter'];
-const USER_AGENT = 'PetCareApp/1.0 (app de bem-estar animal; busca de veterinarias)';
-const TIMEOUT_MS = 25_000;
+/** Servidores públicos do Overpass (lista em wiki.openstreetmap.org/wiki/Overpass_API), na ordem de tentativa. */
+export const OVERPASS_ENDPOINTS = [
+  'https://overpass-api.de/api/interpreter',
+  'https://overpass.kumi.systems/api/interpreter',
+  'https://overpass.private.coffee/api/interpreter',
+];
+/**
+ * Identificação do app. Desde abril de 2026 o servidor principal recusa (HTTP 406) pedidos sem User-Agent ou com o
+ * padrão de bibliotecas ("node", "python-requests"...), e a política de uso pede um jeito de contatar quem consulta:
+ * por isso vai o endereço do projeto. Dá para trocar com a variável OVERPASS_USER_AGENT (ex.: com um e-mail de contato).
+ */
+export const USER_AGENT = process.env.OVERPASS_USER_AGENT || 'TailwagApp/1.0 (+https://github.com/mateus-zanatta/pet-care)';
+/** Por servidor. 3 tentativas x 18 s cabem nos 60 s da função (e a pessoa não espera um minuto inteiro à toa). */
+const TIMEOUT_MS = 18_000;
 const RAW_LIMIT = 400;
 
 export function buildOverpassQuery(center: LatLng, radiusKm: number): string {
   const r = Math.round(radiusKm * 1000);
   const at = `(around:${r},${center.lat},${center.lng})`;
   return [
-    '[out:json][timeout:25];',
+    `[out:json][timeout:${TIMEOUT_MS / 1000}];`,
     '(',
     `  nwr["amenity"="veterinary"]${at};`,
     `  nwr["shop"="pet"]${at};`,
@@ -100,6 +111,27 @@ export function normalizeOverpass(json: unknown, center: LatLng): Place[] {
     .map(({ d: _d, ...place }) => place);
 }
 
+function hostOf(url: string): string {
+  try {
+    return new URL(url).host;
+  } catch {
+    return url;
+  }
+}
+
+/**
+ * Motivo técnico legível de uma falha de rede. O Node só diz "fetch failed"; o motivo real fica em `cause`
+ * (ex.: ENOTFOUND = sem DNS/internet, ECONNRESET = conexão cortada, UNABLE_TO_GET_ISSUER_CERT_LOCALLY = um
+ * antivírus inspecionando HTTPS com um certificado que o Node não conhece). Nunca contém coordenadas.
+ */
+export function describeFetchError(error: unknown): string {
+  const e = error as { name?: unknown; message?: unknown; cause?: { code?: unknown; message?: unknown } } | null;
+  const message = typeof e?.message === 'string' ? e.message : String(error);
+  if (e?.name === 'AbortError' || /aborted/i.test(message)) return `sem resposta em ${TIMEOUT_MS / 1000} s`;
+  const cause = typeof e?.cause?.code === 'string' ? e.cause.code : typeof e?.cause?.message === 'string' ? e.cause.message : '';
+  return cause ? `${message} (${cause})` : message;
+}
+
 type FetchLike = (url: string, init: { method: string; headers: Record<string, string>; body: string; signal: AbortSignal }) => Promise<{
   ok: boolean;
   status: number;
@@ -117,7 +149,8 @@ export class OverpassProvider implements PlacesProvider {
 
   async search({ center, radiusKm }: { center: LatLng; radiusKm: number }): Promise<Place[]> {
     const body = `data=${encodeURIComponent(buildOverpassQuery(center, radiusKm))}`;
-    let lastError: unknown = null;
+    // O motivo de CADA servidor tentado, para o log dizer exatamente o que aconteceu.
+    const failures: string[] = [];
     for (const url of this.endpoints) {
       const controller = new AbortController();
       const timer = setTimeout(() => controller.abort(), TIMEOUT_MS);
@@ -129,17 +162,17 @@ export class OverpassProvider implements PlacesProvider {
           signal: controller.signal,
         });
         if (!res.ok) {
-          lastError = new ProviderError('unavailable', `HTTP ${res.status}`);
+          failures.push(`${hostOf(url)}: HTTP ${res.status}`);
           continue; // sobrecarregado ou fora do ar: tenta o próximo
         }
         return normalizeOverpass(await res.json(), center);
       } catch (error) {
         if (error instanceof ProviderError && error.code === 'bad-response') throw error;
-        lastError = error;
+        failures.push(`${hostOf(url)}: ${describeFetchError(error)}`);
       } finally {
         clearTimeout(timer);
       }
     }
-    throw lastError instanceof ProviderError ? lastError : new ProviderError('unavailable', String((lastError as Error)?.message ?? lastError));
+    throw new ProviderError('unavailable', failures.join('; ') || 'nenhum servidor configurado');
   }
 }

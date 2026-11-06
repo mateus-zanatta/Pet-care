@@ -1,5 +1,5 @@
 {
-  "appName": "Pet Care",
+  "appName": "{{appName}}",
   "actions": {
     "save": "Save",
     "cancel": "Cancel",
@@ -27,7 +27,7 @@
     "ufInvalid": "Invalid state code. Example: SP",
     "emailInvalid": "Enter a valid email address.",
     "passwordTooShort": "The password must have at least 8 characters.",
-    "passwordWeak": "Use letters and numbers in your password.",
+    "passwordWeak": "The password doesn't meet all the requirements below yet.",
     "termsRequired": "To create an account, accept the Terms and the Privacy Policy.",
     "endBeforeStart": "The end date cannot be before the start.",
     "hoursInvalid": "Enter a number of hours between 1 and 168.",
@@ -37,6 +37,7 @@
     "timesDuplicate": "There are repeated times.",
     "crmvInvalid": "The CRMV number must contain digits only.",
     "nextBeforeDate": "The next date must be after the record date.",
-    "phoneInvalid": "Invalid phone. Example: (11) 3333-4444"
+    "phoneInvalid": "Invalid phone. Example: (11) 3333-4444",
+    "tooShort": "Please write a bit more."
   }
 }

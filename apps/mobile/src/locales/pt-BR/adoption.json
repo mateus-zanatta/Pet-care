@@ -1,0 +1,125 @@
+{
+  "title": "Adoção",
+  "intro": "Animais esperando um lar. Quem anuncia informa saúde, idade, cores e onde o animal está.",
+  "cta": "Anunciar um animal para adoção",
+  "accountBody": "Para anunciar e ver o contato de quem doa, crie uma conta. Você pode ver os anúncios sem cadastro.",
+  "responsible": "Adoção responsável: conheça o animal antes, combine uma visita, nunca pague por um animal \"doado\" e desconfie de pedidos de dinheiro.",
+  "show": "Mostrar",
+  "tabs": {
+    "browse": "Para adotar",
+    "mine": "Meus anúncios"
+  },
+  "filter": "Espécie",
+  "all": "Todas",
+  "loadError": "Não foi possível carregar os anúncios. Confira a conexão.",
+  "empty": {
+    "title": "Nenhum anúncio por aqui",
+    "body": "Ainda não há animais para adoção com esse filtro."
+  },
+  "emptyMine": {
+    "title": "Você ainda não anunciou",
+    "body": "Toque em \"Anunciar um animal para adoção\" para começar."
+  },
+  "species": {
+    "dog": "Cachorro",
+    "cat": "Gato",
+    "bird": "Ave",
+    "rabbit": "Coelho",
+    "rodent": "Roedor",
+    "reptile": "Réptil",
+    "horse": "Cavalo",
+    "other": "Outro"
+  },
+  "age": {
+    "baby": "Filhote",
+    "young": "Jovem",
+    "adult": "Adulto",
+    "senior": "Idoso"
+  },
+  "size": {
+    "small": "Pequeno",
+    "medium": "Médio",
+    "large": "Grande"
+  },
+  "colors": {
+    "black": "Preto",
+    "white": "Branco",
+    "brown": "Marrom",
+    "caramel": "Caramelo",
+    "gray": "Cinza",
+    "golden": "Dourado",
+    "brindle": "Tigrado",
+    "spotted": "Malhado",
+    "tricolor": "Tricolor",
+    "other": "Outra"
+  },
+  "status": {
+    "available": "Disponível",
+    "reserved": "Reservado",
+    "adopted": "Adotado"
+  },
+  "form": {
+    "newTitle": "Anunciar para adoção",
+    "editTitle": "Editar anúncio",
+    "publish": "Publicar anúncio",
+    "saveChanges": "Salvar alterações",
+    "fixErrors": "Confira os campos destacados.",
+    "sectionAnimal": "O animal",
+    "species": "Espécie",
+    "name": "Nome (opcional)",
+    "nameHint": "Se o animal ainda não tem nome, deixe em branco.",
+    "sex": "Sexo",
+    "age": "Idade",
+    "breed": "Raça (opcional)",
+    "breedHint": "Sem raça definida? Deixe em branco ou escreva SRD.",
+    "colors": "Cores",
+    "size": "Porte (opcional)",
+    "neutered": "Castrado?",
+    "sectionHealth": "Saúde",
+    "healthHelp": "Informe só o que já foi feito, de preferência com a data. O app não sugere vacinas, remédios nem exames.",
+    "vaccines": "Vacinas já aplicadas",
+    "vaccinesAdd": "Adicionar vacina",
+    "vaccinesPlaceholder": "Ex.: V10, antirrábica",
+    "medications": "Remédios (atuais ou recentes)",
+    "medicationsAdd": "Adicionar remédio",
+    "medicationsPlaceholder": "Nome do remédio, como receitado",
+    "exams": "Exames e testes já feitos",
+    "examsAdd": "Adicionar exame ou teste",
+    "examsPlaceholder": "Ex.: FIV/FeLV, leishmaniose, hemograma",
+    "healthItemError": "Preencha o nome e confira a data de cada item.",
+    "healthNotes": "Outras informações de saúde (opcional)",
+    "sectionAbout": "Sobre o animal",
+    "description": "Descrição",
+    "descriptionHint": "Personalidade, convivência com crianças e outros animais, cuidados especiais...",
+    "sectionWhere": "Onde está e contato",
+    "city": "Cidade",
+    "uf": "UF",
+    "locationHelp": "Opcional. Usamos só a região aproximada (cerca de 1 km), nunca o endereço exato.",
+    "contactPhone": "Telefone ou WhatsApp para contato",
+    "contactHint": "Só pessoas com conta veem o seu número."
+  },
+  "noHealth": "Quem anunciou não informou dados de saúde.",
+  "contactTips": "Ao conversar, pergunte sobre a rotina do animal e combine uma visita em local seguro.",
+  "showContact": "Ver contato de quem doa",
+  "call": "Ligar",
+  "whatsapp": "Conversar no WhatsApp",
+  "noContact": "Contato não informado.",
+  "contactAccount": "Crie uma conta para ver o telefone de quem está doando.",
+  "owner": {
+    "title": "Seu anúncio",
+    "status": "Situação",
+    "edit": "Editar anúncio",
+    "delete": "Excluir anúncio"
+  },
+  "delete": {
+    "title": "Excluir este anúncio?",
+    "body": "O anúncio e as fotos serão apagados. Isso não pode ser desfeito.",
+    "cancel": "Cancelar",
+    "confirm": "Excluir"
+  },
+  "gone": {
+    "title": "Anúncio não encontrado",
+    "body": "Ele pode ter sido excluído por quem anunciou.",
+    "back": "Voltar"
+  }
+}

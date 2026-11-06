@@ -1,6 +1,7 @@
 /**
- * Design tokens. Paleta acolhedora (verde-azulado + tons quentes) com contraste mínimo
- * WCAG AA (4.5:1 para texto) nos dois modos — conferido por contrast.test.ts.
+ * Design tokens. Paleta acolhedora: verde-azulado de confiança (primário) + terracota quente (acento,
+ * para adoção e destaques) sobre fundos creme. Escalas geradas e auditadas (WCAG 2.1 e APCA) com a
+ * ferramenta UI Color Palette; contraste mínimo WCAG AA (4.5:1) nos dois modos — conferido por contrast.test.ts.
  */
 export type ColorTokens = {
   background: string;
@@ -13,6 +14,11 @@ export type ColorTokens = {
   onPrimary: string;
   primaryContainer: string;
   onPrimaryContainer: string;
+  /** Acento quente (terracota): adoção, destaques e chamadas afetivas. Nunca para erro (isso é "danger"). */
+  accent: string;
+  onAccent: string;
+  accentContainer: string;
+  onAccentContainer: string;
   danger: string;
   onDanger: string;
   dangerContainer: string;
@@ -34,6 +40,10 @@ export const lightColors: ColorTokens = {
   onPrimary: '#FFFFFF',
   primaryContainer: '#D7F0E9',
   onPrimaryContainer: '#08392F',
+  accent: '#B3543B',
+  onAccent: '#FFFFFF',
+  accentContainer: '#FFE3D3',
+  onAccentContainer: '#610E00',
   danger: '#B3261E',
   onDanger: '#FFFFFF',
   dangerContainer: '#FBE3E0',
@@ -55,6 +65,10 @@ export const darkColors: ColorTokens = {
   onPrimary: '#06201B',
   primaryContainer: '#14463D',
   onPrimaryContainer: '#C9F2E8',
+  accent: '#FFA289',
+  onAccent: '#3A0D00',
+  accentContainer: '#5A2414',
+  onAccentContainer: '#FFDBC4',
   danger: '#FF8A80',
   onDanger: '#3B0A07',
   dangerContainer: '#5C1A15',

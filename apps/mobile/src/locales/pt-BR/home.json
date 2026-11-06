@@ -13,6 +13,10 @@
       "title": "Meus Pets",
       "subtitle": "Saúde, vacinas e remédios"
     },
+    "adoption": {
+      "title": "Adoção",
+      "subtitle": "Animais esperando um lar, com saúde, idade e local"
+    },
     "rescue": {
       "title": "Resgatar",
       "subtitle": "Encontrei um animal"

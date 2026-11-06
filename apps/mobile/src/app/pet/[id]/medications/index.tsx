@@ -72,7 +72,7 @@ export default function MedicationsScreen() {
               ))}
             </View>
           ))}
-          {canEdit ? <Button icon="add" label={t('list.add')} onPress={add} /> : null}
+          {canEdit ? <Button variant="accent" icon="add-circle" label={t('list.add')} onPress={add} testID="register-medication" /> : null}
         </>
       )}
     </Screen>

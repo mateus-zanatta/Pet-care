@@ -1,5 +1,6 @@
 /* eslint-disable import/no-named-as-default-member -- API padrão do i18next (i18n.use / i18n.changeLanguage) */
 import { getLocales } from 'expo-localization';
+import { APP_NAME } from '@petcare/shared';
 import i18n from 'i18next';
 import { initReactI18next } from 'react-i18next';
 import { getPref, setPref } from '../storage/prefs';
@@ -29,7 +30,8 @@ export async function initI18n(preference: LanguagePreference): Promise<void> {
     fallbackLng: DEFAULT_LOCALE,
     defaultNS: 'common',
     ns: NAMESPACES as string[],
-    interpolation: { escapeValue: false }, // React já escapa
+    // React já escapa. `appName` fica disponível em todos os textos como {{appName}} (nome num lugar só).
+    interpolation: { escapeValue: false, defaultVariables: { appName: APP_NAME } },
     returnNull: false,
   });
 }

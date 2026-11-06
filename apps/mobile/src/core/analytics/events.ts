@@ -17,6 +17,9 @@ export type AnalyticsEvent =
   | { name: 'health_event_created' }
   | { name: 'health_report_exported' }
   | { name: 'nearby_search'; source: 'gps' | 'address' }
+  // Centrais: só o tipo (nunca texto, telefone, local ou tipo de denúncia).
+  | { name: 'central_created'; central: 'adoption' | 'rescue' | 'report' }
+  | { name: 'rescue_guide_step'; step: number }
   | { name: 'place_call' }
   | { name: 'place_directions'; app: 'google' | 'waze' | 'apple' }
   | { name: 'place_favorite' }
